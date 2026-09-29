@@ -12,3 +12,18 @@ C:\Users\Admin\Documents\My Obsidian Vault\Software Architecture and Design\week
 C:\Users\Admin\Documents\My Obsidian Vault\Software Architecture and Design\week01-ex3\obj\Debug\net10.0\week01-ex3.pdb
 C:\Users\Admin\Documents\My Obsidian Vault\Software Architecture and Design\week01-ex3\obj\Debug\net10.0\week01-ex3.genruntimeconfig.cache
 C:\Users\Admin\Documents\My Obsidian Vault\Software Architecture and Design\week01-ex3\obj\Debug\net10.0\ref\week01-ex3.dll
+C:\Users\Admin\Documents\My Obsidian Vault\Software-Architecture-and-Design\week01-ex3\bin\Debug\net10.0\week01-ex3.exe
+C:\Users\Admin\Documents\My Obsidian Vault\Software-Architecture-and-Design\week01-ex3\bin\Debug\net10.0\week01-ex3.deps.json
+C:\Users\Admin\Documents\My Obsidian Vault\Software-Architecture-and-Design\week01-ex3\bin\Debug\net10.0\week01-ex3.runtimeconfig.json
+C:\Users\Admin\Documents\My Obsidian Vault\Software-Architecture-and-Design\week01-ex3\bin\Debug\net10.0\week01-ex3.dll
+C:\Users\Admin\Documents\My Obsidian Vault\Software-Architecture-and-Design\week01-ex3\bin\Debug\net10.0\week01-ex3.pdb
+C:\Users\Admin\Documents\My Obsidian Vault\Software-Architecture-and-Design\week01-ex3\obj\Debug\net10.0\week01-ex3.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Admin\Documents\My Obsidian Vault\Software-Architecture-and-Design\week01-ex3\obj\Debug\net10.0\week01-ex3.AssemblyInfoInputs.cache
+C:\Users\Admin\Documents\My Obsidian Vault\Software-Architecture-and-Design\week01-ex3\obj\Debug\net10.0\week01-ex3.AssemblyInfo.cs
+C:\Users\Admin\Documents\My Obsidian Vault\Software-Architecture-and-Design\week01-ex3\obj\Debug\net10.0\week01-ex3.csproj.CoreCompileInputs.cache
+C:\Users\Admin\Documents\My Obsidian Vault\Software-Architecture-and-Design\week01-ex3\obj\Debug\net10.0\week01-ex3.sourcelink.json
+C:\Users\Admin\Documents\My Obsidian Vault\Software-Architecture-and-Design\week01-ex3\obj\Debug\net10.0\week01-ex3.dll
+C:\Users\Admin\Documents\My Obsidian Vault\Software-Architecture-and-Design\week01-ex3\obj\Debug\net10.0\refint\week01-ex3.dll
+C:\Users\Admin\Documents\My Obsidian Vault\Software-Architecture-and-Design\week01-ex3\obj\Debug\net10.0\week01-ex3.pdb
+C:\Users\Admin\Documents\My Obsidian Vault\Software-Architecture-and-Design\week01-ex3\obj\Debug\net10.0\week01-ex3.genruntimeconfig.cache
+C:\Users\Admin\Documents\My Obsidian Vault\Software-Architecture-and-Design\week01-ex3\obj\Debug\net10.0\ref\week01-ex3.dll

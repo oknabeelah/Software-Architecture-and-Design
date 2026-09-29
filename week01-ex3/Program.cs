@@ -8,122 +8,176 @@
                 Library myLibrary = new Library("My Library");
 
                 // add books to the library ie make new book objects and add
-                Book book1 = new Book("My Library", "The Great Gatsby", "978-0-7432-7356-5", true);
-                Book book2 = new Book("My Library", "To Kill a Mockingbird", "978-0-06-112008-4", true);
+                Book book1 = new Book("The Great Gatsby", "978-0-7432-7356-5", true);
+                Book book2 = new Book("To Kill a Mockingbird", "978-0-06-112008-4", true);
                 myLibrary.addBook(book1);
                 myLibrary.addBook(book2);
 
                 myLibrary.listAllBooks();
 
                 //add members to the library ie make new member objects and add
-                Member member1 = new Member("My Library", "M001", "Alice");
-                Member member2 = new Member("My Library", "M002", "Bob");
+                Member member1 = new Member("M001", "Alice");
+                Member member2 = new Member("M002", "Bob");
                 myLibrary.registerMember(member1);
                 myLibrary.registerMember(member2);
 
                 myLibrary.listAllMembers();
 
                 //borrow a book
-                // take in the isbn of the book and the member object and call the borrowBook method in the library class
-                    // check if available is true, if so, set available to false and print a message that the book has been borrowed
+                myLibrary.borrowBook("978-0-7432-7356-5", member1);
                 
                 // return a book
-                //prevent borrowing if the book is not available
+                myLibrary.returnBook("978-0-7432-7356-5");
+
+                
 			} 
 		}
         class Library
         {
-            public string name { get; set; }
+            private string name;
+            private List<Book> books;
+            private List<Member> members;
             public Library(string name)
             {
                 this.name = name;
+                this.books = new List<Book>();
+                this.members = new List<Member>();
             }
-            public List<Book> allBooks { get; set; } = new List<Book>();
-            public List<Member> allMembers { get; set; } = new List<Member>();
+            public string getName() => name;
             public void addBook(Book book)
             {
-                //add book to the library
-                this.allBooks.Add(book);
-                Console.WriteLine($"Book '{book.title}' has been added to {name}");
+                if (book != null && !books.Contains(book))
+                {
+                    books.Add(book);
+                    Console.WriteLine($"Book '{book.getTitle()}' has been added to {name}");
+                }
             }
+           
             public void registerMember(Member member)
             {
-                //register a new member
-                // create a list of members in the library class and add the member to the list
-                this.allMembers.Add(member);
-                Console.WriteLine($"Member '{member.name}' has been registered to {name}");
-
+                if (member != null && !members.Contains(member))
+                {
+                    members.Add(member);
+                    Console.WriteLine($"Member '{member.getName()}' has been registered to {name}");
+                }
             }
             public void borrowBook(string isbn, Member member)
             {
-                //borrow a book from the library
-                //add to a borrowed book dictionary containing the book and the member who borrowed it ?
-                if (this.allBooks.Any(b => b.isbn == isbn && b.available))
+                if (!members.Contains(member))
                 {
-                    Book bookToBorrow = this.allBooks.First(b => b.isbn == isbn);
-                    bookToBorrow.available = false;
-                    Console.WriteLine($"Book '{bookToBorrow.title}' has been borrowed by {member.name}");
+                    Console.WriteLine($"Member '{member.getName()}' is not registered in {name}");
+                    return;
                 }
-                else
+
+                Book? book = books.Find(b => b.getIsbn() == isbn);
+                if (book == null)
                 {
-                    //Console.WriteLine($"Book with ISBN '{isbn}' is not available for borrowing.");
-                    Console.WriteLine($"{this.allBooks.First(b => b.isbn == isbn).title} is not available for borrowing.");
+                    Console.WriteLine($"Book with ISBN '{isbn}' not found in {name}");
+                    return;
                 }
+
+                if (!book.isAvailable())
+                {
+                    Console.WriteLine($"Book '{book.getTitle()}' is not available for borrowing.");
+                    return;
+                }
+
+                book.Borrow();
+                Console.WriteLine($"Book '{book.getTitle()}' has been borrowed by {member.getName()}");
             }
             public void returnBook(string isbn)
             {
                 //return a book to the library
+                Book? book = books.Find(b => b.getIsbn() == isbn);
+                if (book == null)
+                {
+                    Console.WriteLine($"Book with ISBN '{isbn}' not found in {name}");
+                    return;
+                }
+
+                if (book.isAvailable())
+                {
+                    Console.WriteLine($"Book '{book.getTitle()}' is already available in the library.");
+                    return;
+                }
+
+                book.returnBook();
+                Console.WriteLine($"Book '{book.getTitle()}' has been returned to {name}");
             }
             public void listAllBooks()
             {
                 //list all available books in the library
-                foreach (Book book in this.allBooks)
+                foreach (Book book in books)
                 {
-                    Console.WriteLine($"Title: {book.title}, ISBN: {book.isbn}, Available: {book.available}");
+                    Console.WriteLine($"{book}");
                 }
             }
             public void listAllMembers()
             {
                 //list all registered members in the library
-                foreach (Member member in this.allMembers)
+                foreach (Member member in members)
                 {
-                    Console.WriteLine($"Member ID: {member.memberId}, Name: {member.name}");
+                    Console.WriteLine(member.ToString());
                 }
             }
         }
-        class Book : Library
+        class Book
         {
-            public string title { get; set; }
-            public string isbn { get; set; }
-            public bool available { get; set; }
-            public string libraryName { get; set; }
-            public Book( string libraryName, string title, string isbn, bool available) : base(libraryName)
+            private string title { get; set; }
+            private string isbn { get; set; }
+            private bool available { get; set; }
+            public Book( string title, string isbn, bool available)
             {
-                this.libraryName = libraryName;
                 this.title = title;
                 this.isbn = isbn;
                 this.available = available;
             }
-            public void borrow()
+            public string getTitle() => title;
+            public string getIsbn() => isbn;
+            public bool isAvailable() => available;
+            public void Borrow()
             {
                 //borrow a book from the library
-                
+                if (!available)
+                {
+                    //Console.WriteLine($"Book '{title}' is not available for borrowing.");
+                    throw new InvalidOperationException($"Book '{title}' is not available for borrowing.");
+                }
+                available = false;
             }
+            public void borrow() => Borrow();
             public void returnBook()
             {
                 //return a book to the library
+                if (available)
+                {
+                    //Console.WriteLine($"Book '{title}' is already available in the library.");
+                    throw new InvalidOperationException($"Book '{title}' is already available in the library.");
+                }
+                available = true;
+            }
+            public override string ToString()
+            {
+                string status  = available ? "Yes" : "No";
+                return $"Title: {title}, ISBN: {isbn}, Available: {available}";
             }
 }
-        class Member : Library
+        class Member
         {
-            public string libraryName { get; set; }
-            public string memberId { get; set; }
-            public string name { get; set; } //change to ...
-            public Member(string libraryName, string memberId, string name) : base(libraryName)
+            private string memberId { get; set; }
+            private string name { get; set; } //change to ...
+            public Member(string memberId, string name)
             {
-                this.libraryName = libraryName;
                 this.memberId = memberId;
                 this.name = name;
+            }
+
+            public string getMemberId() => memberId;
+            public string getName() => name;
+
+            public override string ToString()
+            {
+                return $"Member ID: {memberId}, Name: {name}";
             }
         
         }
