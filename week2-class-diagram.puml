@@ -1,0 +1,53 @@
+@startuml implementation-week2-class-diagram
+
+set namespaceSeparator none
+
+package "PgrStudentManagement.Web.Models" {
+    package Models {
+        class Student {
+            +StudentNumber : String
+            +FirstName : String
+            +LastName : String 
+            +FullName : String
+            +ModeOfStudy : String
+            +StartDate : Date
+            +Status : Status
+            +Course : String
+            +ThesisTitle : String
+        }
+        enum Status {
+            +Enrolled
+            +Suspended
+            +Withdrawn
+            +Completed
+        }
+    }
+
+    package Controllers {
+        class StudentsController <<controller>> {
+            +Students : List<Student>
+            -Index() : IActionResult
+            -EnrolmentDetails(studentNumber : String) : IActionResult
+            -ThesisDetails(studentNumber : String) : IActionResult
+        }
+    }
+
+
+    package Views {
+        class "Index.cshtml" <<view>>
+        class "EnrolmentDetails.cshtml" <<view>>
+        class "ThesisDetails.cshtml" <<view>>
+        class "NoThesisDetails.cshtml" <<view>>
+    }
+
+    StudentsController "1" o-- "0..*" Student : in-memory collection
+    StudentsController ..> Status : uses
+    StudentsController ..> "Index.cshtml" : returns
+    StudentsController ..> "EnrolmentDetails.cshtml" : returns
+    StudentsController ..> "ThesisDetails.cshtml" : returns
+    StudentsController ..> "NoThesisDetails.cshtml" : returns
+}
+
+Student ..> Status : uses
+
+@enduml

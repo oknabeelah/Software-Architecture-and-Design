@@ -23,4 +23,24 @@ Use case 1:
 		document decisions before implementing
 Use case 2:
 	review the model
-		
+	add appropriate business rules
+Use case 3:
+	review the model
+	add appropriate business rules
+
+
+
+---
+Lab 2 - Reverse engineer a UML class diagram from the code and create sequence diagrams that describe implemented behavior
+
+### Task 1 - Review modified code
+in StudentController.cs
+	added functionality for `public IActionResult EnrolmentDetails(string studentNumber)`
+	added functionality for `public IActionResult ThesisDetails(string studentNumber)`
+in Views/Students
+	updated `EnrolmentDetails.cshtml`
+	updated `ThesisDetails.cshtml`
+	added `NoThesisDetails.cshtml`
+
+
+
