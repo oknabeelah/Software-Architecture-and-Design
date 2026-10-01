@@ -1,0 +1,54 @@
+@model IEnumerable<PgrStudentManagement.Web.Models.Student>
+
+@{
+    ViewData["Title"] = "Students";
+}
+
+<h1>Students</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Student number</th>
+            <th>Name</th>
+            <th>Current status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var student in Model)
+        {
+            <tr>
+                <td>@student.StudentNumber</td>
+                <td>@student.FullName</td>
+                <td>@student.Status</td>
+                <td>
+                    <a asp-action="EnrolmentDetails"
+                       asp-route-studentNumber="@student.StudentNumber">
+                        Enrolment
+                    </a>
+                    |
+                    <a asp-action="ThesisDetails"
+                       asp-route-studentNumber="@student.StudentNumber">
+                        Thesis
+                    </a>
+                    |
+                    <a asp-action="EditStatus"
+                       asp-route-studentNumber="@student.StudentNumber">
+                        Edit status
+                    </a>
+                    |
+                    <a asp-action="EditExpectedSubmissionDate"
+                       asp-route-studentNumber="@student.StudentNumber">
+                        Edit expected date
+                    </a>
+                    |
+                    <a asp-action="RecordSubmission"
+                       asp-route-studentNumber="@student.StudentNumber">
+                        Record submission
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

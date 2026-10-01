@@ -1,0 +1,24 @@
+@model PgrStudentManagement.Web.Models.Student //instead of returning IEnumerable<Student> from the controller, we are returning a single Student object. So, we need to change the model type to Student instead of IEnumerable<Student>.
+
+@{
+    ViewData["Title"] = "Thesis Details"; 
+}
+
+<h1>Thesis Details</h1>
+
+@* <p class="alert alert-info">
+    TODO: Implement W2-UC02.
+</p> *@
+
+<p>
+    <strong>Student name:</strong> @Model.FullName
+    <br />
+    <strong>Student number:</strong> @Model.StudentNumber
+    <br />
+    <strong>Thesis title:</strong> @Model.ThesisTitle
+    <br />
+    <strong>Status:</strong> @Model.Status
+</p>
+
+
+<a asp-action="Index">Return to students</a>

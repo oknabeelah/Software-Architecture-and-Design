@@ -1,0 +1,27 @@
+@model PgrStudentManagement.Web.Models.Student
+
+
+@{
+    ViewData["Title"] = "Enrolment Details";
+}
+
+<h1>Enrolment Details</h1>
+
+@* <p class="alert alert-info">
+    TODO: Implement W2-UC01 using the enrolment fields selected
+    from the supplied domain model.
+</p> *@
+
+<p>
+    <strong>Student name:</strong> @Model.FullName
+    <br />
+    <strong>Student number:</strong> @Model.StudentNumber
+    <br />
+    <strong>Course:</strong> @Model.Course
+    <br />
+    <strong>Mode of study:</strong> @Model.ModeOfStudy
+    <br />
+    <strong>Start date:</strong> @Model.StartDate
+</p>
+
+<a asp-action="Index">Return to students</a>
