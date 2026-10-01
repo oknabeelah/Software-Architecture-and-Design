@@ -72,6 +72,7 @@ public class StudentsController : Controller
         }
         if (student.ThesisTitle == null)
         {
+            // return an exception or error view indicating that thesis information is not available for this student
             return View("NoThesisDetails", student);
         }
 
