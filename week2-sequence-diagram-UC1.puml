@@ -5,7 +5,6 @@ actor Student
 participant IndexView
 participant StudentsController
 participant Students
-participant Student
 participant EnrolmentDetailsView
 
 IndexView -> IndexView : select Enrolment

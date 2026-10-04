@@ -1,0 +1,33 @@
+' Sequence Diagram for W2-UC02: View Thesis Details'
+@startuml
+
+actor Student
+participant IndexView
+participant StudentsController
+participant Students
+participant ThesisDetailsView
+participant NoThesisDetailsView
+
+IndexView -> IndexView : select Thesis
+IndexView -> StudentsController : ThesisDetails(studentNumber)
+StudentsController -> Students : Find student
+Students --> StudentsController : matching Student or null
+
+alt Student found
+    StudentsController -> Student : read Student
+    StudentsController -> ThesisDetailsView : View(student)
+    ThesisDetailsView --> Student : display thesis details
+else Student not found
+    StudentsController --> Student : NotFound()
+    StudentsController -> NoThesisDetailsView : View(student)
+    NoThesisDetailsView --> Student : display no thesis details
+    note right
+        Student not found
+    end note
+end
+
+note over StudentsController,Student
+    No Student properties are changed in UC02.
+end note
+
+@enduml
