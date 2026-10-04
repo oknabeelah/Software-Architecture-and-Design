@@ -84,17 +84,35 @@ public class StudentsController : Controller
     {
         // TODO W2-UC03:
         // Find the student and display the current status.
+        Student student = Students.Find(s => s.StudentNumber == studentNumber);
+        if (student == null)
+        {
+            return NotFound();
+        }
 
-        return View();
+        return View(student);
     }
 
     [HttpPost]
-    public IActionResult EditStatus(string studentNumber, Status status)
+    [ValidateAntiForgeryToken]
+    public IActionResult EditStatus(string studentNumber, Status? status)
     {
-        // TODO W2-UC03:
-        // Validate and update the selected student's status.
+        Student student = Students.Find(s => s.StudentNumber == studentNumber);
+        if (student == null)
+        {
+            return NotFound();
+        }
 
-        return RedirectToAction(nameof(Index));
+        if (!status.HasValue || !Enum.IsDefined(typeof(Status), status.Value))
+        {
+            ModelState.AddModelError(nameof(Status), "Please select a valid status.");
+            return View(student);
+        }
+
+        student.Status = status.Value;
+        TempData["StatusUpdateSuccess"] = $"{student.FullName}'s status was updated to {student.Status}.";
+
+        return RedirectToAction(nameof(EditStatus), new { studentNumber });
     }
 
     [HttpGet]

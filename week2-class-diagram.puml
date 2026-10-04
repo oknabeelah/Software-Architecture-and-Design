@@ -34,18 +34,18 @@ package "PgrStudentManagement.Web.Models" {
 
 
     package Views {
-        class "Index.cshtml" <<view>>
-        class "EnrolmentDetails.cshtml" <<view>>
-        class "ThesisDetails.cshtml" <<view>>
-        class "NoThesisDetails.cshtml" <<view>>
+        class "Index.cshtml" as IndexView <<view>>
+        class "EnrolmentDetails.cshtml" as EnrolmentDetailsView <<view>>
+        class "ThesisDetails.cshtml" as ThesisDetailsView <<view>>
+        class "NoThesisDetails.cshtml" as NoThesisDetailsView <<view>>
     }
 
     StudentsController "1" o-- "0..*" Student : in-memory collection
     StudentsController ..> Status : uses
-    StudentsController ..> "Index.cshtml" : returns
-    StudentsController ..> "EnrolmentDetails.cshtml" : returns
-    StudentsController ..> "ThesisDetails.cshtml" : returns
-    StudentsController ..> "NoThesisDetails.cshtml" : returns
+    StudentsController ..> IndexView : returns
+    StudentsController ..> EnrolmentDetailsView : returns
+    StudentsController ..> ThesisDetailsView : returns
+    StudentsController ..> NoThesisDetailsView : returns
 }
 
 Student ..> Status : uses

@@ -1,11 +1,45 @@
+@model PgrStudentManagement.Web.Models.Student
+@using PgrStudentManagement.Web.Models
+
 @{
     ViewData["Title"] = "Update Student Status";
 }
 
 <h1>Update Student Status</h1>
 
-<p class="alert alert-info">
-    TODO: Implement W2-UC03.
-</p>
+@if (TempData["StatusUpdateSuccess"] is string successMessage)
+{
+    <div class="alert alert-success" role="alert">@successMessage</div>
+}
+
+<form asp-action="EditStatus"
+      asp-route-studentNumber="@Model.StudentNumber"
+      method="post"
+      id="status-form">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <strong><label asp-for="Status" class="form-label">Status</label></strong>
+        <select asp-for="Status"
+                asp-items="Html.GetEnumSelectList<Status>()"
+                class="form-select">
+        </select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary" id="status-submit">Save status</button>
+</form>
 
 <a asp-action="Index">Return to students</a>
+
+@section Scripts {
+    <script>
+        document.getElementById("status-form").addEventListener("submit", function () {
+            const submitButton = document.getElementById("status-submit");
+            submitButton.disabled = true;
+            submitButton.textContent = "Saving...";
+        });
+    </script>
+}

@@ -1,0 +1,41 @@
+' Sequence Diagram for W2-UC01: View Enrolment Details'
+@startuml
+
+actor Student
+participant IndexView
+participant StudentsController
+participant Students
+participant Student
+participant EnrolmentDetailsView
+
+note right of IndexView
+    Index.cshtml
+end note
+
+note right of EnrolmentDetailsView
+    EnrolmentDetails.cshtml
+end note
+
+Student -> IndexView : select Enrolment for studentNumber
+IndexView -> StudentsController : EnrolmentDetails(studentNumber)
+StudentsController -> Students : Find(s => s.StudentNumber == studentNumber)
+Students --> StudentsController : matching Student or null
+
+alt Student found
+    StudentsController -> Student : read StudentNumber, FullName
+    StudentsController -> Student : read Course, ModeOfStudy, StartDate
+    Student --> StudentsController : enrolment fields
+    StudentsController -> EnrolmentDetailsView : View(student)
+    EnrolmentDetailsView --> Student : display enrolment details
+else Student not found
+    StudentsController --> Student : NotFound()
+    note right
+        Student not found
+    end note
+end
+
+note over StudentsController,Student
+    No Student properties are changed in UC01.
+end note
+
+@enduml
