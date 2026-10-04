@@ -8,23 +8,13 @@ participant Students
 participant Student
 participant EnrolmentDetailsView
 
-note right of IndexView
-    Index.cshtml
-end note
-
-note right of EnrolmentDetailsView
-    EnrolmentDetails.cshtml
-end note
-
-Student -> IndexView : select Enrolment for studentNumber
+IndexView -> IndexView : select Enrolment
 IndexView -> StudentsController : EnrolmentDetails(studentNumber)
-StudentsController -> Students : Find(s => s.StudentNumber == studentNumber)
+StudentsController -> Students : Find student
 Students --> StudentsController : matching Student or null
 
 alt Student found
-    StudentsController -> Student : read StudentNumber, FullName
-    StudentsController -> Student : read Course, ModeOfStudy, StartDate
-    Student --> StudentsController : enrolment fields
+    StudentsController -> Student : read Student
     StudentsController -> EnrolmentDetailsView : View(student)
     EnrolmentDetailsView --> Student : display enrolment details
 else Student not found
