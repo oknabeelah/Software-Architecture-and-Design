@@ -120,18 +120,39 @@ public class StudentsController : Controller
     {
         // TODO W2-UC04:
         // Find the student and display the existing expected date.
+       Student student = Students.Find(s => s.StudentNumber == studentNumber);
+        if (student == null)
+        {
+            return NotFound();
+        }
 
-        return View();
+        return View(student);
     }
 
     [HttpPost]
-    public IActionResult EditExpectedSubmissionDate(string studentNumber,     
-            DateTime expectedSubmissionDate)
+    [ValidateAntiForgeryToken]
+    public IActionResult EditExpectedSubmissionDate(
+        string studentNumber,
+        DateTime? expectedThesisSubmissionDate)
     {
         // TODO W2-UC04:
         // Validate and update the expected submission date.
+        Student student = Students.Find(s => s.StudentNumber == studentNumber);
+        if (student == null)
+        {
+            return NotFound();
+        }
 
-        return RedirectToAction(nameof(Index));
+        if (!expectedThesisSubmissionDate.HasValue || expectedThesisSubmissionDate.Value.Date <= DateTime.Today)
+        {
+            ModelState.AddModelError(nameof(expectedThesisSubmissionDate), "Please select a valid expected submission date.");
+            return View(student);
+        }
+
+            student.ExpectedThesisSubmissionDate = expectedThesisSubmissionDate.Value.Date;
+        TempData["ExpectedThesisSubmissionDateUpdateSuccess"] = $"{student.FullName}'s expected thesis submission date was updated to {student.ExpectedThesisSubmissionDate:dd/MM/yyyy}.";
+
+        return RedirectToAction(nameof(EditExpectedSubmissionDate), new { studentNumber });
     }
 
     [HttpGet]

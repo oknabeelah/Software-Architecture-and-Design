@@ -1,11 +1,46 @@
+@model PgrStudentManagement.Web.Models.Student
+
 @{
     ViewData["Title"] = "Update Expected Thesis Submission Date";
 }
 
 <h1>Update Expected Thesis Submission Date</h1>
 
-<p class="alert alert-info">
+@* <p class="alert alert-info">
     TODO: Implement W2-UC04.
-</p>
+</p> *@
+
+@if (TempData["ExpectedThesisSubmissionDateUpdateSuccess"] is string successMessage)
+{
+    <div class="alert alert-success" role="alert">@successMessage</div>
+}
+
+<form asp-action="EditExpectedSubmissionDate"
+      asp-route-studentNumber="@Model.StudentNumber"
+      method="post"
+      id="expected-submission-date-form">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <strong><label asp-for="ExpectedThesisSubmissionDate" class="form-label">Expected Thesis Submission Date</label></strong>
+        <input asp-for="ExpectedThesisSubmissionDate" class="form-control" type="date" />
+        <span asp-validation-for="ExpectedThesisSubmissionDate" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary" id="expected-submission-date-submit">Save expected submission date</button>
+</form>
+
 
 <a asp-action="Index">Return to students</a>
+
+@section Scripts {
+    <script>
+        document.getElementById("expected-submission-date-form").addEventListener("submit", function () {
+            const submitButton = document.getElementById("expected-submission-date-submit");
+            submitButton.disabled = true;
+            submitButton.textContent = "Saving...";
+        });
+    </script>
+}

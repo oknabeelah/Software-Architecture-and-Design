@@ -21,6 +21,8 @@ public class Student
 
     public string? ThesisTitle { get; set; }
 
+    public DateTime? ExpectedThesisSubmissionDate { get; set; }
+
     /*
      * DESIGN TASK:
      *
