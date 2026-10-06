@@ -5,35 +5,16 @@ namespace PgrStudentManagement.Web.Controllers;
 
 public class StudentsController : Controller
 {
-    private static List<Student> Students = new () //data layer
+    private readonly StudentStorage Students;
+
+    public StudentsController(StudentStorage _students) // _student is the readonly list, and Students is the property of the controller that will be used to access the list of students in the controller's actions
     {
-        new Student
-        {
-            StudentNumber = "S100001",
-            FirstName = "John",
-            LastName = "Doe",
-            Course = "PhD Computing",
-            ModeOfStudy = "Full-time",
-            StartDate = new DateTime(2025, 10, 1),
-            Status = Status.Researching,
-            ThesisTitle = "Explainable Models for Clinical Decision Support"
-        },
-        new Student
-        {
-            StudentNumber = "S100002",
-            FirstName = "Jane",
-            LastName = "Smith",
-            Course = "Professional Doctorate",
-            ModeOfStudy = "Part-time",
-            StartDate = new DateTime(2024, 10, 1),
-            Status = Status.WritingUp,
-            ThesisTitle = null
-        }
-    };
+        this.Students = _students;
+    }
 
     public IActionResult Index() //recieves request, selects view, accesses the static collection => presentation layer
     {
-        return View(Students);
+        return View(Students.GetAll());
     }
 
     public IActionResult EnrolmentDetails(string studentNumber) //recieves request, selects view, accesses the static collection, finds student, => presentation layer
@@ -56,7 +37,6 @@ public class StudentsController : Controller
         }
         if (student.ThesisTitle == null)
         {
-            // return an exception or error view indicating that thesis information is not available for this student
             return View("NoThesisDetails", student);
         }
 
