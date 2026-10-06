@@ -5,7 +5,7 @@ namespace PgrStudentManagement.Web.Controllers;
 
 public class StudentsController : Controller
 {
-    private static List<Student> Students = new ()
+    private static List<Student> Students = new () //data layer
     {
         new Student
         {
@@ -31,12 +31,12 @@ public class StudentsController : Controller
         }
     };
 
-    public IActionResult Index()
+    public IActionResult Index() //recieves request, selects view, accesses the static collection => presentation layer
     {
         return View(Students);
     }
 
-    public IActionResult EnrolmentDetails(string studentNumber)
+    public IActionResult EnrolmentDetails(string studentNumber) //recieves request, selects view, accesses the static collection, finds student, => presentation layer
     {
         Student student = Students.Find(s => s.StudentNumber == studentNumber);
         if (student == null)
@@ -47,7 +47,7 @@ public class StudentsController : Controller
         return View(student);
     }
 
-    public IActionResult ThesisDetails(string studentNumber)
+    public IActionResult ThesisDetails(string studentNumber) //recieves request, selects view, accesses the static collection, finds student, => presentation layer
     {
         Student student = Students.Find(s => s.StudentNumber == studentNumber);
         if (student == null)
@@ -64,7 +64,7 @@ public class StudentsController : Controller
     }
 
     [HttpGet]
-    public IActionResult EditStatus(string studentNumber)
+    public IActionResult EditStatus(string studentNumber) //recieves request, selects view, accesses the static collection, finds student => presentation layer
     {
         Student student = Students.Find(s => s.StudentNumber == studentNumber);
         if (student == null)
@@ -77,7 +77,7 @@ public class StudentsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult EditStatus(string studentNumber, Status? status)
+    public IActionResult EditStatus(string studentNumber, Status? status) //updates student info => business layer
     {
         Student student = Students.Find(s => s.StudentNumber == studentNumber);
         if (student == null)
@@ -98,7 +98,7 @@ public class StudentsController : Controller
     }
 
     [HttpGet]
-    public IActionResult EditExpectedSubmissionDate(string studentNumber)
+    public IActionResult EditExpectedSubmissionDate(string studentNumber) //presentation layer
     {
        Student student = Students.Find(s => s.StudentNumber == studentNumber);
         if (student == null)
@@ -113,7 +113,7 @@ public class StudentsController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult EditExpectedSubmissionDate(
         string studentNumber,
-        DateTime? expectedThesisSubmissionDate)
+        DateTime? expectedThesisSubmissionDate) // business layer
     {
         Student student = Students.Find(s => s.StudentNumber == studentNumber);
         if (student == null)
@@ -134,7 +134,7 @@ public class StudentsController : Controller
     }
 
     [HttpGet]
-    public IActionResult RecordSubmission(string studentNumber)
+    public IActionResult RecordSubmission(string studentNumber) //presentation layer
     {
         Student student = Students.Find(s => s.StudentNumber == studentNumber);
         if (student == null)
