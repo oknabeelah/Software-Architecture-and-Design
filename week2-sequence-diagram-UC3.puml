@@ -1,0 +1,42 @@
+' Sequence Diagram for W2-UC03: Update Student Status'
+@startuml
+
+actor Student
+participant IndexView
+participant StudentsController
+participant Students
+participant EditStudentStatusView
+
+
+IndexView -> IndexView : select Thesis
+IndexView -> StudentsController : EditStatus(studentNumber)
+StudentsController -> Students : Find student
+Students --> StudentsController : matching Student or null
+
+alt Student found
+    StudentsController -> Student : read Student
+    StudentsController -> EditStudentStatusView : View(student)
+    EditStudentStatusView --> Student : display edit status form
+    note right
+        Display the form for editing the student's status.
+    end note
+    EditStudentStatusView -> Student : submit form
+    alt Valid status
+        StudentsController -> Students : Update student status
+        Students --> StudentsController : updated Student
+        StudentsController -> EditStudentStatusView : display success message and updated status
+    else Invalid status
+        EditStudentStatusView --> Student : display validation errors
+    end
+else Student not found
+    StudentsController --> Student : NotFound()
+    note right
+        Student not found
+    end note
+end
+
+note over StudentsController,Student
+    Student status property is changed in UC03.
+end note
+
+@enduml
