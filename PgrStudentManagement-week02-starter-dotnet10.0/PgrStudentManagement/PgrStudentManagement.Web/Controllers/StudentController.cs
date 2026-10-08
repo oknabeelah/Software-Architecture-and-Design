@@ -38,33 +38,17 @@ public class StudentsController : Controller
 
     public IActionResult EnrolmentDetails(string studentNumber)
     {
-        // TODO W2-UC01:
-        // 1. Find the student.
-        // 2. Handle Student Not Found.
-        // 3. Supply the selected enrolment fields to the view.
         Student student = Students.Find(s => s.StudentNumber == studentNumber);
         if (student == null)
         {
             return NotFound();
         }
-        // else
-        // {
-        //     ViewData["StudentNumber"] = student.StudentNumber;
-        //     ViewData["FullName"] = student.FullName;
-        //     ViewData["Course"] = student.Course;
-        //     ViewData["ModeOfStudy"] = student.ModeOfStudy;
-        //     ViewData["StartDate"] = student.StartDate?.ToString("dd/MM/yyyy");
-        // }
 
         return View(student);
     }
 
     public IActionResult ThesisDetails(string studentNumber)
     {
-        // TODO W2-UC02:
-        // 1. Find the student.
-        // 2. Determine whether thesis information is available.
-        // 3. Supply the selected thesis fields to the view.
         Student student = Students.Find(s => s.StudentNumber == studentNumber);
         if (student == null)
         {
@@ -82,8 +66,6 @@ public class StudentsController : Controller
     [HttpGet]
     public IActionResult EditStatus(string studentNumber)
     {
-        // TODO W2-UC03:
-        // Find the student and display the current status.
         Student student = Students.Find(s => s.StudentNumber == studentNumber);
         if (student == null)
         {
@@ -118,8 +100,6 @@ public class StudentsController : Controller
     [HttpGet]
     public IActionResult EditExpectedSubmissionDate(string studentNumber)
     {
-        // TODO W2-UC04:
-        // Find the student and display the existing expected date.
        Student student = Students.Find(s => s.StudentNumber == studentNumber);
         if (student == null)
         {
@@ -135,8 +115,6 @@ public class StudentsController : Controller
         string studentNumber,
         DateTime? expectedThesisSubmissionDate)
     {
-        // TODO W2-UC04:
-        // Validate and update the expected submission date.
         Student student = Students.Find(s => s.StudentNumber == studentNumber);
         if (student == null)
         {
@@ -149,7 +127,7 @@ public class StudentsController : Controller
             return View(student);
         }
 
-            student.ExpectedThesisSubmissionDate = expectedThesisSubmissionDate.Value.Date;
+        student.ExpectedThesisSubmissionDate = expectedThesisSubmissionDate.Value.Date;
         TempData["ExpectedThesisSubmissionDateUpdateSuccess"] = $"{student.FullName}'s expected thesis submission date was updated to {student.ExpectedThesisSubmissionDate:dd/MM/yyyy}.";
 
         return RedirectToAction(nameof(EditExpectedSubmissionDate), new { studentNumber });
@@ -158,22 +136,39 @@ public class StudentsController : Controller
     [HttpGet]
     public IActionResult RecordSubmission(string studentNumber)
     {
-        // TODO W2-UC05:
-        // Find the student and display current thesis information.
-
-        return View();
+        Student student = Students.Find(s => s.StudentNumber == studentNumber);
+        if (student == null)
+        {
+            return NotFound();
+        }
+    
+        return View(student);
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public IActionResult RecordSubmission(string studentNumber,
-        DateTime actualSubmissionDate)
+        DateTime? actualThesisSubmissionDate)
     {
-        // TODO W2-UC05:
-        // 1. Validate the date.
-        // 2. Record the actual submission date.
-        // 3. Change the status to Submitted.
-        // 4. Ensure that no partial update occurs.
+        Student student = Students.Find(s => s.StudentNumber == studentNumber);
+        if (student == null)
+        {
+            return NotFound();
+        }
 
-        return RedirectToAction(nameof(Index));
+        if (!actualThesisSubmissionDate.HasValue ||
+            actualThesisSubmissionDate.Value.Date > DateTime.Today)
+        {
+            ModelState.AddModelError(
+                nameof(actualThesisSubmissionDate),
+                "Please enter a valid actual submission date that is not in the future.");
+            return View(student);
+        }
+
+        student.ActualThesisSubmissionDate = actualThesisSubmissionDate.Value.Date;
+        student.Status = Status.Submitted;
+        TempData["RecordSubmissionSuccess"] = $"{student.FullName}'s actual thesis submission date was recorded as {student.ActualThesisSubmissionDate:dd/MM/yyyy} and status updated to {student.Status}.";
+
+        return RedirectToAction(nameof(RecordSubmission), new { studentNumber });
     }
 }

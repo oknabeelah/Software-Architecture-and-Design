@@ -1,11 +1,42 @@
+@model PgrStudentManagement.Web.Models.Student
+
 @{
     ViewData["Title"] = "Record Actual Thesis Submission";
 }
 
 <h1>Record Actual Thesis Submission</h1>
 
-<p class="alert alert-info">
-    TODO: Implement W2-UC05.
-</p>
+@if (TempData["RecordSubmissionSuccess"] is string successMessage)
+{
+    <div class="alert alert-success" role="alert">@successMessage</div>
+}
+
+<form asp-action="RecordSubmission"
+      asp-route-studentNumber="@Model.StudentNumber"
+      method="post"
+      id="actual-submission-date-form">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <strong><label asp-for="ActualThesisSubmissionDate" class="form-label">Actual Thesis Submission Date</label></strong>
+        <input asp-for="ActualThesisSubmissionDate" class="form-control" type="date" />
+        <span asp-validation-for="ActualThesisSubmissionDate" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary" id="actual-submission-date-submit">Save actual submission date</button>
+</form>
+
 
 <a asp-action="Index">Return to students</a>
+
+@section Scripts {
+    <script>
+        document.getElementById("expected-submission-date-form").addEventListener("submit", function () {
+            const submitButton = document.getElementById("expected-submission-date-submit");
+            submitButton.disabled = true;
+            submitButton.textContent = "Saving...";
+        });
+    </script>
+}

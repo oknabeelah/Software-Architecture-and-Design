@@ -23,6 +23,8 @@ public class Student
 
     public DateTime? ExpectedThesisSubmissionDate { get; set; }
 
+    public DateTime? ActualThesisSubmissionDate { get; set; }
+
     /*
      * DESIGN TASK:
      *
