@@ -1,3 +1,12 @@
-[Bb]in/
-[Oo]bj/
+# .NET build output
+**/[Bb]in/
+**/[Oo]bj/
+**/[Aa]rtifacts/
+
+# Visual Studio and IDE caches
 .vs/
+**/.vs/
+
+# Build logs and generated symbols
+*.binlog
+*.pdb
