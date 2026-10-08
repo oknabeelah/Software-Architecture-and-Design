@@ -26,3 +26,11 @@ look at StudentController and identify where the code:
 	Accesses the static collection.
 Record each responsibility, its current location, and its intended Week 3 layer.
 
+---
+08/10/2026
+
+continue layered implementation
+
+Presentation - replacing view
+Business - replacing model + controller (to some extent)
+Data - replacing model

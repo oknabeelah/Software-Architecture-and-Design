@@ -49,19 +49,33 @@ public class StudentStorage
         }
         _students.Add(student);
     }
+    // rather than a UpdateStudent method, I implemented method(s) to update the status, thesis details, etc of a student as when needed
 
-    public void UpdateStudent(Student student)
+    // Q: is input validation done in the business or data layer?
+    public void UpdateStatus(string studentNumber, Status? status)
     {
-        //find student obj in list and replace it with the updated student obj
-        var existingStudent = GetStudent(student.StudentNumber);
-        if (existingStudent != null)
-        {
-            _students[_students.IndexOf(existingStudent)] = student;
-        }
-        else
-        {
-            throw new ArgumentException($"Student with StudentNumber {student.StudentNumber} not found.");
-        }
+        var student = GetStudent(studentNumber);
+        student?.Status = status ?? student.Status;
+        
+        // if (student != null)
+        // {
+        //     student.Status = status ?? student.Status;
+        // }
+        // else
+        // {
+        //     throw new ArgumentException($"Student with StudentNumber {studentNumber} not found.");
+        // }
+    }
+
+    public void UpdateExpectedThesisSubmissionDate(string studentNumber, DateTime? expectedSubmissionDate)
+    {
+        var student = GetStudent(studentNumber);
+        student?.ExpectedThesisSubmissionDate = expectedSubmissionDate ?? student.ExpectedThesisSubmissionDate;
+    }
+
+    public void RecordSubmission(string studentNumber, DateTime? actualSubmissionDate)
+    {
+        // TODO W2-UC05:
     }
 
 }

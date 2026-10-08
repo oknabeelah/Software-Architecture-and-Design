@@ -60,16 +60,8 @@ public class StudentsController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult EditStatus(string studentNumber, Status? status) //updates student info => business layer
     {
-        Student? student = Students.GetStudent(studentNumber);
-        if (student == null)
-        {
-            return NotFound();
-        }
-
-        student.Status = status ?? student.Status; //if status is null, keep the existing status
-
-        Students.UpdateStudent(student);
-        TempData["StatusUpdateSuccess"] = $"{student.FullName}'s status was updated to {student.Status}.";
+        Students.UpdateStatus(studentNumber, status);
+        TempData["StatusUpdateSuccess"] = $"The student's status is now updated to {status}.";
 
         return RedirectToAction(nameof(EditStatus), new { studentNumber });
     }
