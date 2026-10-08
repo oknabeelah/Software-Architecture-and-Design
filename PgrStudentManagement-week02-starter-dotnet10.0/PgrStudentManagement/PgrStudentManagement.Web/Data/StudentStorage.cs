@@ -32,14 +32,37 @@ public class StudentStorage
         }
     };
 
-    public IEnumerable<Student> GetAll()
+    public IReadOnlyList<Student> GetStudents()
     {
         return _students;
     }
 
-    public Student? Find(Predicate<Student> match)
+    public Student? GetStudent(string studentNumber)
     {
-        return _students.Find(match);
+        return _students.FirstOrDefault(s => s.StudentNumber == studentNumber);
+    }
+
+    public void AddStudent(Student student)
+    {
+        if (student == null)
+        {
+            throw new ArgumentNullException(nameof(student));
+        }
+        _students.Add(student);
+    }
+
+    public void UpdateStudent(Student student)
+    {
+        //find student obj in list and replace it with the updated student obj
+        var existingStudent = GetStudent(student.StudentNumber);
+        if (existingStudent != null)
+        {
+            _students[_students.IndexOf(existingStudent)] = student;
+        }
+        else
+        {
+            throw new ArgumentException($"Student with StudentNumber {student.StudentNumber} not found.");
+        }
     }
 
 }

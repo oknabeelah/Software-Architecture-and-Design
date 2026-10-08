@@ -14,12 +14,12 @@ public class StudentsController : Controller
 
     public IActionResult Index() //recieves request, selects view, accesses the static collection => presentation layer
     {
-        return View(Students.GetAll());
+        return View(Students.GetStudents());
     }
 
     public IActionResult EnrolmentDetails(string studentNumber) //recieves request, selects view, accesses the static collection, finds student, => presentation layer
     {
-        Student student = Students.Find(s => s.StudentNumber == studentNumber);
+        Student? student = Students.GetStudent(studentNumber);
         if (student == null)
         {
             return NotFound();
@@ -30,7 +30,7 @@ public class StudentsController : Controller
 
     public IActionResult ThesisDetails(string studentNumber) //recieves request, selects view, accesses the static collection, finds student, => presentation layer
     {
-        Student student = Students.Find(s => s.StudentNumber == studentNumber);
+        Student? student = Students.GetStudent(studentNumber);
         if (student == null)
         {
             return NotFound();
@@ -46,7 +46,7 @@ public class StudentsController : Controller
     [HttpGet]
     public IActionResult EditStatus(string studentNumber) //recieves request, selects view, accesses the static collection, finds student => presentation layer
     {
-        Student student = Students.Find(s => s.StudentNumber == studentNumber);
+        Student? student = Students.GetStudent(studentNumber);
         if (student == null)
         {
             return NotFound();
@@ -59,19 +59,15 @@ public class StudentsController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult EditStatus(string studentNumber, Status? status) //updates student info => business layer
     {
-        Student student = Students.Find(s => s.StudentNumber == studentNumber);
+        Student? student = Students.GetStudent(studentNumber);
         if (student == null)
         {
             return NotFound();
         }
 
-        if (!status.HasValue || !Enum.IsDefined(typeof(Status), status.Value))
-        {
-            ModelState.AddModelError(nameof(Status), "Please select a valid status.");
-            return View(student);
-        }
+        student.Status = status ?? student.Status; //if status is null, keep the existing status
 
-        student.Status = status.Value;
+        Students.UpdateStudent(student);
         TempData["StatusUpdateSuccess"] = $"{student.FullName}'s status was updated to {student.Status}.";
 
         return RedirectToAction(nameof(EditStatus), new { studentNumber });
@@ -80,7 +76,7 @@ public class StudentsController : Controller
     [HttpGet]
     public IActionResult EditExpectedSubmissionDate(string studentNumber) //presentation layer
     {
-       Student student = Students.Find(s => s.StudentNumber == studentNumber);
+       Student? student = Students.GetStudent(studentNumber);
         if (student == null)
         {
             return NotFound();
@@ -95,7 +91,7 @@ public class StudentsController : Controller
         string studentNumber,
         DateTime? expectedThesisSubmissionDate) // business layer
     {
-        Student student = Students.Find(s => s.StudentNumber == studentNumber);
+        Student? student = Students.GetStudent(studentNumber);
         if (student == null)
         {
             return NotFound();
