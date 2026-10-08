@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PgrStudentManagement.Web.Models;
+using PgrStudentManagement.Web.Data;
 
 namespace PgrStudentManagement.Web.Controllers;
 

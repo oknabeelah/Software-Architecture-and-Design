@@ -1,8 +1,7 @@
 
-using Microsoft.AspNetCore.Mvc;
 using PgrStudentManagement.Web.Models;
 
-namespace PgrStudentManagement.Web.Controllers;
+namespace PgrStudentManagement.Web.Data;
 
 public class StudentStorage
 {

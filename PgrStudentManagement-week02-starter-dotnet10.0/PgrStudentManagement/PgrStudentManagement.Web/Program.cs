@@ -1,4 +1,5 @@
 using PgrStudentManagement.Web.Controllers;
+using PgrStudentManagement.Web.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
