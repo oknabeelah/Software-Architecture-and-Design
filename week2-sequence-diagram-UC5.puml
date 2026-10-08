@@ -1,0 +1,42 @@
+' Sequence Diagram for W2-UC05: Update Actual Thesis Submission'
+@startuml
+
+actor CollegeAdministrator
+participant IndexView
+participant StudentsController
+participant Students
+participant RecordSubmissionView
+
+
+CollegeAdministrator -> IndexView : select Record Thesis Information
+IndexView -> StudentsController : RecordSubmission(studentNumber)
+StudentsController -> Students : Find student
+' Student or StudentsController ?'
+StudentsController -> RecordSubmissionView : displays matching Student's recorded submission date and datetime input form
+note right
+        Display the form for recording the student's thesis submission.
+    end note
+
+alt Student found
+    CollegeAdministrator -> RecordSubmissionView : select valid date and submit form
+    alt Valid date
+        RecordSubmissionView -> StudentsController : RecordSubmission(studentNumber, newDate)
+        StudentsController -> Students : Update student recorded submission date
+        StudentsController -> Students : Update student status to "Submitted"
+        Students --> StudentsController : updated Student
+        StudentsController -> RecordSubmissionView : display success message and updated date and status
+    else Invalid date
+        StudentsController -> RecordSubmissionView: display validation errors
+    end
+else Student not found
+    StudentsController -> RecordSubmissionView : NotFound()
+    note right
+        Student not found
+    end note
+end
+
+note over Students
+    Student submission date property and status property is changed in UC05.
+end note
+
+@enduml

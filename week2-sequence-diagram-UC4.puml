@@ -1,0 +1,44 @@
+' Sequence Diagram for W2-UC04: Update Expected Thesis Submission Date'
+@startuml
+
+actor CollegeAdministrator
+participant IndexView
+participant StudentsController
+participant Students
+participant EditExpectedThesisSubmissionDateView
+
+
+CollegeAdministrator -> IndexView : select Edit Thesis Information
+IndexView -> StudentsController : EditExpectedSubmissionDate(studentNumber)
+StudentsController -> Students : Find student
+' Student or StudentsController ?'
+StudentsController -> EditExpectedThesisSubmissionDateView : displays matching Student's expected submission date and datetime input form
+
+alt Student found
+    'possible to remove read student line or aboce display line to reduce complexity'
+    Students -> StudentsController: read Student
+    StudentsController -> EditExpectedThesisSubmissionDateView : View(student) - displays matching Student's expected submission date and available options
+    note right
+        Display the form for editing the student's expected submission date.
+    end note
+    CollegeAdministrator -> EditExpectedThesisSubmissionDateView : select valid date and submit form
+    alt Valid date
+        EditExpectedThesisSubmissionDateView -> StudentsController : EditExpectedSubmissionDate(studentNumber, newDate)
+        StudentsController -> Students : Update student expected submission date
+        Students --> StudentsController : updated Student
+        StudentsController -> EditExpectedThesisSubmissionDateView : display success message and updated date
+    else Invalid date
+        StudentsController -> EditExpectedThesisSubmissionDateView: display validation errors
+    end
+else Student not found
+    StudentsController -> EditExpectedThesisSubmissionDateView : NotFound()
+    note right
+        Student not found
+    end note
+end
+
+note over Students
+    Student expected submission date property is changed in UC04.
+end note
+
+@enduml

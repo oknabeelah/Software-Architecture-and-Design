@@ -1,41 +1,42 @@
 ' Sequence Diagram for W2-UC03: Update Student Status'
 @startuml
 
-actor Student
+actor CollegeAdministrator
 participant IndexView
 participant StudentsController
 participant Students
 participant EditStudentStatusView
 
 
-IndexView -> IndexView : select Thesis
+CollegeAdministrator -> IndexView : select Edit Student Status
 IndexView -> StudentsController : EditStatus(studentNumber)
 StudentsController -> Students : Find student
-Students --> StudentsController : matching Student or null
+' Students or StudentsController ?
+StudentsController -> EditStudentStatusView : displays matching Student's status and available status values
 
 alt Student found
-    StudentsController -> Student : read Student
-    StudentsController -> EditStudentStatusView : View(student)
-    EditStudentStatusView --> Student : display edit status form
+    Students -> StudentsController: read Student
+    StudentsController -> EditStudentStatusView : View(student) - displays matching Student's status and available status values
     note right
         Display the form for editing the student's status.
     end note
-    EditStudentStatusView -> Student : submit form
+    CollegeAdministrator -> EditStudentStatusView : select valid status and submit form
     alt Valid status
+        EditStudentStatusView -> StudentsController : EditStatus(studentNumber, newStatus)
         StudentsController -> Students : Update student status
         Students --> StudentsController : updated Student
         StudentsController -> EditStudentStatusView : display success message and updated status
     else Invalid status
-        EditStudentStatusView --> Student : display validation errors
+        StudentsController -> EditStudentStatusView: display validation errors
     end
 else Student not found
-    StudentsController --> Student : NotFound()
+    StudentsController -> EditStudentStatusView : NotFound()
     note right
         Student not found
     end note
 end
 
-note over StudentsController,Student
+note over Student
     Student status property is changed in UC03.
 end note
 
