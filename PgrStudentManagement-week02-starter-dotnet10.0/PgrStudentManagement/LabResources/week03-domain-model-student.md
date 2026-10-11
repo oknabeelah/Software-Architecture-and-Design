@@ -2,10 +2,6 @@
 ```plantuml
 @startuml
 
-
-
-@enduml
-```
 skinparam classAttributeIconSize 0
 hide empty methods
 

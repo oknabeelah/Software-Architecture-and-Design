@@ -1,0 +1,83 @@
+@model PgrStudentManagement.Web.Models.Student
+@using PgrStudentManagement.Web.Models
+
+@{
+    ViewData["Title"] = "Create Student";
+}
+
+<h1>Create a new Student</h1>
+
+<form asp-action="CreateStudent" method="post" id="expected-submission-date-form"> @Html.AntiForgeryToken()
+    @* <div asp-validation-summary="ModelOnly" class="text-danger"></div> *@
+    <div class="form-group">
+        <label asp-for="StudentNumber" class="control-label"> Student Number </label>
+        <input asp-for="StudentNumber" class="form-control" type="text" required/>
+        <span asp-validation-for="StudentNumber" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="FirstName" class="control-label"> First Name </label>
+        <input asp-for="FirstName" class="form-control" type="text" required/>
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="LastName" class="control-label"> Last Name </label>
+        <input asp-for="LastName" class="form-control" type="text" required/>
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Course" class="control-label"> Course </label>
+        <input asp-for="Course" class="form-control" type="text" required/>
+        <span asp-validation-for="Course" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ModeOfStudy" class="control-label"> Mode of Study </label>
+        <select asp-for="ModeOfStudy" class="form-control" required>
+            <option value="">Select Mode of Study</option>
+            <option value="Part-time">Part-time</option>
+            <option value="Full-time">Full-time</option>
+        </select>
+        <span asp-validation-for="ModeOfStudy" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="StartDate" class="control-label"> Start Date </label>
+        <input asp-for="StartDate" class="form-control" type="date" required/>
+        <span asp-validation-for="StartDate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Status" class="control-label"> Status </label>
+        <select asp-for="Status" class="form-control" asp-items="@Html.GetEnumSelectList<Status>()" required></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ThesisTitle" class="control-label"> Thesis Title </label>
+        <input asp-for="ThesisTitle" class="form-control" optional="true"/>
+        <span asp-validation-for="ThesisTitle" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ExpectedThesisSubmissionDate" class="control-label"> Expected Thesis Submission Date </label>
+        <input asp-for="ExpectedThesisSubmissionDate" class="form-control" type="date" />
+        <span asp-validation-for="ExpectedThesisSubmissionDate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ActualThesisSubmissionDate" class="control-label"> Actual Thesis Submission Date </label>
+        <input asp-for="ActualThesisSubmissionDate" class="form-control" type="date" optional="true"/>
+        <span asp-validation-for="ActualThesisSubmissionDate" class="text-danger"></span>
+    </div>
+    <br />
+    <div class="btn-group" role="group">
+        <button type="submit" class="btn btn-primary" id="create-student-submit">Create Student</button>
+        <a asp-Controller="Students" asp-action="Administrator" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+
+<a asp-action="Index">Return to students</a>
+
+@section Scripts {
+    <script>
+        document.getElementById("create-student-form").addEventListener("submit", function () {
+            const submitButton = document.getElementById("create-student-submit");
+            submitButton.disabled = true;
+            submitButton.textContent = "Creating...";
+        });
+    </script>
+}

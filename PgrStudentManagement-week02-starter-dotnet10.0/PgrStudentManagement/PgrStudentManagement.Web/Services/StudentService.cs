@@ -22,14 +22,21 @@ public class StudentService
         }
         return student;
     }
-    public void CreateStudent(Student student) // business rule - ask StudentStorage toadd student to the list of students if student is not null
+    public void CreateStudent(Student student) // business rule - ask StudentStorage to add student to the list of students if student is not null
     {
-        if (student == null)
+        // check that required info is supplied and valid
+        // if any student.StudentNumber, student.FirstName, student.LastName, student.Course, student.ModeOfStudy, student.StartDate is null or empty, throw an ArgumentException
+        if (string.IsNullOrEmpty(student.StudentNumber) || string.IsNullOrEmpty(student.FirstName) || string.IsNullOrEmpty(student.LastName) || string.IsNullOrEmpty(student.Course) || string.IsNullOrEmpty(student.ModeOfStudy) || student.StartDate == null) // no need to check Status as its never null
         {
-            //return NotFound(); // because StudentService is not a controller, it cannot return Notfound(). 
-            // Instead, we can throw an exception or handle the null case in a different way.
-            throw new ArgumentNullException(nameof(student), "Student cannot be null.");
+            throw new ArgumentException("Required student information is missing or invalid.");
         }
+        // check that the student number is not in use
+        if (_studentStorage.GetStudent(student.StudentNumber) != null)
+        {
+            throw new ArgumentException(" A Student with this number already exists.");
+            // do not create a new student if the student number is already in use
+        }
+
         _studentStorage.AddStudent(student);
     }
     public void UpdateStatus(string studentNumber, Status status) // business rule - ensure student exists and status is a valid status
@@ -72,4 +79,5 @@ public class StudentService
         _studentStorage.UpdateActualThesisSubmissionDate(studentNumber, actualSubmissionDate.Value);
         _studentStorage.UpdateStatus(studentNumber, Status.Submitted);
     }
+
 }

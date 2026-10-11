@@ -35,13 +35,13 @@ Presentation - replacing view
 Business - replacing model + controller (to some extent)
 Data - replacing model
 
-- [x] complete UC01 to UC05 with StudentStorage and StudentService refactored cleanly
-- [ ] Make class diagram for week 3
-- [ ] Make use case diagrams for UC01 to UC05 for week 3
-- [ ] Implement W3UC01
-- [ ] Implement W3UC02
-- [ ] Implement W3UC03
-- [ ] Implement W3UC04 (optional)
-- [ ] Implement W3UC05 (optional)
-- [ ] Create test suite (optional)
-- [ ] 
+- [x] L1 complete UC01 to UC05 with StudentStorage and StudentService refactored cleanly
+- [ ] L1 Implement W3UC01
+- [ ] L1 Implement W3UC02
+- [ ] L1 Implement W3UC03
+- [ ] L1 Implement W3UC04 (optional)
+- [ ] L1 Implement W3UC05 (optional)
+- [ ] L1 Create test suite (optional)
+- [ ] L2 Make class diagram for week 3
+- [ ] L2 Make use case diagrams for UC01 to UC05 for week 3
+

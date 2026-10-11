@@ -14,9 +14,12 @@ public class StudentsController : Controller
     }
 
     public IActionResult Index() //recieves request, selects view, accesses the static collection => presentation layer
-    {
-        //check here maybe?
+    {        //check here maybe?
         return View(_studentService.GetStudents());
+    }
+    public IActionResult Administrator()
+    {
+        return View("~/Views/Administrator/Index.cshtml");
     }
 
     public IActionResult EnrolmentDetails(string studentNumber) //recieves request, selects view, accesses the static collection, finds student, => presentation layer
@@ -108,5 +111,34 @@ public class StudentsController : Controller
         TempData["RecordSubmissionSuccess"] = $"The student's actual thesis submission date was recorded as {actualThesisSubmissionDate:dd/MM/yyyy} and status updated to Submitted.";
 
         return RedirectToAction(nameof(RecordSubmission), new { studentNumber });
+    }
+
+    [HttpGet]
+    public IActionResult CreateStudent() //business layer
+    {
+        return View("~/Views/Administrator/CreateStudent.cshtml");
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult CreateStudent(Student student) // business layer
+    {
+        if (!ModelState.IsValid)
+        {
+            return View("~/Views/Administrator/CreateStudent.cshtml", student); // return the view with student to preserve the entered data and display validation errors
+        }
+
+        try
+        {
+            _studentService.CreateStudent(student);
+        }
+        catch (ArgumentException exception)
+        {
+            ModelState.AddModelError(nameof(student.StudentNumber), exception.Message);
+            return View("~/Views/Administrator/CreateStudent.cshtml", student);
+        }
+        TempData["CreateStudentSuccess"] = $"The student was successfully created.";
+
+        return RedirectToAction(nameof(Index));
     }
 }

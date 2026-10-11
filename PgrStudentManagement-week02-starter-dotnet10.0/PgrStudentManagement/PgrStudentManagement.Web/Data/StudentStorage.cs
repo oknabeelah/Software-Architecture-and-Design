@@ -43,10 +43,6 @@ public class StudentStorage
 
     public void AddStudent(Student student)
     {
-        if (student == null)
-        {
-            throw new ArgumentNullException(nameof(student));
-        }
         _students.Add(student);
     }
 
