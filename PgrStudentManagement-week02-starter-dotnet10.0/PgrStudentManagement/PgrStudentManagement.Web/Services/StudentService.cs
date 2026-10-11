@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
 using PgrStudentManagement.Web.Models;
 using PgrStudentManagement.Web.Data;
 
@@ -48,13 +47,12 @@ public class StudentService
     }
     public void UpdateExpectedSubmissionDate(string studentNumber, DateTime? expectedSubmissionDate)
     {
-        // check student and datetime
         var student = _studentStorage.GetStudent(studentNumber);
         if (student == null)
         {
             throw new KeyNotFoundException($"Student with number {studentNumber} not found.");
         }
-        if (expectedSubmissionDate == null || expectedSubmissionDate < student.StartDate)
+        if (expectedSubmissionDate == null || expectedSubmissionDate < student.StartDate) // business rule - expected submission date cannot be null or earlier than the start date
         {
             throw new ArgumentException("Expected submission date cannot be null or earlier than the start date.", nameof(expectedSubmissionDate));
         }
@@ -62,14 +60,16 @@ public class StudentService
     }
     public void RecordSubmission(string studentNumber, DateTime? actualSubmissionDate)
     {
-        //check student and datetime
-        //do record submission
-        //do update status to submitted
         var student = _studentStorage.GetStudent(studentNumber);
         if (student == null)
         {
             throw new KeyNotFoundException($"Student with number {studentNumber} not found.");
         }
-        // TODO W2-UC05:
+        if (actualSubmissionDate == null || actualSubmissionDate < student.StartDate) // business rule - expected submission date cannot be null or earlier than the start date
+        {
+            throw new ArgumentException("Expected submission date cannot be null or earlier than the start date.", nameof(actualSubmissionDate));
+        }
+        _studentStorage.UpdateActualThesisSubmissionDate(studentNumber, actualSubmissionDate.Value);
+        _studentStorage.UpdateStatus(studentNumber, Status.Submitted);
     }
 }
