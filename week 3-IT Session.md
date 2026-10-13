@@ -37,8 +37,8 @@ Data - replacing model
 
 - [x] L1 complete UC01 to UC05 with StudentStorage and StudentService refactored cleanly
 - [x] L1 Implement W3UC01
-- [ ] L1 Implement W3UC02
-- [ ] L1 Implement W3UC03
+- [x] L1 Implement W3UC02
+- [x] L1 Implement W3UC03
 - [ ] L1 Implement W3UC04 (optional)
 - [ ] L1 Implement W3UC05 (optional)
 - [ ] L1 Create test suite (optional)
