@@ -45,10 +45,21 @@ Each module should:
 - [x] T1: Preserve and check the week 3 baseline
 - [x] T2: Identify the module boundaries
 	Add the new Week 4 concepts and decide which module owns them?
-- [ ] T3: Reorganise the student Module
+- [x] T3: Reorganise the student Module
 	reorganised successfully, resolved unhandled exception, confirmed existing use cases are still working
-- [ ] T4: Review the week 4 domain model
-- [ ] T5: Create the Academic Supervisors module
+- [x] T4: Review the week 4 domain model
+	**Which suggested fields you will include** - All suggested supervisor and assignment fields required by the use cases are included.
+	**Which fields are mandatory or optional** - 
+	**How external supervisors are identified using the supplied staffNumber model** - staffNumber is the unique identifier for both institution-employed and external supervisors; external supervisors use an institution- or system-issued value in the same field.
+	**Whether eligible roles are stored or derived** - eligibleRoles is stored because eligibility is role-specific and can be updated.
+	**Whether current assignment state is calculated from endDate** - current is derived from endDate == null; historical assignments remain retained.
+	**How authorised exceptions are represented** - Assignments now explicitly reference studentNumber and supervisorStaffNumber.
+	Authorised exceptions include:
+	exceptionAuthorised
+	exceptionReason
+	exceptionAuthorisedBy
+	exceptionAuthorisedAt
+- [x] T5: Create the Academic Supervisors module
 - [ ] T6: Create AcademicSupervisorStorage
 - [ ] T7: Create AcademicSupervisorService
 - [ ] T8: Register the Academic Supervisors module (see appendix)
