@@ -14,21 +14,31 @@ public class StudentsController : Controller
     }
 
     public IActionResult Index() //recieves request, selects view, accesses the static collection => presentation layer
-    {        //check here maybe?
-        return View(_studentService.GetStudents());
+    {
+        try
+        {
+            return View(_studentService.GetStudents());
+        }
+        catch (KeyNotFoundException)
+        {
+            TempData["NoStudentsFound"] = "No students found.";
+            return RedirectToAction(nameof(Index));
+        }
     }
     public IActionResult Administrator()
     {
         return View("~/Views/Administrator/Index.cshtml");
     }
 
-    public IActionResult EnrolmentDetails(string studentNumber) //recieves request, selects view, accesses the static collection, finds student, => presentation layer
+    public IActionResult EnrolmentDetails(string studentNumber, string? returnTo) //recieves request, selects view, accesses the static collection, finds student, => presentation layer
     {
         Student? student = _studentService.GetStudent(studentNumber);
         if (student == null)
         {
             return NotFound();
         }
+
+        ViewBag.ReturnTo = returnTo; // store the returnTo value in ViewData to be used in the view for navigation
 
         return View(student);
     }
@@ -140,5 +150,19 @@ public class StudentsController : Controller
         TempData["CreateStudentSuccess"] = $"The student was successfully created.";
 
         return RedirectToAction(nameof(Index));
+    }
+
+    public IActionResult StudentDetails() // business layer
+    {
+        try
+        {
+            var students = _studentService.GetStudents();
+            return View("~/Views/Administrator/StudentDetails.cshtml", students);
+        }
+        catch (KeyNotFoundException)
+        {
+            TempData["NoStudentsFound"] = "No students found.";
+            return RedirectToAction(nameof(Administrator));
+        }
     }
 }

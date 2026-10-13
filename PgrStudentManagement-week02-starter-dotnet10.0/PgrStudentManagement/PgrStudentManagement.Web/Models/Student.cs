@@ -25,6 +25,7 @@ public class Student
 
     public DateTime? ActualThesisSubmissionDate { get; set; }
 
+    // TODO: Answer the following questions in the comments below:
     /*
      * DESIGN TASK:
      *

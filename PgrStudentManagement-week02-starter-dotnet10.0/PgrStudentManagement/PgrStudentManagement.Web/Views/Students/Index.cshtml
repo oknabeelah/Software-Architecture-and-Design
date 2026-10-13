@@ -29,7 +29,8 @@
                 <td>@student.Status</td>
                 <td>
                     <a asp-action="EnrolmentDetails"
-                       asp-route-studentNumber="@student.StudentNumber">
+                       asp-route-studentNumber="@student.StudentNumber"
+                       add asp-route-returnTo="student">
                         Enrolment
                     </a>
                     |

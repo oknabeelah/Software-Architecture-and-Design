@@ -7,11 +7,6 @@
 
 <h1>Enrolment Details</h1>
 
-@* <p class="alert alert-info">
-    TODO: Implement W2-UC01 using the enrolment fields selected
-    from the supplied domain model.
-</p> *@
-
 <p>
     <strong>Student name:</strong> @Model.FullName
     <br />
@@ -19,10 +14,34 @@
     <br />
     <strong>Course:</strong> @Model.Course
     <br />
+    <strong>Thesis title:</strong> @(Model.ThesisTitle ?? "Not available")
+    <br />
     <strong>Mode of study:</strong> @Model.ModeOfStudy
     <br />
     <strong>Start date:</strong> @Model.StartDate
     <br />
+    <strong>Status:</strong> @Model.Status
+    <br />
+    <strong>Expected submission date:</strong> @(Model.ExpectedThesisSubmissionDate?.ToString("dd/MM/yyyy") ?? "Not available")
+    <br />
+    <strong>Actual submission date:</strong> @(Model.ActualThesisSubmissionDate?.ToString("dd/MM/yyyy") ?? "Not available")
 </p>
 
-<a asp-action="Index">Return to students</a>
+<div class="mt-3">
+    @if (ViewBag.ReturnTo == "administrator")
+    {
+        <a asp-controller="Students" asp-action="Administrator">Return to options</a>
+    }
+    else
+    {
+        <a asp-controller="Students" asp-action="Index">Return to students</a>
+    }
+</div>
+
+@* how do  i track where the link is clicked to determine which index (student or admin) to return to? *@
+
+@* Soln: add asp-route-returnTo="administrator" to the <a></a> from StudentDetails.cshtml to EnrolmentDetails.cshtml
+and add asp-route-returnTo="student" to the <a></a> from Index.cshtml to EnrolmentDetails.cshtml.
+accept the val in the controller as ViewBag.ReturnTo" = returnTo;
+use the viewData to conditionally render the correct return link in EnrolmentDetails.cshtml. *@
+

@@ -11,7 +11,12 @@ public class StudentService
     }
     public IReadOnlyList<Student> GetStudents()
     {
-        return _studentStorage.GetStudents();
+        if (!_studentStorage.GetStudents().Any())
+        {
+            throw new KeyNotFoundException("No students found.");
+        }      
+        return _studentStorage.GetStudents().OrderBy(s => s.StudentNumber).ToList().AsReadOnly();
+        //apply ordering for W3UC02
     }
     public Student? GetStudent(string studentNumber)  //business rule - return not found if student is null
     {
