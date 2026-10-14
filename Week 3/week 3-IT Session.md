@@ -1,5 +1,7 @@
 06/10/2026
 
+Indicative soln - https://github.com/mustbebuilt/PgrStudentManagementWk3
+
 last week we used MVC, we also learnt there are situations where we have 'super controller' - when the controller has too many responsibilities its more disadvantageous to use MVC.
 
 the new architecture we are looking at is called layered architecture - where instead of MVC we have layers that interact with either with the directly next layer (strict) or any layer (relaxed)
