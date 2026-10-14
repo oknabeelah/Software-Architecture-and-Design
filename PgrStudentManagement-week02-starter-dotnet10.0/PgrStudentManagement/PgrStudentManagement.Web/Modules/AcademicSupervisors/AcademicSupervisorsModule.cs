@@ -7,6 +7,8 @@ public static class AcademicSupervisorsModule
 {
     public static IServiceCollection AddAcademicSupervisorsModule(this IServiceCollection services)
     {
+        services.AddControllersWithViews();
+
         services.AddSingleton<AcademicSupervisorStorage>();
         services.AddScoped<AcademicSupervisorService>();
 

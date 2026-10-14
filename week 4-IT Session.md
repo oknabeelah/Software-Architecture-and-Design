@@ -68,8 +68,8 @@ Each module should:
 	Need to re implement Update method
 - [x] T8: Register the Academic Supervisors module (see appendix)
 	used custom service extension
-- [ ] T9: Implement W4-UC01 Create Academic Supervisor
-- [ ] T10: Implement W4-UC02 List Academic Supervisors
+- [x] T9: Implement W4-UC01 Create Academic Supervisor
+- [x] T10: Implement W4-UC02 List Academic Supervisors
 - [ ] T11: Implement W4-UC03 View Academic Supervisor Details
 - [ ] T12: Define the Student Lookup Contract
 - [ ] T13: Implement W4-UC04 Assign Academic Supervisor to Student
