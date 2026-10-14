@@ -70,7 +70,7 @@ Each module should:
 	used custom service extension
 - [x] T9: Implement W4-UC01 Create Academic Supervisor
 - [x] T10: Implement W4-UC02 List Academic Supervisors
-- [ ] T11: Implement W4-UC03 View Academic Supervisor Details
+- [x] T11: Implement W4-UC03 View Academic Supervisor Details
 - [ ] T12: Define the Student Lookup Contract
 - [ ] T13: Implement W4-UC04 Assign Academic Supervisor to Student
 - [ ] T14: Implement W4-UC05 View Student Supervisory Team

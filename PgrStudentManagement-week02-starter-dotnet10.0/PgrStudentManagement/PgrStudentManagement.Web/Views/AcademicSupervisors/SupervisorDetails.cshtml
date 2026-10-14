@@ -1,0 +1,24 @@
+@model PgrAcademicSupervisorManagement.Web.Models.AcademicSupervisor
+
+@{
+    ViewData["Title"] = "Supervisor Details";
+}
+
+<h1>Supervisor Details</h1>
+
+<p>
+    <strong>Full name:</strong> @Model.FullName
+    <br />
+    <strong>Staff number:</strong> @Model.StaffNumber
+    <br />
+    <strong>Email:</strong> @Model.EmailAddress
+    <br />
+    <strong>Employment type:</strong> @Model.EmploymentType
+    <br />
+    <strong>Eligible roles:</strong> @(string.Join(", ", Model.EligibleRoles))
+    <br />
+</p>
+
+<div class="mt-3">
+    <a asp-action="Index">Return to Supervisors</a>
+</div>

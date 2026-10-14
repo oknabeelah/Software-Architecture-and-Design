@@ -54,6 +54,19 @@ public class AcademicSupervisorsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    public IActionResult SupervisorDetails(string staffNumber)
+    {
+        try
+        {
+            AcademicSupervisor? supervisor = _academicSupervisorService.GetSupervisorByStaffNumber(staffNumber);
+            return View(supervisor);
+        }
+        catch (KeyNotFoundException)
+        {
+            TempData["SupervisorNotFound"] = $"Supervisor with staff number '{staffNumber}' not found.";
+            return RedirectToAction(nameof(Index));
+        }
+    }
 
 
 }

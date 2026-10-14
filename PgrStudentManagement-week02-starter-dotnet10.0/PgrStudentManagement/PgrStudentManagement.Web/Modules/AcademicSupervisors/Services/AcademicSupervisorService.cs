@@ -57,6 +57,26 @@ public class AcademicSupervisorService
             throw new InvalidOperationException($"A supervisor with staff number '{supervisor.StaffNumber}' already exists.");
         }
 
+        // Business rule: use the employment type to determine eligibility roles
+        if (supervisor.EmploymentType == SupervisorEmploymentType.InstitutionEmployed)
+        {
+            supervisor.EligibleRoles = new HashSet<SupervisoryRole> 
+            { SupervisoryRole.DirectorOfStudies, 
+                SupervisoryRole.FirstSupervisor, 
+                SupervisoryRole.SecondSupervisor, 
+                SupervisoryRole.Adviser };
+        }
+        else if (supervisor.EmploymentType == SupervisorEmploymentType.External)
+        {
+            supervisor.EligibleRoles = new HashSet<SupervisoryRole> 
+            { SupervisoryRole.SecondSupervisor, 
+                SupervisoryRole.Adviser };
+        }
+        else
+        {
+            throw new InvalidOperationException($"Invalid employment type for supervisor '{supervisor.StaffNumber}'.");
+        }
+
         _academicSupervisorStorage.AddAcademicSupervisor(supervisor);
     }
 
