@@ -64,8 +64,10 @@ Each module should:
 - [x] T5: Create the Academic Supervisors module
 - [x] T6: Create AcademicSupervisorStorage
 	updated the domain model as i went
-- [ ] T7: Create AcademicSupervisorService
-- [ ] T8: Register the Academic Supervisors module (see appendix)
+- [x] T7: Create AcademicSupervisorService
+	Need to re implement Update method
+- [x] T8: Register the Academic Supervisors module (see appendix)
+	used custom service extension
 - [ ] T9: Implement W4-UC01 Create Academic Supervisor
 - [ ] T10: Implement W4-UC02 List Academic Supervisors
 - [ ] T11: Implement W4-UC03 View Academic Supervisor Details

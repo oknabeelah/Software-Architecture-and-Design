@@ -142,8 +142,8 @@ public class AcademicSupervisorStorage
 
     public void UpdateSupervisoryAssignment(SupervisoryAssignment assignment)
     {
-        var existingAssignment = _supervisoryAssignments.FirstOrDefault(a => a.StudentNumber == assignment.StudentNumber && a.Role == assignment.Role);
-        existingAssignment = assignment;
+        //var existingAssignment = _supervisoryAssignments.FirstOrDefault(a => a.StudentNumber == assignment.StudentNumber && a.Role == assignment.Role);
+        //existingAssignment = assignment;
     }
 }
 
