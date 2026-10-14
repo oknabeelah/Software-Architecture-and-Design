@@ -49,18 +49,21 @@ Each module should:
 	reorganised successfully, resolved unhandled exception, confirmed existing use cases are still working
 - [x] T4: Review the week 4 domain model
 	**Which suggested fields you will include** - All suggested supervisor and assignment fields required by the use cases are included.
+	add withdrawn to Status enum
 	**Which fields are mandatory or optional** - 
-	**How external supervisors are identified using the supplied staffNumber model** - staffNumber is the unique identifier for both institution-employed and external supervisors; external supervisors use an institution- or system-issued value in the same field.
+	**How external supervisors are identified using the supplied staffNumber model** - staffNumber is the unique identifier for both institution-employed and external supervisors; external supervisors use an institution- or system-issued value in the same field with a prefix distinction (IE for institution employed and E for external) when creating a new employee a dropdown asking whether a supervisor is institution employed or external will be used to build staff number string
 	**Whether eligible roles are stored or derived** - eligibleRoles is stored because eligibility is role-specific and can be updated.
+	**Whether additional information is needed to explain why a supervisor is eligible for a role** - add an optional hash set field in academic supervisor to store roles for which an exception to be eligible was authorised and set authorised exception to true for the assignment. to confirm simply check that the the supervisor either has the role in eligible roles or in "excepted roles" and authorised exception must be true. additionally, add Student and Academic supervisor field to supervisor assignments
 	**Whether current assignment state is calculated from endDate** - current is derived from endDate == null; historical assignments remain retained.
-	**How authorised exceptions are represented** - Assignments now explicitly reference studentNumber and supervisorStaffNumber.
-	Authorised exceptions include:
-	exceptionAuthorised
-	exceptionReason
-	exceptionAuthorisedBy
-	exceptionAuthorisedAt
+	**How authorised exceptions are represented** - 
+	additionally excepted roles could be an object rather than hash set with the following fields for documentation of formal process. exceptionAuthorised, exceptionReason, exceptionAuthorisedBy, exceptionAuthorisedDate
+	**Whether an assignment requires an end reason** - this could be added as an optional property only if there is an end date. 
+	**What information is required to authorise an exception** - a request could be put in by a student to an IE employee requesting an external supervisor citing reason. this is then used in the "excepted roles" object by adding the above info and setting exceptionAuthorised depending on the outcome
+	Whether additional training details or dates are required - a new training object could track trainings, dates assigned, and to who.  the trainingCompleted bool in AcademicSuprvisor is then evaluated based on whether all training assigned to a supervisor (after their start date) have been completed
+	How Academic Supervisors and assignments are displayed and ordered - display academic supervisors as a list to admin with filtering for internal and external employees. adding assignments to the student object is a way to link the student to their supervisor  
 - [x] T5: Create the Academic Supervisors module
-- [ ] T6: Create AcademicSupervisorStorage
+- [x] T6: Create AcademicSupervisorStorage
+	updated the domain model as i went
 - [ ] T7: Create AcademicSupervisorService
 - [ ] T8: Register the Academic Supervisors module (see appendix)
 - [ ] T9: Implement W4-UC01 Create Academic Supervisor

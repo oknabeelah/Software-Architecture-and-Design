@@ -244,13 +244,17 @@ Student ..> Status : uses
 Before implementation, decide:
 
 - Which suggested attributes are required by the Week 4 use cases.
+All suggested supervisor and assignment fields required by the use cases are included. The model also requires explicit Student and AcademicSupervisor references on each SupervisoryAssignment.
 - Which attributes are mandatory or optional.
 - How staff numbers are handled for institution-employed and external supervisors.
 - Whether `eligibleRoles` is stored directly or derived from employment and training information.
 - Whether additional information is needed to explain why a supervisor is eligible for a role.
+Each excepted role is documented with exceptionAuthorised, exceptionReason, exceptionAuthorisedBy, and exceptionAuthorisedDate. A student may request an exception from an institution-employed employee for an external supervisor; the decision and formal reason are retained in the exception record.
 - Whether an assignment requires an end reason.
 - What information is required to authorise an exception.
 - Whether additional training details or dates are required.
+Training records store the training name, assignment date, recipient, and completion date. trainingCompleted is derived as true only when all training assigned to the supervisor after their start date has been completed.
 - How Academic Supervisors and assignments are displayed and ordered.
+Administrators see Academic Supervisors as a list filterable by institution-employed and external employment type. Assignments are shown from the student and supervisor views, with current assignments first and then startDate descending. Students retain their assignments so the student-supervisor relationship is directly navigable.
 
 Record any changes made to this model. Keep the domain model, use cases, module operations, views, and implementation consistent.

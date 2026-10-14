@@ -8,5 +8,6 @@ public enum Status
     Suspended,
     Corrections,
     Continuation,
-    Completed
+    Completed,
+    Withdrawn
 }
