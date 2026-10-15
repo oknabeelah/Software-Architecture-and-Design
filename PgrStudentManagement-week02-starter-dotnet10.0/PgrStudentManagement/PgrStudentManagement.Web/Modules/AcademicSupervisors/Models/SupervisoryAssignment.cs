@@ -11,7 +11,7 @@ public class SupervisoryAssignment {
     public DateTime? EndDate { get; set; }
     public string? EndReason { get; set; }
     public bool Current => EndDate is null; // derived from evaluating whether the assignment has an end date
-    public bool ExceptionAuthorised { get; set; } // if the supervisor is not eligible for the role, but has been authorised to supervise the student in that role, this property will be set to true.
+    public bool ExceptionAuthorised { get; set; } //defaulty false // if the supervisor is not eligible for the role, but has been authorised to supervise the student in that role, this property will be set to true.
 
 }
 // Business Rule: A current combination of student,

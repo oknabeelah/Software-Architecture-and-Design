@@ -68,5 +68,35 @@ public class AcademicSupervisorsController : Controller
         }
     }
 
+    [HttpGet]
+    public IActionResult AssignSupervisor()
+    {
+    
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult AssignSupervisor(SupervisoryAssignment assignment)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(assignment);
+        }
+
+        try
+        {
+            _academicSupervisorService.AssignSupervisorToStudent(assignment);
+        }
+        catch (InvalidOperationException ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return View(assignment);
+        }
+
+        TempData["AssignSupervisorSuccess"] = "Supervisor assigned to student successfully.";
+        return RedirectToAction(nameof(Index)); // redirect to supervisory team with student number
+    }
+
 
 }

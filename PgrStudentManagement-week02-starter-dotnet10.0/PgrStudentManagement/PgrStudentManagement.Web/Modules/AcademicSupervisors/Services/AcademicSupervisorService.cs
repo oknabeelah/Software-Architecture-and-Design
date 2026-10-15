@@ -5,16 +5,10 @@ using PgrStudentManagement.Web.Modules.Students.Contracts;
 namespace PgrAcademicSupervisorManagement.Web.Services;
 
 // The service should coordinate:
-// Academic Supervisor creation
-// Supervisor retrieval and ordering
-// Supervisory-assignment creation
-// Supervisory-team retrieval
-// Eligibility and assignment business rules
+// Supervisor retrieval and ordering 
+// Supervisory-assignment creation 
+// Eligibility and assignment business rules 
 
-// Inject the Academic Supervisor storage dependency through the constructor. x
-// The service may also depend on an explicit Students-module operation or contract for student lookup.
-// Do not inject StudentStorage directly into the Academic Supervisor service. Other modules should not depend on the
-// internal data implementation of the Students module.
 public class AcademicSupervisorService
 {
     private readonly AcademicSupervisorStorage _academicSupervisorStorage;
@@ -206,6 +200,41 @@ public class AcademicSupervisorService
         }
 
         _academicSupervisorStorage.UpdateSupervisoryAssignment(assignment);
+    }
+
+    public void AssignSupervisorToStudent(SupervisoryAssignment assignment)
+    {
+        var studentSummary = _studentLookup.GetStudentSummary(assignment.StudentNumber);
+        if (studentSummary is null)
+        {
+            throw new InvalidOperationException($"Student '{assignment.StudentNumber}' not found.");
+        }
+
+        var supervisor = _academicSupervisorStorage.GetAcademicSupervisor(assignment.AcademicSupervisorNumber);
+        if (supervisor is null)
+        {
+            throw new InvalidOperationException($"Supervisor '{assignment.AcademicSupervisorNumber}' not found.");
+        }
+
+        var supervisoryTeam = _academicSupervisorStorage.GetAssignmentsForStudent(assignment.StudentNumber);
+        if (supervisoryTeam.Count(a => a.Current) >= 3 && !assignment.ExceptionAuthorised) // if the student already has 3 current assignments and the new assignment is not authorised as an exception
+        {
+            throw new InvalidOperationException($"Cannot assign supervisor '{assignment.AcademicSupervisorNumber}' to student '{assignment.StudentNumber}' as they already have 3 current assignments and the new assignment is not authorised as an exception.");
+        }
+        else if (supervisoryTeam.Contains(assignment)) // duplicate assignment
+        {
+            throw new InvalidOperationException($"Cannot assign supervisor '{assignment.AcademicSupervisorNumber}' to student '{assignment.StudentNumber}' as this is a duplicate assignment.");
+        }
+        else if ((assignment.Role == SupervisoryRole.DirectorOfStudies || assignment.Role == SupervisoryRole.FirstSupervisor) && supervisoryTeam.Any(a => a.Current && (a.Role == SupervisoryRole.DirectorOfStudies || a.Role == SupervisoryRole.FirstSupervisor))) // if the new assignment would result in more than one current Director of Studies or First Supervisor
+        {
+            throw new InvalidOperationException($"Cannot assign supervisor '{assignment.AcademicSupervisorNumber}' to student '{assignment.StudentNumber}' as they already have a current {assignment.Role}.");
+        }
+        else if (!supervisor.EligibleRoles.Contains(assignment.Role) && !assignment.ExceptionAuthorised) // if the supervisor is not eligible for the role and the assignment is not authorised as an exception
+        {
+            throw new InvalidOperationException($"Cannot assign supervisor '{assignment.AcademicSupervisorNumber}' to student '{assignment.StudentNumber}' as they are not eligible for the role '{assignment.Role}' and the assignment is not authorised as an exception.");
+        }
+
+        _academicSupervisorStorage.AddSupervisoryAssignment(assignment);
     }
 
 }

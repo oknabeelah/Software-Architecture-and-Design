@@ -72,7 +72,23 @@ Each module should:
 - [x] T10: Implement W4-UC02 List Academic Supervisors
 - [x] T11: Implement W4-UC03 View Academic Supervisor Details
 - [x] T12: Define the Student Lookup Contract
-- [ ] T13: Implement W4-UC04 Assign Academic Supervisor to Student
+	**Which module owns the contract** - Student module
+	**Which class implements it** - StudentService class
+	**Which student fields are exposed through StudentSummary** - Student number and Student full name
+	**Why those fields are required by the supervisory use cases** - in UC04 and UC05, its used to confirm that a provided student number is indeed valid
+	**How the contract prevents direct access to the Students module's internal data** - 
+	**How the contract is registered with dependency injection** - 
+	
+- [x] T13: Implement W4-UC04 Assign Academic Supervisor to Student
+	Decide and document:  
+	Whether Adviser assignments count towards the supervisor-number limit - yes they do, all current assignments cannot exceed 3 without authorised exception
+	Where an authorised fourth-supervisor exception is recorded.  
+	Whether eligibility is stored or derived.  
+	How a current assignment is identified.  
+	Whether start dates include time or only a calendar date.  
+	How incomplete and complete supervisory teams are displayed.  
+	Which service operation evaluates team completeness.
+	
 - [ ] T14: Implement W4-UC05 View Student Supervisory Team
 - [ ] T15: Check Module Encapsulation
 - [ ] T16: Verify the Complete Core Application
