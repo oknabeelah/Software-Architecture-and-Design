@@ -1,5 +1,6 @@
 using PgrAcademicSupervisorManagement.Web.Models;
 using PgrAcademicSupervisorManagement.Web.Data;
+using PgrStudentManagement.Web.Modules.Students.Contracts;
 
 namespace PgrAcademicSupervisorManagement.Web.Services;
 
@@ -17,9 +18,12 @@ namespace PgrAcademicSupervisorManagement.Web.Services;
 public class AcademicSupervisorService
 {
     private readonly AcademicSupervisorStorage _academicSupervisorStorage;
-    public AcademicSupervisorService(AcademicSupervisorStorage academicSupervisorStorage)
+
+    private readonly IStudentLookup _studentLookup;
+    public AcademicSupervisorService(AcademicSupervisorStorage academicSupervisorStorage, IStudentLookup studentLookup)
     {
         _academicSupervisorStorage = academicSupervisorStorage;
+        _studentLookup = studentLookup;
     }
 
     public IEnumerable<AcademicSupervisor> GetAllSupervisors()
@@ -57,6 +61,40 @@ public class AcademicSupervisorService
             throw new InvalidOperationException($"A supervisor with staff number '{supervisor.StaffNumber}' already exists.");
         }
 
+        // Business rule: check that the staff number has the necessary prefix to signify employment type "IE" for institution-employed, "E" for external
+        if (supervisor.EmploymentType == SupervisorEmploymentType.InstitutionEmployed)
+        {
+            if (!supervisor.StaffNumber.StartsWith("IE"))
+            {
+                if (char.IsDigit(supervisor.StaffNumber[0]))
+                {
+                    supervisor.StaffNumber = "IE" + supervisor.StaffNumber;
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Invalid staff number format for institution-employed supervisor '{supervisor.StaffNumber}'.");
+                }
+            }
+        }
+        else if (supervisor.EmploymentType == SupervisorEmploymentType.External)
+        {
+            if (!supervisor.StaffNumber.StartsWith("E"))
+            {
+                if (char.IsDigit(supervisor.StaffNumber[0]))
+                {
+                    supervisor.StaffNumber = "E" + supervisor.StaffNumber;
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Invalid staff number format for external supervisor '{supervisor.StaffNumber}'.");
+                }
+            }
+        }
+        else
+        {
+            throw new InvalidOperationException($"Invalid employment type for supervisor '{supervisor.StaffNumber}'.");
+        }
+
         // Business rule: use the employment type to determine eligibility roles
         if (supervisor.EmploymentType == SupervisorEmploymentType.InstitutionEmployed)
         {
@@ -82,7 +120,13 @@ public class AcademicSupervisorService
 
     public IReadOnlyList<SupervisoryAssignment> GetSupervisoryTeam(string studentNumber)
     {
-        var supervisors = _academicSupervisorStorage.GetAssignmentsForStudent(studentNumber);
+        // Business rule: check that the student exists in the Students module
+        var studentSummary = _studentLookup.GetStudentSummary(studentNumber);
+        if (studentSummary == null)
+        {
+            throw new KeyNotFoundException($"Student with student number '{studentNumber}' not found.");
+        }
+        var supervisors = _academicSupervisorStorage.GetAssignmentsForStudent(studentSummary.StudentNumber);
         if (supervisors == null || !supervisors.Any())
         {
             throw new InvalidOperationException($"No supervisors found assigned to this student.");
@@ -100,7 +144,7 @@ public class AcademicSupervisorService
         return assignments;
     }
 
-    public void AddSupervisoryAssignment(SupervisoryAssignment assignment)
+    public void AddSupervisoryAssignment(SupervisoryAssignment assignment) //TODO: use ILookup
     {
         if (assignment == null)
         {
@@ -126,7 +170,7 @@ public class AcademicSupervisorService
     }
 
 // TODO: REFACTOR Update Assignment
-    public void UpdateSupervisoryAssignment(SupervisoryAssignment assignment) // needs refactoring to allow input - a list of fields to update
+    public void UpdateSupervisoryAssignment(SupervisoryAssignment assignment) // use ILookup // needs refactoring to allow input - a list of fields to update
     {
         //Controller
         //     receives UpdateSupervisoryAssignmentRequest
@@ -163,7 +207,6 @@ public class AcademicSupervisorService
 
         _academicSupervisorStorage.UpdateSupervisoryAssignment(assignment);
     }
-
 
 }
 

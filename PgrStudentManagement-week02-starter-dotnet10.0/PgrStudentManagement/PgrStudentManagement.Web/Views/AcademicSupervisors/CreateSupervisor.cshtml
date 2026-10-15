@@ -11,7 +11,9 @@
 <form asp-action="CreateSupervisor" method="post" id="create-supervisor-form"> @Html.AntiForgeryToken()
     <div class="form-group">
         <label asp-for="EmploymentType" class="control-label"> Empoyment Type </label>
-        <select asp-for="EmploymentType" class="form-control" asp-items="@Html.GetEnumSelectList<SupervisorEmploymentType>()" required></select>
+        <select asp-for="EmploymentType" class="form-control" asp-items="@Html.GetEnumSelectList<SupervisorEmploymentType>()" required>
+            <option value="">Select Employment Type</option>
+        </select>
         <span asp-validation-for="EmploymentType" class="text-danger"></span>
     </div>
     <div class="form-group">

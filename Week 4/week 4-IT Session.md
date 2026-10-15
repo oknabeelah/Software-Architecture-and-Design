@@ -71,7 +71,7 @@ Each module should:
 - [x] T9: Implement W4-UC01 Create Academic Supervisor
 - [x] T10: Implement W4-UC02 List Academic Supervisors
 - [x] T11: Implement W4-UC03 View Academic Supervisor Details
-- [ ] T12: Define the Student Lookup Contract
+- [x] T12: Define the Student Lookup Contract
 - [ ] T13: Implement W4-UC04 Assign Academic Supervisor to Student
 - [ ] T14: Implement W4-UC05 View Student Supervisory Team
 - [ ] T15: Check Module Encapsulation
@@ -84,3 +84,19 @@ Each module should:
 - [ ] Answer Reflection questions
 
 ---
+
+Lab 2
+Goals
+	Reverse-engineer domain concepts and relationships from source code.
+	Separate a domain-model diagram from an implementation-structure
+	diagram.
+	Represent module ownership and module boundaries in UML.
+	Represent controllers, services, storage classes, contracts, and views.
+	Create sequence diagrams from implemented use-case behaviour.
+	Check consistency between use cases, models, diagrams, and code.
+	Identify potential modules from requirements and business capabilities.
+
+A class diagram that captures the domain model
+A separate class diagram that captures the rest of the implementation
+Sequence diagrams for the five new Week 4 core UCs
+
