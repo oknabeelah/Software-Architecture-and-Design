@@ -95,8 +95,32 @@ public class AcademicSupervisorsController : Controller
         }
 
         TempData["AssignSupervisorSuccess"] = "Supervisor assigned to student successfully.";
-        return RedirectToAction(nameof(Index)); // redirect to supervisory team with student number
+        return RedirectToAction(nameof(ViewSupervisoryTeam),  new { studentNumber = assignment.StudentNumber }); // redirect to supervisory team with student number
     }
 
+    [HttpGet]
+    public IActionResult ViewSupervisoryTeam(string? studentNumber)
+    {
+        if (string.IsNullOrWhiteSpace(studentNumber))
+        {
+            return View();
+        }
+
+        try
+        {
+            var assignments = _academicSupervisorService.GetSupervisoryTeam(studentNumber);
+            return View(assignments);
+        }
+        catch (KeyNotFoundException)
+        {
+            TempData["NoAssignmentsFound"] = $"No supervisory assignments found for student '{studentNumber}'.";
+            return View();
+        }
+        catch (InvalidOperationException)
+        {
+            TempData["NoAssignmentsFound"] = $"No supervisory assignments found for student '{studentNumber}'.";
+            return View();
+        }
+    }
 
 }

@@ -16,6 +16,7 @@
 <h1>Assign a Supervisor to a Student</h1>
 
 <form asp-action="AssignSupervisor" method="post" id="assign-supervisor-form"> @Html.AntiForgeryToken()
+    <div asp-validation-summary="All" class="text-danger"></div>
     <div class="form-group">
         <label asp-for="StudentNumber" class="control-label"> Student Number </label>
         <input asp-for="StudentNumber" class="form-control" type="text" required/>
@@ -50,7 +51,7 @@
     <br />
     <div class="btn-group" role="group">
         <button type="submit" class="btn btn-primary" id="assign-supervisor-submit">Assign Supervisor</button>
-        <a asp-Controller="AcademicSupervisors" asp-action="AssignSupervisor" class="btn btn-secondary">Cancel</a>
+        <a asp-controller="AcademicSupervisors" asp-action="AssignSupervisor" class="btn btn-secondary">Cancel</a>
     </div>
 </form>
 
