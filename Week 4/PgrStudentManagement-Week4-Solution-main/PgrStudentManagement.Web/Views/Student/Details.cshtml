@@ -1,0 +1,43 @@
+@model PgrStudentManagement.Web.Modules.Students.Models.Student
+
+@{
+    ViewData["Title"] = "Student Details";
+}
+
+<h1>Student Details</h1>
+
+<dl class="row">
+    <dt class="col-sm-4">Student number</dt>
+    <dd class="col-sm-8">@Model.StudentNumber</dd>
+
+    <dt class="col-sm-4">Name</dt>
+    <dd class="col-sm-8">@Model.FullName</dd>
+
+    <dt class="col-sm-4">Course</dt>
+    <dd class="col-sm-8">
+        @(Model.Course ?? "Not recorded")
+    </dd>
+
+    <dt class="col-sm-4">Mode of study</dt>
+    <dd class="col-sm-8">
+        @(Model.ModeOfStudy ?? "Not recorded")
+    </dd>
+
+    <dt class="col-sm-4">Start date</dt>
+    <dd class="col-sm-8">
+        @(Model.StartDate?.ToString("dd MMMM yyyy")
+            ?? "Not recorded")
+    </dd>
+
+    <dt class="col-sm-4">Status</dt>
+    <dd class="col-sm-8">@Model.Status</dd>
+
+    <dt class="col-sm-4">Thesis title</dt>
+    <dd class="col-sm-8">
+        @(Model.ThesisTitle ?? "Not recorded")
+</dl>
+
+<div class="d-flex gap-2 mt-3">
+    <a asp-controller="AcademicSupervisors" asp-action="SupervisoryTeam" asp-route-studentNumber="@Model.StudentNumber" class="btn btn-primary">Supervisory Team</a>
+    <a asp-action="Index" class="btn btn-outline-secondary">Return to students</a>
+</div>

@@ -1,0 +1,72 @@
+@startuml Extension_Thesis_Assessment_Module
+
+title Candidate Module: Thesis Assessment & Examination (Extension Task)
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam shadowing false
+hide empty methods
+
+package "Thesis Assessment & Examination Module (Candidate)" {
+    enum ExaminationOutcome {
+        Pass
+        MinorCorrections
+        MajorCorrections
+        Resubmission
+        Fail
+    }
+
+    enum ExaminerRole {
+        InternalExaminer
+        ExternalExaminer
+        IndependentChair
+    }
+
+    enum PanelStatus {
+        Nominated
+        Approved
+        Completed
+    }
+
+    class ThesisExamination {
+        + examinationId : String
+        + studentNumber : String
+        + thesisTitle : String
+        + submissionDate : DateTime
+        + vivaDate : DateTime?
+        + outcome : ExaminationOutcome?
+        + outcomeDate : DateTime?
+        + correctionsDueDate : DateTime?
+        + correctionsApprovedDate : DateTime?
+        + /status : String
+    }
+
+    class Examiner {
+        + examinerId : String
+        + firstName : String
+        + lastName : String
+        + institution : String
+        + emailAddress : String
+    }
+
+    class ExaminationPanelAppointment {
+        + examinationId : String
+        + examinerId : String
+        + role : ExaminerRole
+        + appointmentDate : DateTime
+        + isIndependent : Boolean
+    }
+
+    ThesisExamination "1" -- "2..4" ExaminationPanelAppointment : has
+    Examiner "1" -- "0..*" ExaminationPanelAppointment : serves as
+    ExaminationPanelAppointment ..> ExaminerRole : uses
+    ThesisExamination ..> ExaminationOutcome : results in
+}
+
+note bottom of ThesisExamination
+  Candidate module identified from PGR thesis submission and viva requirements.
+  Cross-module dependencies:
+  - References Student via StudentNumber (from Students Module IStudentLookup contract).
+  - Verifies DoS supervisory status via Academic Supervisors Module contract.
+end note
+
+@enduml

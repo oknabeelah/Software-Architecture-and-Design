@@ -1,0 +1,63 @@
+@model PgrStudentManagement.Web.Modules.AcademicSupervisors.Models.AcademicSupervisor
+
+@{
+    ViewData["Title"] = $"Supervisor - {Model.FullName}";
+}
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Academic Supervisor Details</h4>
+        <span class="badge bg-light text-dark">@Model.StaffNumber</span>
+    </div>
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Staff Number</dt>
+            <dd class="col-sm-9">@Model.StaffNumber</dd>
+
+            <dt class="col-sm-3">Full Name</dt>
+            <dd class="col-sm-9">@Model.FullName</dd>
+
+            <dt class="col-sm-3">Email Address</dt>
+            <dd class="col-sm-9"><a href="mailto:@Model.EmailAddress">@Model.EmailAddress</a></dd>
+
+            <dt class="col-sm-3">Employment Type</dt>
+            <dd class="col-sm-9">
+                <span class="badge @(Model.EmploymentType == PgrStudentManagement.Web.Modules.AcademicSupervisors.Models.SupervisorEmploymentType.InstitutionEmployed ? "bg-success" : "bg-secondary")">
+                    @Model.EmploymentType
+                </span>
+            </dd>
+
+            <dt class="col-sm-3">Training Status</dt>
+            <dd class="col-sm-9">
+                @if (Model.TrainingCompleted)
+                {
+                    <span class="badge bg-success">Training Completed</span>
+                }
+                else
+                {
+                    <span class="badge bg-warning text-dark">Training Pending</span>
+                }
+            </dd>
+
+            <dt class="col-sm-3">Eligible Roles</dt>
+            <dd class="col-sm-9">
+                @if (Model.EligibleRoles.Any())
+                {
+                    <ul class="list-inline mb-0">
+                        @foreach (var role in Model.EligibleRoles)
+                        {
+                            <li class="list-inline-item badge bg-info text-dark">@role</li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <span class="text-muted">None specified</span>
+                }
+            </dd>
+        </dl>
+    </div>
+    <div class="card-footer bg-light">
+        <a asp-action="Index" class="btn btn-outline-secondary">Back to Supervisors List</a>
+    </div>
+</div>

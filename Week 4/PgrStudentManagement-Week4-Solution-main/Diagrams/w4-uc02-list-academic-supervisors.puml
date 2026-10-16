@@ -1,0 +1,45 @@
+@startuml W4_UC02_List_Academic_Supervisors
+
+title Sequence Diagram: W4-UC02 List Academic Supervisors
+skinparam shadowing false
+autonumber
+
+actor "PgRT" as Actor
+boundary "Views/AcademicSupervisors\n/Index.cshtml" as IndexView
+control "AcademicSupervisorsController" as Controller
+entity "AcademicSupervisorService" as Service
+database "AcademicSupervisorStorage" as Storage
+collections "_academicSupervisors : List" as Collection
+
+Actor -> Controller : GET /AcademicSupervisors/Index
+activate Controller
+
+Controller -> Service : GetSupervisors()
+activate Service
+
+Service -> Storage : GetAcademicSupervisors()
+activate Storage
+Storage -> Collection : AsReadOnly()
+activate Collection
+Collection --> Storage : IReadOnlyList<AcademicSupervisor>
+deactivate Collection
+Storage --> Service : IReadOnlyList<AcademicSupervisor>
+deactivate Storage
+
+Service -> Service : OrderBy(LastName)\n.ThenBy(FirstName)\n.ThenBy(StaffNumber)
+Service --> Controller : IReadOnlyList<AcademicSupervisor> (ordered)
+deactivate Service
+
+Controller -> IndexView : View(supervisors)
+activate IndexView
+
+alt Supervisor records available [Main Success Scenario]
+    IndexView --> Actor : Display supervisor list with summary fields and Details links
+else No supervisor records [Alternative Flow A1: No Academic Supervisors Found]
+    IndexView --> Actor : Display "No Academic Supervisors found."
+end
+
+deactivate IndexView
+deactivate Controller
+
+@enduml

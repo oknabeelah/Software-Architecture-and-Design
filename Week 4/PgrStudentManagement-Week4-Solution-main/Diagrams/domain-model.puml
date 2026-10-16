@@ -1,0 +1,95 @@
+@startuml Week4_DomainModel
+
+title Week 4 Domain Model: Students & Academic Supervisors
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam shadowing false
+hide empty methods
+
+package "Students Module" {
+    enum Status {
+        Researching
+        WritingUp
+        Submitted
+        Corrections
+        Completed
+        Continuation
+        Suspended
+        Withdrawn
+    }
+
+    class Student {
+        + studentNumber : String
+        + firstName : String
+        + lastName : String
+        + /fullName : String
+        + course : String?
+        + modeOfStudy : String?
+        + startDate : DateTime?
+        + status : Status
+        + thesisTitle : String?
+        + originalExpectedSubmissionDate : DateTime?
+        + expectedSubmissionDate : DateTime?
+        + actualSubmissionDate : DateTime?
+    }
+
+    Student ..> Status : uses
+}
+
+package "Academic Supervisors Module" {
+    enum SupervisorEmploymentType {
+        InstitutionEmployed
+        External
+    }
+
+    enum SupervisoryRole {
+        DirectorOfStudies
+        FirstSupervisor
+        SecondSupervisor
+        Adviser
+    }
+
+    class AcademicSupervisor {
+        + staffNumber : String
+        + firstName : String
+        + lastName : String
+        + /fullName : String
+        + emailAddress : String
+        + employmentType : SupervisorEmploymentType
+        + trainingCompleted : Boolean
+        + eligibleRoles : HashSet<SupervisoryRole>
+    }
+
+    class SupervisoryAssignment {
+        + studentNumber : String
+        + supervisorStaffNumber : String
+        + role : SupervisoryRole
+        + startDate : DateTime
+        + endDate : DateTime?
+        + exceptionAuthorised : Boolean
+        + /current : Boolean
+    }
+
+    AcademicSupervisor ..> SupervisorEmploymentType : uses
+    AcademicSupervisor ..> SupervisoryRole : eligible for
+    SupervisoryAssignment ..> SupervisoryRole : has role
+}
+
+' Conceptual relationships across module boundaries
+Student "1" .. "0..*" SupervisoryAssignment : referenced by (studentNumber)
+AcademicSupervisor "1" -- "0..*" SupervisoryAssignment : participates in (supervisorStaffNumber)
+
+note bottom of AcademicSupervisor
+  • Director of Studies and First Supervisor must be InstitutionEmployed (BR01, BR13).
+  • External supervisors may only hold SecondSupervisor or Adviser roles (BR13).
+  • StaffNumber uniquely identifies the supervisor.
+end note
+
+note bottom of SupervisoryAssignment
+  • Current is derived from (endDate is null).
+  • A current (student, supervisor, role) combination must be unique (BR15).
+  • A student may have at most one current DirectorOfStudies and one FirstSupervisor (BR14).
+  • Teams with >3 supervisors require exceptionAuthorised = true (BR03).
+end note
+
+@enduml

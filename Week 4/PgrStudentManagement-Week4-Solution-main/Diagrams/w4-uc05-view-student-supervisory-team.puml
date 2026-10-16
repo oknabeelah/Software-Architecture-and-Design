@@ -1,0 +1,83 @@
+@startuml W4_UC05_View_Student_Supervisory_Team
+
+title Sequence Diagram: W4-UC05 View Student Supervisory Team
+skinparam shadowing false
+autonumber
+
+actor "PgRT" as Actor
+boundary "Views/AcademicSupervisors\n/SupervisoryTeam.cshtml" as TeamView
+control "AcademicSupervisorsController" as Controller
+entity "AcademicSupervisorService" as Service
+participant "IStudentLookup\n<<Contract>>" as StudentContract
+database "AcademicSupervisorStorage" as Storage
+collections "_academicSupervisors\n: List" as SupCol
+collections "_supervisoryAssignments\n: List" as AssignCol
+
+Actor -> Controller : GET /AcademicSupervisors/SupervisoryTeam?studentNumber={studentNumber}
+activate Controller
+
+== Cross-Module Student Confirmation ==
+Controller -> Service : GetStudentSummary(studentNumber)
+activate Service
+Service -> StudentContract : GetStudentSummary(studentNumber)
+activate StudentContract
+StudentContract --> Service : StudentSummary (or null)
+deactivate StudentContract
+Service --> Controller : StudentSummary (or null)
+deactivate Service
+
+== Retrieve Assignments & Assessment ==
+Controller -> Service : GetAssignmentsForStudent(studentNumber)
+activate Service
+Service -> Storage : GetAssignmentsForStudent(studentNumber)
+activate Storage
+Storage -> AssignCol : Where(studentNumber == studentNumber)
+activate AssignCol
+AssignCol --> Storage : student assignments
+deactivate AssignCol
+Storage --> Service : student assignments
+deactivate Storage
+Service --> Controller : IReadOnlyList<SupervisoryAssignment>
+deactivate Service
+
+Controller -> Service : EvaluateSupervisoryTeam(studentNumber)
+activate Service
+Service -> Storage : GetAssignmentsForStudent(studentNumber)
+activate Storage
+Storage --> Service : student assignments
+deactivate Storage
+Service -> Service : Check institution-employed DoS & FirstSupervisor,\nteam size (2-3), and authorised exception
+Service --> Controller : SupervisoryTeamAssessment (IsComplete, Issues)
+deactivate Service
+
+== Resolve Supervisor Details for Each Assignment ==
+loop For each assignment
+    Controller -> Service : GetSupervisor(staffNumber)
+    activate Service
+    Service -> Storage : GetAcademicSupervisor(staffNumber)
+    activate Storage
+    Storage -> SupCol : FirstOrDefault(s => s.StaffNumber == staffNumber)
+    activate SupCol
+    SupCol --> Storage : supervisor
+    deactivate SupCol
+    Storage --> Service : supervisor
+    deactivate Storage
+    Service --> Controller : supervisor
+    deactivate Service
+end
+
+Controller -> Controller : Build SupervisoryTeamViewModel(\n  Student, Assignments, Assessment)
+
+Controller -> TeamView : View(viewModel)
+activate TeamView
+
+alt Assignments exist [Main Success Scenario]
+    TeamView --> Actor : Display current and historical assignments, roles, dates, status, and team completeness assessment banner
+else No assignments exist [Alternative Flow A1: No Supervisory Assignments Found]
+    TeamView --> Actor : Display "No supervisory assignments found for this student" and link to Assign Supervisor
+end
+
+deactivate TeamView
+deactivate Controller
+
+@enduml

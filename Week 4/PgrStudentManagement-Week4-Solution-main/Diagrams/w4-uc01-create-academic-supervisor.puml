@@ -1,0 +1,63 @@
+@startuml W4_UC01_Create_Academic_Supervisor
+
+title Sequence Diagram: W4-UC01 Create Academic Supervisor
+skinparam shadowing false
+autonumber
+
+actor "PgRT" as Actor
+boundary "Views/AcademicSupervisors\n/Create.cshtml" as CreateView
+control "AcademicSupervisorsController" as Controller
+entity "AcademicSupervisorService" as Service
+database "AcademicSupervisorStorage" as Storage
+collections "_academicSupervisors : List" as Collection
+
+== Form Display ==
+Actor -> Controller : GET /AcademicSupervisors/Create
+activate Controller
+Controller -> CreateView : View(new AcademicSupervisor)
+activate CreateView
+CreateView --> Actor : Display supervisor creation form
+deactivate CreateView
+deactivate Controller
+
+== Submission & Processing ==
+Actor -> Controller : POST /AcademicSupervisors/Create(supervisor, eligibleRoles)
+activate Controller
+
+Controller -> Service : CreateSupervisor(supervisor)
+activate Service
+
+Service -> Storage : StaffNumberExists(supervisor.StaffNumber)
+activate Storage
+Storage -> Collection : Any(s => s.StaffNumber == staffNumber)
+activate Collection
+Collection --> Storage : exists (bool)
+deactivate Collection
+Storage --> Service : exists (bool)
+deactivate Storage
+
+alt Staff number already exists [Alternative Flow A1: Duplicate Staff Number]
+    Service --> Controller : (false, "An Academic Supervisor with this staff number already exists", null)
+    Controller -> Controller : ModelState.AddModelError("StaffNumber", ErrorMessage)
+    Controller -> CreateView : View(supervisor)
+    activate CreateView
+    CreateView --> Actor : Redisplay form with "An Academic Supervisor with this staff number already exists"
+    deactivate CreateView
+else Staff number is unique [Main Success Scenario]
+    Service -> Service : Set default role eligibility if empty
+    Service -> Storage : AddAcademicSupervisor(supervisor)
+    activate Storage
+    Storage -> Collection : Add(supervisor)
+    activate Collection
+    Collection --> Storage : void
+    deactivate Collection
+    Storage --> Service : void
+    deactivate Storage
+    Service --> Controller : (true, null, supervisor)
+    deactivate Service
+
+    Controller --> Actor : RedirectToAction(Details, new { staffNumber = supervisor.StaffNumber })
+    deactivate Controller
+end
+
+@enduml
