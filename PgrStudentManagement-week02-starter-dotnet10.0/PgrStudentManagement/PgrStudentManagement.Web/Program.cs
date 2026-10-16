@@ -1,7 +1,13 @@
+using PgrStudentManagement.Web.Controllers;
+using PgrStudentManagement.Web.Data;
+using PgrStudentManagement.Web.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddSingleton<StudentStorage>(); // use add Singleton lifetime for a in memory storage. other requests include AddScoped, AddTransient. Singleton is used here because we want to keep the same instance of StudentStorage for the entire application lifetime, so that all controllers share the same data.
+builder.Services.AddScoped<StudentService>(); // use add Scoped lifetime for individual web requests.
 
 var app = builder.Build();
 

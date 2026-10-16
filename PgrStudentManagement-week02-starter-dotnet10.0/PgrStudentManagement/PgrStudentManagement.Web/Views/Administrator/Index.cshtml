@@ -1,0 +1,21 @@
+@model IEnumerable<PgrStudentManagement.Web.Models.Student>
+
+@{
+    ViewData["Title"] = "Administrator";
+}
+
+<h1>Administrator</h1>
+
+<h2>Options</h2>
+<br />
+<ul>
+    <li>
+        <a asp-controller="Students" asp-action="CreateStudent">Create a new Student</a>
+    </li>
+    <li>
+        <a asp-controller="Students" asp-action="StudentDetails">Display Students</a></li>
+</ul>
+
+<div class="mt-3">
+    <a asp-controller="Students" asp-action="Index">Return to students</a>
+</div>

@@ -1,0 +1,97 @@
+@startuml implementation-week3-class-diagram
+
+set namespaceSeparator none
+
+package "PgrStudentManagement.Web.Models" {
+    package Models {
+        class Student {
+            +StudentNumber : String
+            +FirstName : String
+            +LastName : String 
+            +FullName : String
+            +ModeOfStudy : String
+            +StartDate : Date
+            +Status : Status
+            +Course : String
+            +ThesisTitle : String
+            +ExpectedThesisSubmissionDate : Date
+            +ActualThesisSubmissionDate : Date
+        }
+        enum Status {
+            +Enrolled
+            +Suspended
+            +Withdrawn
+            +Completed
+        }
+    }
+
+    package Controllers {
+        class StudentsController <<controller>> {
+            +studentService : StudentService
+            -Index() : IActionResult
+            -Administrator() : IActionResult
+            -EnrolmentDetails(studentNumber : String) : IActionResult
+            -ThesisDetails(studentNumber : String) : IActionResult
+            -EditStatus(studentNumber : String, status : Status) : IActionResult
+            -EditExpectingSubmissionDate(studentNumber : String, expectedSubmissionDate : Date) : IActionResult
+            -RecordSubmission(studentNumber : String, actualSubmissionDate : Date) : IActionResult
+            -CreateStudent(Student student) : IActionResult
+            -StudentDetails() : IActionResult
+        }
+    }
+
+    package Services {
+        class StudentService <<services>> {
+            +studentStorage : StudentStorage
+            -GetStudents() : ReadOnlyList<Student>
+            -GetStudent(studentNumber : String) : Student
+            -CreateStudent(student : Student) : void
+            -UpdateStatus(studentNumber : String, status : Status) : void
+            -UpdateExpectedSubmissionDate(studentNumber : String, expectedSubmissionDate : Date) : void
+            -RecordSubmission(studentNumber : String, actualSubmissionDate : Date) : void
+        }
+    }
+
+    package Data {
+        class StudentStorage <<data>> {
+            +studentService : ReadOnlyList<Student>
+            -GetStudents() : ReadOnlyList<Student>
+            -GetStudent(studentNumber : String) : Student
+            -AddStudent(student : Student) : void
+            -UpdateStatus(studentNumber : String, status : Status) : void
+            -UpdateExpectedThesisSubmissionDate(studentNumber : String, expectedSubmissionDate : Date) : void
+            -UpdateActualThesisSubmissionDate(studentNumber : String, actualSubmissionDate : Date) : void
+        }
+    }
+
+
+    package Views {
+        class "Index.cshtml" as IndexView <<view>>
+        class "EnrolmentDetails.cshtml" as EnrolmentDetailsView <<view>>
+        class "ThesisDetails.cshtml" as ThesisDetailsView <<view>>
+        class "NoThesisDetails.cshtml" as NoThesisDetailsView <<view>>
+        class "EditStatus.cshtml" as EditStatusView <<view>>
+        class "EditExpectingSubmissionDate.cshtml" as EditExpectingSubmissionDateView <<view>>
+        class "RecordSubmission.cshtml" as RecordSubmissionView <<view>>
+        class "CreateStudent.cshtml" as CreateStudentView <<view>>
+        class "StudentDetails.cshtml" as StudentDetailsView <<view>>
+    }
+
+    StudentStorage "1" o-- "0..*" Student : in-memory collection
+    StudentService "1" o-- "1" StudentStorage : uses
+    StudentsController "1" o-- "1" StudentService : uses
+    
+    StudentsController ..> Status : uses
+    StudentsController ..> IndexView : returns
+    StudentsController ..> EnrolmentDetailsView : returns
+    StudentsController ..> ThesisDetailsView : returns
+    StudentsController ..> NoThesisDetailsView : returns
+    StudentsController ..> EditStatusView : returns
+    StudentsController ..> EditExpectingSubmissionDateView : returns
+    StudentsController ..> RecordSubmissionView : returns
+    StudentsController ..> CreateStudentView : returns
+    StudentsController ..> StudentDetailsView : returns
+
+}
+
+@enduml

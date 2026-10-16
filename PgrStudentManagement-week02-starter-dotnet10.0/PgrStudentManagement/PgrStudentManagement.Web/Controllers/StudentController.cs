@@ -1,62 +1,57 @@
 using Microsoft.AspNetCore.Mvc;
 using PgrStudentManagement.Web.Models;
+using PgrStudentManagement.Web.Services;
 
 namespace PgrStudentManagement.Web.Controllers;
 
 public class StudentsController : Controller
-{
-    private static List<Student> Students = new ()
-    {
-        new Student
-        {
-            StudentNumber = "S100001",
-            FirstName = "John",
-            LastName = "Doe",
-            Course = "PhD Computing",
-            ModeOfStudy = "Full-time",
-            StartDate = new DateTime(2025, 10, 1),
-            Status = Status.Researching,
-            ThesisTitle = "Explainable Models for Clinical Decision Support"
-        },
-        new Student
-        {
-            StudentNumber = "S100002",
-            FirstName = "Jane",
-            LastName = "Smith",
-            Course = "Professional Doctorate",
-            ModeOfStudy = "Part-time",
-            StartDate = new DateTime(2024, 10, 1),
-            Status = Status.WritingUp,
-            ThesisTitle = null
-        }
-    };
+{    
+    private readonly StudentService _studentService;
 
-    public IActionResult Index()
+    public StudentsController(StudentService studentService)
     {
-        return View(Students);
+        _studentService = studentService;
     }
 
-    public IActionResult EnrolmentDetails(string studentNumber)
+    public IActionResult Index() //recieves request, selects view, accesses the static collection => presentation layer
     {
-        Student student = Students.Find(s => s.StudentNumber == studentNumber);
+        try
+        {
+            return View(_studentService.GetStudents());
+        }
+        catch (KeyNotFoundException)
+        {
+            TempData["NoStudentsFound"] = "No students found.";
+            return RedirectToAction(nameof(Index));
+        }
+    }
+    public IActionResult Administrator()
+    {
+        return View("~/Views/Administrator/Index.cshtml");
+    }
+
+    public IActionResult EnrolmentDetails(string studentNumber, string? returnTo) //recieves request, selects view, accesses the static collection, finds student, => presentation layer
+    {
+        Student? student = _studentService.GetStudent(studentNumber);
         if (student == null)
         {
             return NotFound();
         }
 
+        ViewBag.ReturnTo = returnTo; // store the returnTo value in ViewData to be used in the view for navigation
+
         return View(student);
     }
 
-    public IActionResult ThesisDetails(string studentNumber)
+    public IActionResult ThesisDetails(string studentNumber) //recieves request, selects view, accesses the static collection, finds student, => presentation layer
     {
-        Student student = Students.Find(s => s.StudentNumber == studentNumber);
+        Student? student = _studentService.GetStudent(studentNumber);
         if (student == null)
         {
             return NotFound();
         }
         if (student.ThesisTitle == null)
         {
-            // return an exception or error view indicating that thesis information is not available for this student
             return View("NoThesisDetails", student);
         }
 
@@ -64,9 +59,9 @@ public class StudentsController : Controller
     }
 
     [HttpGet]
-    public IActionResult EditStatus(string studentNumber)
+    public IActionResult EditStatus(string studentNumber) //recieves request, selects view, accesses the static collection, finds student => presentation layer
     {
-        Student student = Students.Find(s => s.StudentNumber == studentNumber);
+        Student? student = _studentService.GetStudent(studentNumber);
         if (student == null)
         {
             return NotFound();
@@ -77,34 +72,18 @@ public class StudentsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult EditStatus(string studentNumber, Status? status)
+    public IActionResult EditStatus(string studentNumber, Status status) //updates student info => business layer
     {
-        Student student = Students.Find(s => s.StudentNumber == studentNumber);
-        if (student == null)
-        {
-            return NotFound();
-        }
-
-        if (!status.HasValue || !Enum.IsDefined(typeof(Status), status.Value))
-        {
-            ModelState.AddModelError(nameof(Status), "Please select a valid status.");
-            return View(student);
-        }
-
-        student.Status = status.Value;
-        TempData["StatusUpdateSuccess"] = $"{student.FullName}'s status was updated to {student.Status}.";
+        _studentService.UpdateStatus(studentNumber, status);
+        TempData["StatusUpdateSuccess"] = $"The student's status was updated to {status}.";
 
         return RedirectToAction(nameof(EditStatus), new { studentNumber });
     }
 
     [HttpGet]
-    public IActionResult EditExpectedSubmissionDate(string studentNumber)
+    public IActionResult EditExpectedSubmissionDate(string studentNumber) //presentation layer
     {
-       Student student = Students.Find(s => s.StudentNumber == studentNumber);
-        if (student == null)
-        {
-            return NotFound();
-        }
+        Student? student = _studentService.GetStudent(studentNumber);
 
         return View(student);
     }
@@ -113,30 +92,18 @@ public class StudentsController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult EditExpectedSubmissionDate(
         string studentNumber,
-        DateTime? expectedThesisSubmissionDate)
+        DateTime? expectedThesisSubmissionDate) // business layer
     {
-        Student student = Students.Find(s => s.StudentNumber == studentNumber);
-        if (student == null)
-        {
-            return NotFound();
-        }
-
-        if (!expectedThesisSubmissionDate.HasValue || expectedThesisSubmissionDate.Value.Date <= DateTime.Today)
-        {
-            ModelState.AddModelError(nameof(expectedThesisSubmissionDate), "Please select a valid expected submission date.");
-            return View(student);
-        }
-
-        student.ExpectedThesisSubmissionDate = expectedThesisSubmissionDate.Value.Date;
-        TempData["ExpectedThesisSubmissionDateUpdateSuccess"] = $"{student.FullName}'s expected thesis submission date was updated to {student.ExpectedThesisSubmissionDate:dd/MM/yyyy}.";
+        _studentService.UpdateExpectedSubmissionDate(studentNumber, expectedThesisSubmissionDate);
+        TempData["ExpectedThesisSubmissionDateUpdateSuccess"] = $"The Student's expected thesis submission date was updated to {expectedThesisSubmissionDate:dd/MM/yyyy}.";
 
         return RedirectToAction(nameof(EditExpectedSubmissionDate), new { studentNumber });
     }
 
     [HttpGet]
-    public IActionResult RecordSubmission(string studentNumber)
+    public IActionResult RecordSubmission(string studentNumber) //presentation layer
     {
-        Student student = Students.Find(s => s.StudentNumber == studentNumber);
+        Student? student = _studentService.GetStudent(studentNumber);
         if (student == null)
         {
             return NotFound();
@@ -148,27 +115,54 @@ public class StudentsController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult RecordSubmission(string studentNumber,
-        DateTime? actualThesisSubmissionDate)
+        DateTime? actualThesisSubmissionDate) // business layer
     {
-        Student student = Students.Find(s => s.StudentNumber == studentNumber);
-        if (student == null)
-        {
-            return NotFound();
-        }
-
-        if (!actualThesisSubmissionDate.HasValue ||
-            actualThesisSubmissionDate.Value.Date > DateTime.Today)
-        {
-            ModelState.AddModelError(
-                nameof(actualThesisSubmissionDate),
-                "Please enter a valid actual submission date that is not in the future.");
-            return View(student);
-        }
-
-        student.ActualThesisSubmissionDate = actualThesisSubmissionDate.Value.Date;
-        student.Status = Status.Submitted;
-        TempData["RecordSubmissionSuccess"] = $"{student.FullName}'s actual thesis submission date was recorded as {student.ActualThesisSubmissionDate:dd/MM/yyyy} and status updated to {student.Status}.";
+        _studentService.RecordSubmission(studentNumber, actualThesisSubmissionDate); // abstract the tasks of record submission (update actual thessi submission date and update status) from the controller
+        TempData["RecordSubmissionSuccess"] = $"The student's actual thesis submission date was recorded as {actualThesisSubmissionDate:dd/MM/yyyy} and status updated to Submitted.";
 
         return RedirectToAction(nameof(RecordSubmission), new { studentNumber });
+    }
+
+    [HttpGet]
+    public IActionResult CreateStudent() //business layer
+    {
+        return View("~/Views/Administrator/CreateStudent.cshtml");
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult CreateStudent(Student student) // business layer
+    {
+        if (!ModelState.IsValid)
+        {
+            return View("~/Views/Administrator/CreateStudent.cshtml", student); // return the view with student to preserve the entered data and display validation errors
+        }
+
+        try
+        {
+            _studentService.CreateStudent(student);
+        }
+        catch (ArgumentException exception)
+        {
+            ModelState.AddModelError(nameof(student.StudentNumber), exception.Message);
+            return View("~/Views/Administrator/CreateStudent.cshtml", student);
+        }
+        TempData["CreateStudentSuccess"] = $"The student was successfully created.";
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    public IActionResult StudentDetails() // business layer
+    {
+        try
+        {
+            var students = _studentService.GetStudents();
+            return View("~/Views/Administrator/StudentDetails.cshtml", students);
+        }
+        catch (KeyNotFoundException)
+        {
+            TempData["NoStudentsFound"] = "No students found.";
+            return RedirectToAction(nameof(Administrator));
+        }
     }
 }

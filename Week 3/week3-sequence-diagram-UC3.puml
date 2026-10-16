@@ -1,0 +1,30 @@
+' Sequence Diagram for W3-UC03: List Student'
+
+@startuml
+
+actor Administrator
+participant IndexView
+participant StudentController
+participant StudentService
+participant StudentStorage
+participant StudentDetailsView
+
+IndexView -> IndexView : select List Students
+IndexView -> StudentController : StudentDetails()
+StudentController -> StudentService : GetStudents()
+StudentService -> StudentStorage : GetStudents()
+
+
+alt Students found
+    StudentStorage --> StudentService : Students
+    StudentService -> StudentController : Students in ReadOnlyList<Student>
+    StudentController --> StudentDetailsView : View(student)
+    StudentDetailsView --> Administrator : display student details
+else Students not found
+    StudentStorage --> StudentService : No students found
+    StudentService --> StudentController : Throw exception
+    StudentController --> StudentDetailsView : View(student)
+    StudentDetailsView --> Administrator : display error message
+end
+
+@enduml
