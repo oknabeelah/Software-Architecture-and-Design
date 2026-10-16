@@ -1,0 +1,37 @@
+' Sequence Diagram for W3-UC01: Create Student'
+
+@startuml
+
+actor Administrator
+participant IndexView
+participant StudentController
+participant StudentService
+participant StudentStorage
+participant CreateStudentView
+
+IndexView -> IndexView : select CreateStudent
+IndexView -> StudentController : CreateStudent(student)
+StudentController -> StudentService : CreateStudent(student)
+
+alt Student exists
+    StudentService -> StudentController : Throw exception
+    StudentController --> CreateStudentView : View(student)
+    CreateStudentView --> Administrator : display error message
+    note right
+        Administrator: The student already exists
+    end note
+else Student does not exist
+    alt Invalid Input
+        StudentService -> StudentController : Throw exception
+        StudentController --> CreateStudentView : View(student)
+        CreateStudentView --> Administrator : display error message
+    else Valid Input
+        StudentService -> StudentStorage : AddStudent(student)
+        StudentStorage --> StudentService : Student added
+        StudentService --> StudentController : Student created
+        StudentController --> CreateStudentView : View(student)
+        CreateStudentView --> Administrator : display success message and student details
+    end alt
+end
+
+@enduml
