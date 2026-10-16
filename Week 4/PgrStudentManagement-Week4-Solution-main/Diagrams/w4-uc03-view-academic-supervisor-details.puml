@@ -1,0 +1,49 @@
+@startuml W4_UC03_View_Academic_Supervisor_Details
+
+title Sequence Diagram: W4-UC03 View Academic Supervisor Details
+skinparam shadowing false
+autonumber
+
+actor "PgRT" as Actor
+boundary "Views/AcademicSupervisors\n/Details.cshtml" as DetailsView
+boundary "Views/AcademicSupervisors\n/SupervisorNotFound.cshtml" as NotFoundView
+control "AcademicSupervisorsController" as Controller
+entity "AcademicSupervisorService" as Service
+database "AcademicSupervisorStorage" as Storage
+collections "_academicSupervisors : List" as Collection
+
+Actor -> Controller : GET /AcademicSupervisors/Details?staffNumber={staffNumber}
+activate Controller
+
+Controller -> Service : GetSupervisor(staffNumber)
+activate Service
+
+Service -> Storage : GetAcademicSupervisor(staffNumber)
+activate Storage
+
+Storage -> Collection : FirstOrDefault(s => s.StaffNumber == staffNumber)
+activate Collection
+Collection --> Storage : supervisor (or null)
+deactivate Collection
+
+Storage --> Service : supervisor (or null)
+deactivate Storage
+
+Service --> Controller : supervisor (or null)
+deactivate Service
+
+alt Supervisor not found [Alternative Flow A1: Academic Supervisor Not Found]
+    Controller -> NotFoundView : View("SupervisorNotFound")
+    activate NotFoundView
+    NotFoundView --> Actor : Display "Academic Supervisor Not Found" message
+    deactivate NotFoundView
+else Supervisor found [Main Success Scenario]
+    Controller -> DetailsView : View(supervisor)
+    activate DetailsView
+    DetailsView --> Actor : Display full supervisor details (Name, Staff No, Email, Employment, Training, Eligible Roles)
+    deactivate DetailsView
+end
+
+deactivate Controller
+
+@enduml

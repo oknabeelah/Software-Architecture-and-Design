@@ -1,0 +1,57 @@
+@startuml Week4_Module_Boundaries
+
+title Week 4 Modular Monolith: Module Boundaries & Public Contracts
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+package "Students Module" {
+    package "Contracts (Public)" {
+        interface IStudentLookup <<Module Contract>> {
+            + GetStudentSummary(studentNumber: string): StudentSummary?
+        }
+        
+        class StudentSummary <<Record>> {
+            + StudentNumber: string
+            + DisplayName: string
+        }
+    }
+
+    package "Internal Implementation" {
+        class StudentController <<Controller>>
+        class StudentService <<Service>>
+        class StudentStorage <<Storage>> {
+            - _students: List<Student>
+        }
+    }
+}
+
+package "Academic Supervisors Module" {
+    package "Internal Implementation" {
+        class AcademicSupervisorsController <<Controller>>
+        class AcademicSupervisorService <<Service>>
+        class AcademicSupervisorStorage <<Storage>> {
+            - _academicSupervisors: List<AcademicSupervisor>
+            - _supervisoryAssignments: List<SupervisoryAssignment>
+        }
+    }
+}
+
+' Students Module internal wiring
+StudentController ..> StudentService : uses
+StudentService ..> StudentStorage : uses
+StudentService ..|> IStudentLookup : implements
+IStudentLookup ..> StudentSummary : returns
+
+' Academic Supervisors Module internal wiring
+AcademicSupervisorsController ..> AcademicSupervisorService : uses
+AcademicSupervisorService ..> AcademicSupervisorStorage : uses
+
+' Explicit cross-module contract dependency
+AcademicSupervisorService ..> IStudentLookup : uses contract
+
+note right of IStudentLookup
+  Cross-module access only occurs through this public contract.
+  AcademicSupervisorService never accesses StudentStorage directly.
+end note
+
+@enduml

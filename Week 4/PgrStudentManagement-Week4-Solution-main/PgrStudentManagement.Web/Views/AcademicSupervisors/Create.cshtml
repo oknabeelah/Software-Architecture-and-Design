@@ -1,0 +1,69 @@
+@model PgrStudentManagement.Web.Modules.AcademicSupervisors.Models.AcademicSupervisor
+
+@{
+    ViewData["Title"] = "Create Academic Supervisor";
+}
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">Create Academic Supervisor</h4>
+    </div>
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <label asp-for="StaffNumber" class="form-label">Staff Number <span class="text-danger">*</span></label>
+                    <input asp-for="StaffNumber" class="form-control" placeholder="e.g. STAFF005" required />
+                    <span asp-validation-for="StaffNumber" class="text-danger"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="FirstName" class="form-label">First Name <span class="text-danger">*</span></label>
+                    <input asp-for="FirstName" class="form-control" required />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="LastName" class="form-label">Last Name <span class="text-danger">*</span></label>
+                    <input asp-for="LastName" class="form-control" required />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label asp-for="EmailAddress" class="form-label">Email Address <span class="text-danger">*</span></label>
+                    <input asp-for="EmailAddress" type="email" class="form-control" required />
+                    <span asp-validation-for="EmailAddress" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="EmploymentType" class="form-label">Employment Type <span class="text-danger">*</span></label>
+                    <select asp-for="EmploymentType" class="form-select" asp-items="Html.GetEnumSelectList<PgrStudentManagement.Web.Modules.AcademicSupervisors.Models.SupervisorEmploymentType>()"></select>
+                    <span asp-validation-for="EmploymentType" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-3 form-check">
+                <input asp-for="TrainingCompleted" class="form-check-input" type="checkbox" id="trainingCheck" />
+                <label class="form-check-label" for="trainingCheck">Supervisor Training Completed</label>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label d-block">Eligible Roles</label>
+                @foreach (var role in Enum.GetValues<PgrStudentManagement.Web.Modules.AcademicSupervisors.Models.SupervisoryRole>())
+                {
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" name="eligibleRoles" value="@role" id="role_@role"
+                               @(Model?.EligibleRoles?.Contains(role) == true ? "checked" : "") />
+                        <label class="form-check-label" for="role_@role">@role</label>
+                    </div>
+                }
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Create Supervisor</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,91 @@
+@startuml W4_UC04_Assign_Academic_Supervisor
+
+title Sequence Diagram: W4-UC04 Assign Academic Supervisor to Student
+skinparam shadowing false
+autonumber
+
+actor "PgRT" as Actor
+boundary "Views/AcademicSupervisors\n/Assign.cshtml" as AssignView
+control "AcademicSupervisorsController" as Controller
+entity "AcademicSupervisorService" as Service
+participant "IStudentLookup\n<<Contract>>" as StudentContract
+database "AcademicSupervisorStorage" as Storage
+collections "_supervisoryAssignments\n: List" as AssignmentsCol
+
+== Assign Form Submission ==
+Actor -> Controller : POST /AcademicSupervisors/Assign(model)
+activate Controller
+
+Controller -> Service : AssignSupervisor(studentNumber, staffNumber, role, startDate, exceptionAuthorised)
+activate Service
+
+== Cross-Module Student Validation ==
+Service -> StudentContract : GetStudentSummary(studentNumber)
+activate StudentContract
+StudentContract --> Service : StudentSummary (or null)
+deactivate StudentContract
+
+== Supervisor Lookup ==
+Service -> Storage : GetAcademicSupervisor(staffNumber)
+activate Storage
+Storage --> Service : AcademicSupervisor (or null)
+deactivate Storage
+
+== Business Rule Validations ==
+Service -> Service : 1. Verify External restriction (BR13)\n   (External cannot be DoS or FirstSupervisor)
+Service -> Service : 2. Verify Role Eligibility\n   (supervisor.EligibleRoles.Contains(role))
+
+Service -> Storage : GetAssignmentsForStudent(studentNumber)
+activate Storage
+Storage --> Service : IReadOnlyList<SupervisoryAssignment>
+deactivate Storage
+
+Service -> Service : Filter current assignments (EndDate is null)
+Service -> Service : 3. Check Duplicate Active Assignment (BR15)\n   (same student, supervisor, role)
+Service -> Service : 4. Check Unique Role (BR14)\n   (single active DoS and FirstSupervisor)
+Service -> Service : 5. Check Team Size Limits (BR02, BR03)\n   (max 3 supervisors unless exceptionAuthorised)
+
+alt Duplicate Assignment Exists [Alternative Flow A1: Assignment Already Exists]
+    Service --> Controller : (AssignmentOutcome.DuplicateAssignment, "This Academic Supervisor is already assigned to the student in this role.")
+    Controller -> Controller : ModelState.AddModelError("", errorMessage)
+    Controller -> Service : GetStudentSummary(studentNumber)
+    activate Service
+    Service -> StudentContract : GetStudentSummary(studentNumber)
+    activate StudentContract
+    StudentContract --> Service : StudentSummary
+    deactivate StudentContract
+    Service --> Controller : StudentSummary
+    deactivate Service
+
+    Controller -> Service : GetSupervisors()
+    activate Service
+    Service -> Storage : GetAcademicSupervisors()
+    activate Storage
+    Storage --> Service : List<AcademicSupervisor>
+    deactivate Storage
+    Service --> Controller : List<AcademicSupervisor>
+    deactivate Service
+
+    Controller -> AssignView : View(model)
+    activate AssignView
+    AssignView --> Actor : Redisplay form with "This Academic Supervisor is already assigned to the student in this role."
+    deactivate AssignView
+
+else Valid Proposed Assignment [Main Success Scenario]
+    Service -> Storage : AddSupervisoryAssignment(new SupervisoryAssignment { ... })
+    activate Storage
+    Storage -> AssignmentsCol : Add(assignment)
+    activate AssignmentsCol
+    AssignmentsCol --> Storage : void
+    deactivate AssignmentsCol
+    Storage --> Service : void
+    deactivate Storage
+
+    Service --> Controller : (AssignmentOutcome.Created, null)
+    deactivate Service
+
+    Controller --> Actor : RedirectToAction("SupervisoryTeam", new { studentNumber })
+    deactivate Controller
+end
+
+@enduml

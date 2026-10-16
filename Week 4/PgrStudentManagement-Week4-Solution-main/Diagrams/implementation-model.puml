@@ -1,0 +1,220 @@
+@startuml Week4_ImplementationModel
+
+title Week 4 Implementation Class Diagram: Modular Monolith
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+package "Students Module" {
+    package "Contracts" {
+        interface IStudentLookup <<Contract>> {
+            + GetStudentSummary(studentNumber: string): StudentSummary?
+        }
+
+        class StudentSummary <<Record>> {
+            + StudentNumber: string
+            + DisplayName: string
+        }
+    }
+
+    package "Controllers" {
+        class StudentController <<Controller>> {
+            - _studentService: StudentService
+            + Index(): IActionResult
+            + Create(): IActionResult
+            + Create(student: Student): IActionResult
+            + Details(studentNumber: string): IActionResult
+            + EnrolmentDetails(studentNumber: string): IActionResult
+            + ThesisDetails(studentNumber: string): IActionResult
+            + EditStatus(studentNumber: string): IActionResult
+            + EditStatus(studentNumber: string, status: Status): IActionResult
+            + EditExpectedSubmissionDate(studentNumber: string): IActionResult
+            + EditExpectedSubmissionDate(studentNumber: string, expectedDate: DateTime?): IActionResult
+            + RecordSubmission(studentNumber: string): IActionResult
+            + RecordSubmission(studentNumber: string, submissionDate: DateTime?): IActionResult
+        }
+    }
+
+    package "Services" {
+        class StudentService <<Service>> {
+            - _studentStorage: StudentStorage
+            + GetStudents(): IReadOnlyList<Student>
+            + GetStudent(studentNumber: string): Student?
+            + GetStudentSummary(studentNumber: string): StudentSummary?
+            + CreateStudent(student: Student): OperationResult<Student>
+            + UpdateStatus(studentNumber: string, status: Status): OperationResult
+            + UpdateExpectedSubmissionDate(studentNumber: string, expectedDate: DateTime?): OperationResult
+            + RecordSubmission(studentNumber: string, actualDate: DateTime?): OperationResult
+        }
+
+        class OperationResult {
+            + Succeeded: bool
+            + ErrorMessage: string?
+            + {static} Success(): OperationResult
+            + {static} Failure(message: string): OperationResult
+        }
+
+        class "OperationResult<T>" as OperationResultT {
+            + Succeeded: bool
+            + Value: T?
+            + ErrorMessage: string?
+            + {static} Success(value: T): OperationResult<T>
+            + {static} Failure(message: string): OperationResult<T>
+        }
+    }
+
+    package "Data" {
+        class StudentStorage <<Storage>> {
+            - _students: List<Student>
+            + GetStudents(): IReadOnlyList<Student>
+            + GetStudent(studentNumber: string): Student?
+            + StudentNumberExists(studentNumber: string): bool
+            + AddStudent(student: Student): void
+            + UpdateStudent(student: Student): void
+        }
+    }
+}
+
+package "Academic Supervisors Module" {
+    package "Controllers" {
+        class AcademicSupervisorsController <<Controller>> {
+            - _supervisorService: AcademicSupervisorService
+            + Index(): IActionResult
+            + Details(staffNumber: string): IActionResult
+            + Create(): IActionResult
+            + Create(supervisor: AcademicSupervisor, eligibleRoles: List<SupervisoryRole>): IActionResult
+            + SupervisoryTeam(studentNumber: string): IActionResult
+            + Assign(studentNumber: string): IActionResult
+            + Assign(model: AssignSupervisorViewModel): IActionResult
+        }
+    }
+
+    package "Services" {
+        class AcademicSupervisorService <<Service>> {
+            - _supervisorStorage: AcademicSupervisorStorage
+            - _studentLookup: IStudentLookup
+            + GetSupervisors(): IReadOnlyList<AcademicSupervisor>
+            + GetSupervisor(staffNumber: string): AcademicSupervisor?
+            + GetStudentSummary(studentNumber: string): StudentSummary?
+            + CreateSupervisor(supervisor: AcademicSupervisor): (bool, string?, AcademicSupervisor?)
+            + GetAssignmentsForStudent(studentNumber: string): IReadOnlyList<SupervisoryAssignment>
+            + AssignSupervisor(studentNumber: string, staffNumber: string, role: SupervisoryRole, startDate: DateTime, exceptionAuthorised: bool): (AssignmentOutcome, string?)
+            + EvaluateSupervisoryTeam(studentNumber: string): SupervisoryTeamAssessment
+        }
+
+        enum AssignmentOutcome {
+            Created
+            StudentNotFound
+            SupervisorNotFound
+            DuplicateAssignment
+            RoleAlreadyFilled
+            SupervisorNotEligible
+            EmploymentTypeNotPermitted
+            ExceptionRequired
+        }
+
+        class SupervisoryTeamAssessment <<Record>> {
+            + IsComplete: bool
+            + Issues: IReadOnlyList<string>
+        }
+    }
+
+    package "Data" {
+        class AcademicSupervisorStorage <<Storage>> {
+            - _academicSupervisors: List<AcademicSupervisor>
+            - _supervisoryAssignments: List<SupervisoryAssignment>
+            + GetAcademicSupervisors(): IReadOnlyList<AcademicSupervisor>
+            + GetAcademicSupervisor(staffNumber: string): AcademicSupervisor?
+            + StaffNumberExists(staffNumber: string): bool
+            + AddAcademicSupervisor(supervisor: AcademicSupervisor): void
+            + UpdateAcademicSupervisor(supervisor: AcademicSupervisor): void
+            + GetAssignmentsForStudent(studentNumber: string): IReadOnlyList<SupervisoryAssignment>
+            + GetAssignmentsForSupervisor(staffNumber: string): IReadOnlyList<SupervisoryAssignment>
+            + AddSupervisoryAssignment(assignment: SupervisoryAssignment): void
+            + UpdateSupervisoryAssignment(assignment: SupervisoryAssignment): void
+        }
+    }
+
+    package "Models / ViewModels" {
+        class SupervisoryTeamViewModel {
+            + Student: StudentSummary
+            + Assignments: IReadOnlyList<SupervisoryTeamItemViewModel>
+            + Assessment: SupervisoryTeamAssessment
+        }
+
+        class SupervisoryTeamItemViewModel {
+            + Assignment: SupervisoryAssignment
+            + Supervisor: AcademicSupervisor?
+        }
+
+        class AssignSupervisorViewModel {
+            + StudentNumber: string
+            + Student: StudentSummary?
+            + StaffNumber: string
+            + Role: SupervisoryRole
+            + StartDate: DateTime
+            + ExceptionAuthorised: bool
+            + AvailableSupervisors: IReadOnlyList<AcademicSupervisor>
+        }
+    }
+}
+
+package "Views" {
+    package "Views/Student" {
+        class "Index.cshtml" as V_Student_Index <<Razor View>>
+        class "Details.cshtml" as V_Student_Details <<Razor View>>
+        class "Create.cshtml" as V_Student_Create <<Razor View>>
+        class "EnrolmentDetails.cshtml" as V_Student_Enrolment <<Razor View>>
+        class "ThesisDetails.cshtml" as V_Student_Thesis <<Razor View>>
+        class "EditStatus.cshtml" as V_Student_Status <<Razor View>>
+        class "EditExpectedSubmissionDate.cshtml" as V_Student_ExpDate <<Razor View>>
+        class "RecordSubmission.cshtml" as V_Student_RecordSub <<Razor View>>
+        class "StudentNotFound.cshtml" as V_Student_NotFound <<Razor View>>
+    }
+
+    package "Views/AcademicSupervisors" {
+        class "Index.cshtml" as V_Sup_Index <<Razor View>>
+        class "Details.cshtml" as V_Sup_Details <<Razor View>>
+        class "Create.cshtml" as V_Sup_Create <<Razor View>>
+        class "Assign.cshtml" as V_Sup_Assign <<Razor View>>
+        class "SupervisoryTeam.cshtml" as V_Sup_Team <<Razor View>>
+        class "SupervisorNotFound.cshtml" as V_Sup_NotFound <<Razor View>>
+    }
+}
+
+' Wiring & Dependencies
+StudentController --> StudentService : invokes
+StudentService --> StudentStorage : uses
+StudentService ..|> IStudentLookup : implements
+IStudentLookup ..> StudentSummary : returns
+StudentService ..> OperationResult : returns
+StudentService ..> OperationResultT : returns
+
+AcademicSupervisorsController --> AcademicSupervisorService : invokes
+AcademicSupervisorService --> AcademicSupervisorStorage : uses
+AcademicSupervisorService --> IStudentLookup : consumes cross-module contract
+AcademicSupervisorService ..> AssignmentOutcome : returns
+AcademicSupervisorService ..> SupervisoryTeamAssessment : returns
+
+AcademicSupervisorsController ..> SupervisoryTeamViewModel : creates & passes
+AcademicSupervisorsController ..> AssignSupervisorViewModel : creates & passes
+
+' View associations
+StudentController ..> V_Student_Index : renders
+StudentController ..> V_Student_Details : renders
+StudentController ..> V_Student_Create : renders
+StudentController ..> V_Student_Enrolment : renders
+StudentController ..> V_Student_Thesis : renders
+StudentController ..> V_Student_Status : renders
+StudentController ..> V_Student_ExpDate : renders
+StudentController ..> V_Student_RecordSub : renders
+StudentController ..> V_Student_NotFound : renders
+
+AcademicSupervisorsController ..> V_Sup_Index : renders
+AcademicSupervisorsController ..> V_Sup_Details : renders
+AcademicSupervisorsController ..> V_Sup_Create : renders
+AcademicSupervisorsController ..> V_Sup_Assign : renders
+AcademicSupervisorsController ..> V_Sup_Team : renders
+AcademicSupervisorsController ..> V_Sup_NotFound : renders
+
+@enduml

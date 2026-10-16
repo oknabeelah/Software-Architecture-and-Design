@@ -1,0 +1,68 @@
+@model IReadOnlyList<PgrStudentManagement.Web.Modules.AcademicSupervisors.Models.AcademicSupervisor>
+
+@{
+    ViewData["Title"] = "Academic Supervisors";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Academic Supervisors</h2>
+    <a asp-action="Create" class="btn btn-primary">Create Academic Supervisor</a>
+</div>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">
+        <p class="mb-0">No Academic Supervisors found.</p>
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Staff Number</th>
+                    <th>Name</th>
+                    <th>Email Address</th>
+                    <th>Employment Type</th>
+                    <th>Training Status</th>
+                    <th>Eligible Roles</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var supervisor in Model)
+                {
+                    <tr>
+                        <td><strong>@supervisor.StaffNumber</strong></td>
+                        <td>@supervisor.FullName</td>
+                        <td>@supervisor.EmailAddress</td>
+                        <td>
+                            <span class="badge @(supervisor.EmploymentType == PgrStudentManagement.Web.Modules.AcademicSupervisors.Models.SupervisorEmploymentType.InstitutionEmployed ? "bg-success" : "bg-secondary")">
+                                @supervisor.EmploymentType
+                            </span>
+                        </td>
+                        <td>
+                            @if (supervisor.TrainingCompleted)
+                            {
+                                <span class="badge bg-success">Completed</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            }
+                        </td>
+                        <td>
+                            @string.Join(", ", supervisor.EligibleRoles)
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-route-staffNumber="@supervisor.StaffNumber" class="btn btn-sm btn-outline-primary">
+                                Details
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
