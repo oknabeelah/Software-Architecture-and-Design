@@ -1,0 +1,166 @@
+@startuml implementation-week4-class-diagram
+
+
+
+package "Students Module" {
+    package "Contracts" {
+        interface IStudentLookup <<Contract>> {
+            +GetStudentSummary(studentNumbers : string>) : StudentSummary?
+        }
+        class StudentSummary <<Contract>> {
+            +StudentNumber : String
+            +FullName : String
+        }
+    }
+
+    package Models {
+        class Student {
+            +StudentNumber : String
+            +FirstName : String
+            +LastName : String 
+            +FullName : String
+            +ModeOfStudy : String
+            +StartDate : Date
+            +Status : Status
+            +Course : String
+            +ThesisTitle : String
+            +ExpectedThesisSubmissionDate : Date
+            +ActualThesisSubmissionDate : Date
+        }
+        enum Status {
+            +Enrolled
+            +Suspended
+            +Withdrawn
+            +Completed
+        }
+    }
+
+    package Controllers {
+        class StudentsController <<controller>> {
+            +studentService : StudentService
+            -Index() : IActionResult
+            -Administrator() : IActionResult
+            -EnrolmentDetails(studentNumber : String) : IActionResult
+            -ThesisDetails(studentNumber : String) : IActionResult
+            -EditStatus(studentNumber : String, status : Status) : IActionResult
+            -EditExpectingSubmissionDate(studentNumber : String, expectedSubmissionDate : Date) : IActionResult
+            -RecordSubmission(studentNumber : String, actualSubmissionDate : Date) : IActionResult
+            -CreateStudent(Student student) : IActionResult
+            -StudentDetails() : IActionResult
+        }
+    }
+
+    package Services {
+        class StudentService <<services>> {
+            +studentStorage : StudentStorage
+            -GetStudents() : ReadOnlyList<Student>
+            -GetStudent(studentNumber : String) : Student
+            -CreateStudent(student : Student) : void
+            -UpdateStatus(studentNumber : String, status : Status) : void
+            -UpdateExpectedSubmissionDate(studentNumber : String, expectedSubmissionDate : Date) : void
+            -RecordSubmission(studentNumber : String, actualSubmissionDate : Date) : void
+        }
+    }
+
+    package Data {
+        class StudentStorage <<Storage>> {
+            -_studentService : List<Student>
+            +GetStudents() : IReadOnlyList<Student>
+            +GetStudent(studentNumber : String) : Student?
+            +AddStudent(student : Student) : void
+            +UpdateStatus(studentNumber : String, status : Status) : void
+            +UpdateExpectedThesisSubmissionDate(studentNumber : String, expectedSubmissionDate : Date) : void
+            +UpdateActualThesisSubmissionDate(studentNumber : String, actualSubmissionDate : Date) : void
+        }
+    }
+}
+
+package "Academic Supervisors Module" {
+    package "Controllers" {
+        class AcademicSupervisorsController <<controller>> {
+            -_academicSupervisorService : AcademicSupervisorService
+            +Index() : IActionResult
+            +SupervisorDetails(supervisorId : String) : IActionResult
+            +CreateSupervisor(supervisor : AcademicSupervisor) : IActionResult
+            +ViewSupervisoryTeam(studentNumber : String) : IActionResult
+            +AssignSupervisor(assignment: SupervisorAssignment) : IActionResult
+        }
+    }
+
+    package "Services" {
+        class AcademicSupervisorService <<services>> {
+            -_academicSupervisorStorage : AcademicSupervisorStorage
+            -_studentLookup : IStudentLookup
+            +GetSupervisors() : ReadOnlyList<AcademicSupervisor>
+            +GetSupervisor(staffNumber : String) : AcademicSupervisor?
+            +CreateSupervisor(supervisor : AcademicSupervisor) : void
+            +GetAssignmentsForStudent(studentNumber : String) : ReadOnlyList<SupervisorAssignment>
+            +AssignSupervisor(assignment: SupervisorAssignment) : void
+        }
+    }
+
+    package "Data" {
+        class AcademicSupervisorStorage <<Storage>> {
+            -_academicSupervisors : List<AcademicSupervisor>
+            -_supervisorAssignments : List<SupervisorAssignment>
+            +GetSupervisors() : IReadOnlyList<AcademicSupervisor>
+            +GetSupervisor(staffNumber : String) : AcademicSupervisor?
+            +AddSupervisor(supervisor : AcademicSupervisor) : void
+            +GetAssignmentsForStudent(studentNumber : String) : IReadOnlyList<SupervisorAssignment>
+            +AddSupervisorAssignment(assignment: SupervisorAssignment) : void
+            +UpdateSupervisorAssignment(assignment: SupervisorAssignment) : void
+        }
+    }
+}
+
+
+package Views {
+    package "Students" {
+        class "Index.cshtml" as IndexView <<view>>
+        class "EnrolmentDetails.cshtml" as EnrolmentDetailsView <<view>>
+        class "ThesisDetails.cshtml" as ThesisDetailsView <<view>>
+        class "NoThesisDetails.cshtml" as NoThesisDetailsView <<view>>
+        class "EditStatus.cshtml" as EditStatusView <<view>>
+        class "EditExpectingSubmissionDate.cshtml" as EditExpectingSubmissionDateView <<view>>
+        class "RecordSubmission.cshtml" as RecordSubmissionView <<view>>
+        class "CreateStudent.cshtml" as CreateStudentView <<view>>
+        class "StudentDetails.cshtml" as StudentDetailsView <<view>>
+    }
+    package "Academic Supervisors" {
+        class "Index.cshtml" as AcademicSupervisorsIndexView <<view>>
+        class "SupervisorDetails.cshtml" as SupervisorDetailsView <<view>>
+        class "CreateSupervisor.cshtml" as CreateSupervisorView <<view>>
+        class "ViewSupervisoryTeam.cshtml" as ViewSupervisoryTeamView <<view>>
+        class "AssignSupervisor.cshtml" as AssignSupervisorView <<view>>
+    }
+}
+
+StudentStorage "1" o-- "0..*" Student : in-memory collection
+StudentService --> StudentStorage : uses
+StudentsController --> StudentService : invokes
+StudentService --> IStudentLookup : implements
+IStudentLookup --> StudentSummary : returns
+
+AcademicSupervisorsController --> AcademicSupervisorService : invokes
+AcademicSupervisorService --> AcademicSupervisorStorage : uses
+AcademicSupervisorService --> IStudentLookup : consumes cross module contract
+
+
+StudentsController --> Status : uses
+StudentsController --> IndexView : renders
+StudentsController --> EnrolmentDetailsView : renders
+StudentsController --> ThesisDetailsView : renders
+StudentsController --> NoThesisDetailsView : renders
+StudentsController --> EditStatusView : renders
+StudentsController --> EditExpectingSubmissionDateView : renders
+StudentsController --> RecordSubmissionView : renders
+StudentsController --> CreateStudentView : renders
+StudentsController --> StudentDetailsView : renders
+
+AcademicSupervisorsController --> AcademicSupervisorsIndexView : renders
+AcademicSupervisorsController --> SupervisorDetailsView : renders
+AcademicSupervisorsController --> CreateSupervisorView : renders
+AcademicSupervisorsController --> ViewSupervisoryTeamView : renders
+AcademicSupervisorsController --> AssignSupervisorView : renders
+
+@enduml

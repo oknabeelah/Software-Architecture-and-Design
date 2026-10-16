@@ -1,0 +1,27 @@
+' Sequence Diagram for W4-UC03: Academic Supervisor Details'
+@startuml
+
+actor PgRT
+participant IndexView
+participant AcademicSupervisorController
+participant AcademicSupervisorService
+participant AcademicSupervisorStorage
+participant AcademicSupervisorDetailsView
+
+IndexView -> AcademicSupervisorController : GetAcademicSupervisor(staffNumber)
+AcademicSupervisorController -> AcademicSupervisorService : GetAcademicSupervisorbyStaffNumber(staffNumber)
+AcademicSupervisorService -> AcademicSupervisorStorage : GetAcademicSupervisor(staffNumber)
+
+alt Invalid Academic Supervisor number
+    AcademicSupervisorStorage --> AcademicSupervisorService : return null
+    AcademicSupervisorService -> AcademicSupervisorController : Throw exception
+    AcademicSupervisorController --> AcademicSupervisorDetailsView : display error message
+    AcademicSupervisorDetailsView --> PgRT : Invalid Academic Supervisor number
+else
+    AcademicSupervisorStorage --> AcademicSupervisorService : AcademicSupervisor
+    AcademicSupervisorService --> AcademicSupervisorController : AcademicSupervisor
+    AcademicSupervisorController --> AcademicSupervisorDetailsView : View(academicSupervisor)
+    IndexView --> PgRT : display Academic Supervisor details
+end
+
+@enduml

@@ -1,0 +1,36 @@
+' Sequence Diagram for W4-UC01: Create Academic Supervisor'
+@startuml
+
+actor PgRT
+participant IndexView
+participant AcademicSupervisorController
+participant AcademicSupervisorService
+participant AcademicSupervisorStorage
+participant CreateAcademicSupervisorView
+
+IndexView -> IndexView : select CreateAcademicSupervisor
+IndexView -> AcademicSupervisorController : CreateAcademicSupervisor(academicSupervisor)
+AcademicSupervisorController -> AcademicSupervisorService : CreateAcademicSupervisor(academicSupervisor)
+
+alt Duplicate Academic Supervisor
+    AcademicSupervisorService -> AcademicSupervisorController : Throw exception
+    AcademicSupervisorController --> CreateAcademicSupervisorView : View(academicSupervisor)
+    CreateAcademicSupervisorView --> PgRT : display error message
+    note right
+        PgRT: The academic supervisor already exists
+    end note
+else New Academic Supervisor
+    alt Invalid Input
+        AcademicSupervisorService -> AcademicSupervisorController : Throw exception
+        AcademicSupervisorController --> CreateAcademicSupervisorView : View(academicSupervisor)
+        CreateAcademicSupervisorView --> PgRT : display error message
+    else Valid Input
+        AcademicSupervisorService -> AcademicSupervisorStorage : AddAcademicSupervisor(academicSupervisor)
+        AcademicSupervisorStorage --> AcademicSupervisorService : Academic Supervisor added
+        AcademicSupervisorService --> AcademicSupervisorController : Academic Supervisor created
+        AcademicSupervisorController --> CreateAcademicSupervisorView : View(academicSupervisor)
+        CreateAcademicSupervisorView --> PgRT : display success message and Academic Supervisor details
+    end alt
+end
+
+@enduml
