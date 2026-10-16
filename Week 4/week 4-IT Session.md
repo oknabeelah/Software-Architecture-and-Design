@@ -78,26 +78,34 @@ Each module should:
 	**Why those fields are required by the supervisory use cases** - in UC04 and UC05, its used to confirm that a provided student number is indeed valid
 	**How the contract prevents direct access to the Students module's internal data** - 
 	**How the contract is registered with dependency injection** - 
-	
 - [x] T13: Implement W4-UC04 Assign Academic Supervisor to Student
 	Decide and document:  
-	Whether Adviser assignments count towards the supervisor-number limit - yes they do, all current assignments cannot exceed 3 without authorised exception
-	Where an authorised fourth-supervisor exception is recorded.  
-	Whether eligibility is stored or derived.  
-	How a current assignment is identified.  
-	Whether start dates include time or only a calendar date.  
-	How incomplete and complete supervisory teams are displayed.  
-	Which service operation evaluates team completeness.
-	
-- [ ] T14: Implement W4-UC05 View Student Supervisory Team
-- [ ] T15: Check Module Encapsulation
-- [ ] T16: Verify the Complete Core Application
+	**Whether Adviser assignments count towards the supervisor number limit** - yes they do, all current assignments cannot exceed 3 without authorised exception
+	**Where an authorised fourth-supervisor exception is recorded** - bool exception authorise and expanded in new authorised exception model and 
+	**Whether eligibility is stored or derived** - derived from employment type 
+	**How a current assignment is identified** - current bool
+	**Whether start dates include time or only a calendar date** -   should not include time
+	How incomplete and complete supervisory teams are displayed - n/a 
+	Which service operation evaluates team completeness - n/a
+- [x] T14: Implement W4-UC05 View Student Supervisory Team
+	Record your decisions about: 
+	**Fields displayed for each supervisor**  - Staff number, role, start date, end date, assignment state
+	**Assignment ordering**  - In chronological order
+	**Current and historical grouping**  - Displayed as one table
+	**Representation of the derived current state** - replaced end date with current if true
+- [x] T15: Check Module Encapsulation
+	Create a short dependency table showing each cross-module dependency and its purpose.
+	| Dependency | Owning module | Consumer | Purpose |
+	| `IStudentLookup` | Student Management | Academic Supervisor Management | Validates that a student exists and provides the student number required by supervisory use cases. |
+	| `StudentSummary` | Student Management | Academic Supervisor Management | Exposes limited student identity data without exposing student storage. | 
+	The Academic Supervisor Management module owns supervisors, supervisory assignments, and their business rules. It depends on Student Management only through the `IStudentLookup` contract. It does not access `StudentStorage` or the Students collection directly. The contract is registered by `AddStudentsModule()` and injected into `AcademicSupervisorService`.
+- [x] T16: Verify the Complete Core Application
 - [ ] ET1: Implement W4-UC06 Update Academic Supervisor Eligibility
 - [ ] ET2: Implement W4-UC07 End Supervisory Assignment
 - [ ] ET3: Implement W4-UC08 View Academic Supervisor Assignments
 - [ ] ET4: Add Module-Level Tests
 - [ ] ET5: Identify Additional Alternative Flows
-- [ ] Answer Reflection questions
+- [x] Answer Reflection questions
 
 ---
 
