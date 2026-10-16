@@ -1,0 +1,27 @@
+' Sequence Diagram for W4-UC02: List Academic Supervisors'
+@startuml
+
+actor PgRT
+participant IndexView
+participant AcademicSupervisorController
+participant AcademicSupervisorService
+participant AcademicSupervisorStorage
+
+
+IndexView -> AcademicSupervisorController : GetAcademicSupervisors()
+AcademicSupervisorController -> AcademicSupervisorService : GetAcademicSupervisors()
+AcademicSupervisorService -> AcademicSupervisorStorage : GetAcademicSupervisors()
+
+alt No Academic Supervisor found
+    AcademicSupervisorStorage --> AcademicSupervisorService : return empty list
+    AcademicSupervisorService -> AcademicSupervisorController : return empty list
+    AcademicSupervisorController --> IndexView : display table with no records
+    IndexView --> PgRT : No academic supervisors found
+else
+    AcademicSupervisorStorage --> AcademicSupervisorService : IREadOnlyList<AcademicSupervisor>
+    AcademicSupervisorService --> AcademicSupervisorController : IReadOnlyList<AcademicSupervisor>
+    AcademicSupervisorController --> IndexView : View(academicSupervisor)
+    IndexView --> PgRT : display table of Academic Supervisors
+end
+
+@enduml

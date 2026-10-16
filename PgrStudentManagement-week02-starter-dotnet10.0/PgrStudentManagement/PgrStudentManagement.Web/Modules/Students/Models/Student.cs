@@ -37,4 +37,20 @@ public class Student
      * Review the supplied domain model before adding or renaming fields.
      */
 
+/*
+    suspensionEndDate : Date
+    feeStatus : String
+    HoRD : String
+    pgrt : String
+    college : String
+    departmentSchool : String
+    rikeHub : String
+    additionalTimeMonths : Integer
+    visa : Boolean
+    bursary : Boolean
+    learningContract : Boolean
+    thesisTitle : String
+    studentEmail : String
+*/
+
 }

@@ -1,0 +1,39 @@
+' Sequence Diagram for W4-UC04: Assign Academic Supervisor to Student'
+@startuml
+
+actor PgRT
+participant IndexView
+participant AcademicSupervisorController
+participant AcademicSupervisorService
+participant IStudentLookup
+participant AcademicSupervisorStorage
+participant AssignSupervisorView
+
+IndexView -> IndexView : Assign Academic Supervisor to Student
+IndexView -> AcademicSupervisorController : AssignSupervisor(SupervisoryAssignment)
+AcademicSupervisorController -> AcademicSupervisorService : AssignSupervisor(SupervisoryAssignment)
+AcademicSupervisorService -> IStudentLookup : StudentSummary(StudentNumber)
+AcademicSupervisorService --> IStudentLookup : return StudentSummary
+
+alt Invalid Student Number
+    IStudentLookup --> AcademicSupervisorService : return null
+    AcademicSupervisorService -> AcademicSupervisorController : Throw exception
+    AcademicSupervisorController --> AssignSupervisorView : display error message
+    AssignSupervisorView --> PgRT : Invalid Student Number
+else
+    IStudentLookup --> AcademicSupervisorService : return StudentSummary
+    AcademicSupervisorService -> AcademicSupervisorStorage : GetSupervisoryTeam(StudentNumber)
+    alt No Supervisory Team Found
+        AcademicSupervisorStorage --> AcademicSupervisorService : return null
+        AcademicSupervisorService -> AcademicSupervisorController : Throw exception
+        AcademicSupervisorController --> AssignSupervisorView : display error message
+        AssignSupervisorView --> PgRT : No Supervisory Team found for Student Number
+    else
+        AcademicSupervisorStorage --> AcademicSupervisorService : return SupervisoryTeam
+        AcademicSupervisorService --> AcademicSupervisorController : return SupervisoryTeam
+        AcademicSupervisorController --> AssignSupervisorView : display Supervisory Team details
+        AssignSupervisorView --> PgRT : display Supervisory Team details and input form for assigning supervisor to student
+    end
+end
+
+@enduml

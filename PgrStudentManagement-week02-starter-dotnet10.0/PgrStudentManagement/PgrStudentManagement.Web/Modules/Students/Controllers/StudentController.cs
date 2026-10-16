@@ -33,24 +33,15 @@ public class StudentsController : Controller
     public IActionResult EnrolmentDetails(string studentNumber, string? returnTo) //recieves request, selects view, accesses the static collection, finds student, => presentation layer
     {
         Student? student = _studentService.GetStudent(studentNumber);
-        if (student == null)
-        {
-            return NotFound();
-        }
-
+        
         ViewBag.ReturnTo = returnTo; // store the returnTo value in ViewData to be used in the view for navigation
-
         return View(student);
     }
 
     public IActionResult ThesisDetails(string studentNumber) //recieves request, selects view, accesses the static collection, finds student, => presentation layer
     {
         Student? student = _studentService.GetStudent(studentNumber);
-        if (student == null)
-        {
-            return NotFound();
-        }
-        if (student.ThesisTitle == null)
+        if (student?.ThesisTitle == null)
         {
             return View("NoThesisDetails", student);
         }
@@ -62,11 +53,6 @@ public class StudentsController : Controller
     public IActionResult EditStatus(string studentNumber) //recieves request, selects view, accesses the static collection, finds student => presentation layer
     {
         Student? student = _studentService.GetStudent(studentNumber);
-        if (student == null)
-        {
-            return NotFound();
-        }
-
         return View(student);
     }
 
@@ -74,9 +60,18 @@ public class StudentsController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult EditStatus(string studentNumber, Status status) //updates student info => business layer
     {
-        _studentService.UpdateStatus(studentNumber, status);
-        TempData["StatusUpdateSuccess"] = $"The student's status was updated to {status}.";
+        try
+        {
+            _studentService.UpdateStatus(studentNumber, status);
+        }
+        catch (ArgumentException exception)
+        {
+            ModelState.AddModelError(nameof(status), exception.Message);
+            Student? student = _studentService.GetStudent(studentNumber);
+            return View(student);
+        }
 
+        TempData["StatusUpdateSuccess"] = $"The student's status was updated to {status}.";
         return RedirectToAction(nameof(EditStatus), new { studentNumber });
     }
 
@@ -94,9 +89,18 @@ public class StudentsController : Controller
         string studentNumber,
         DateTime? expectedThesisSubmissionDate) // business layer
     {
-        _studentService.UpdateExpectedSubmissionDate(studentNumber, expectedThesisSubmissionDate);
-        TempData["ExpectedThesisSubmissionDateUpdateSuccess"] = $"The Student's expected thesis submission date was updated to {expectedThesisSubmissionDate:dd/MM/yyyy}.";
+        try
+        {
+            _studentService.UpdateExpectedSubmissionDate(studentNumber, expectedThesisSubmissionDate);
+        }
+        catch (ArgumentException exception)
+        {
+            ModelState.AddModelError(nameof(expectedThesisSubmissionDate), exception.Message);
+            Student? student = _studentService.GetStudent(studentNumber);
+            return View(student);
+        }
 
+        TempData["ExpectedThesisSubmissionDateUpdateSuccess"] = $"The Student's expected thesis submission date was updated to {expectedThesisSubmissionDate:dd/MM/yyyy}.";
         return RedirectToAction(nameof(EditExpectedSubmissionDate), new { studentNumber });
     }
 
@@ -117,9 +121,18 @@ public class StudentsController : Controller
     public IActionResult RecordSubmission(string studentNumber,
         DateTime? actualThesisSubmissionDate) // business layer
     {
-        _studentService.RecordSubmission(studentNumber, actualThesisSubmissionDate); // abstract the tasks of record submission (update actual thessi submission date and update status) from the controller
-        TempData["RecordSubmissionSuccess"] = $"The student's actual thesis submission date was recorded as {actualThesisSubmissionDate:dd/MM/yyyy} and status updated to Submitted.";
+        try
+        {
+            _studentService.RecordSubmission(studentNumber, actualThesisSubmissionDate);
+        }
+        catch (ArgumentException exception)
+        {
+            ModelState.AddModelError(nameof(actualThesisSubmissionDate), exception.Message);
+            Student? student = _studentService.GetStudent(studentNumber);
+            return View(student);
+        }
 
+        TempData["RecordSubmissionSuccess"] = $"The student's actual thesis submission date was recorded as {actualThesisSubmissionDate:dd/MM/yyyy} and status updated to Submitted.";
         return RedirectToAction(nameof(RecordSubmission), new { studentNumber });
     }
 

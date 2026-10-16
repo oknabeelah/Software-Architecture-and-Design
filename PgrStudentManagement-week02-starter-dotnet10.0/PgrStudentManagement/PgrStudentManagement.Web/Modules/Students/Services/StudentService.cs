@@ -1,8 +1,10 @@
 using PgrStudentManagement.Web.Models;
 using PgrStudentManagement.Web.Data;
+using PgrStudentManagement.Web.Modules.Students.Contracts;
+
 
 namespace PgrStudentManagement.Web.Services;
-public class StudentService
+public class StudentService : IStudentLookup
 {
     private readonly StudentStorage _studentStorage;
     public StudentService(StudentStorage studentStorage)
@@ -85,4 +87,14 @@ public class StudentService
         _studentStorage.UpdateStatus(studentNumber, Status.Submitted);
     }
 
+    public StudentSummary? GetStudentSummary(string studentNumber)
+    {
+        var student = _studentStorage.GetStudent(studentNumber);
+        if (student is null)
+        {
+            return null;
+        }
+
+        return new StudentSummary(student.StudentNumber, student.FullName);
+    }
 }

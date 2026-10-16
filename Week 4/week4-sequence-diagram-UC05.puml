@@ -1,0 +1,38 @@
+' Sequence Diagram for W4-UC05: View Supervisory team'
+@startuml
+
+actor PgRT
+participant IndexView
+participant AcademicSupervisorController
+participant AcademicSupervisorService
+participant IStudentLookup
+participant AcademicSupervisorStorage
+participant SupervisoryTeamView
+
+IndexView -> IndexView : View Supervisory Team
+IndexView -> AcademicSupervisorController : ViewSupervisoryTeam(StudentNumber)
+AcademicSupervisorController -> AcademicSupervisorService : ViewSupervisoryTeam(StudentNumber)
+AcademicSupervisorService -> IStudentLookup : StudentSummary(StudentNumber)
+AcademicSupervisorService --> IStudentLookup : return StudentSummary
+alt Invalid Student Number
+    IStudentLookup --> AcademicSupervisorService : return null
+    AcademicSupervisorService -> AcademicSupervisorController : Throw exception
+    AcademicSupervisorController --> SupervisoryTeamView : display error message
+    SupervisoryTeamView --> PgRT : Invalid Student Number
+else
+    IStudentLookup --> AcademicSupervisorService : return StudentSummary
+    AcademicSupervisorService --> AcademicSupervisorStorage : GetSupervisoryTeam(StudentNumber)
+    alt No Supervisory Team Found
+        AcademicSupervisorStorage --> AcademicSupervisorService : return null
+        AcademicSupervisorService -> AcademicSupervisorController : Throw exception
+        AcademicSupervisorController --> SupervisoryTeamView : display error message
+        SupervisoryTeamView --> PgRT : No Supervisory Team found for Student Number
+    else
+        AcademicSupervisorStorage --> AcademicSupervisorService : return SupervisoryTeam
+        AcademicSupervisorService --> AcademicSupervisorController : return SupervisoryTeam
+        AcademicSupervisorController --> SupervisoryTeamView : display Supervisory Team
+        SupervisoryTeamView --> PgRT : display Supervisory Team details
+    end
+end
+
+@enduml

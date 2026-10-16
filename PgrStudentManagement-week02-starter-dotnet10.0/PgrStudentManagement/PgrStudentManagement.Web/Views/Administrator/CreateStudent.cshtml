@@ -7,7 +7,7 @@
 
 <h1>Create a new Student</h1>
 
-<form asp-action="CreateStudent" method="post" id="expected-submission-date-form"> @Html.AntiForgeryToken()
+<form asp-action="CreateStudent" method="post" id="create-student-form"> @Html.AntiForgeryToken()
     @* <div asp-validation-summary="ModelOnly" class="text-danger"></div> *@
     <div class="form-group">
         <label asp-for="StudentNumber" class="control-label"> Student Number </label>
