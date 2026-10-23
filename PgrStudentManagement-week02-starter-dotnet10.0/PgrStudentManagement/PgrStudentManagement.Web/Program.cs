@@ -1,16 +1,33 @@
 using PgrStudentManagement.Web.Modules.AcademicSupervisors;
 using PgrStudentManagement.Web.Modules.Students;
+using PgrStudentManagement.Web.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// // Add services to the container.
-// builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<StudentManagementDbContext>(
+options => options.UseSqlite(
+builder.Configuration.GetConnectionString(
+"StudentManagementDatabase")));
 
 builder.Services
      .AddStudentsModule()
      .AddAcademicSupervisorsModule(); // custom service extension method
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<StudentManagementDbContext>(); //StudentManagementDbContext is registered as a scoped dependency
+    await context.Database.MigrateAsync(); // applies any outstanding migrations before the seed operation runs
+    await StudentDataSeeder.SeedAsync(context); 
+    if (await context.Students.AnyAsync())
+    {
+        return;
+    } // do not duplicate seed data if it already exists
+} // run the seeder during application startup
+// Do not use EnsureCreated() in this project because the database schema is being managed through Entity Framework Core migrations.
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

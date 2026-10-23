@@ -72,13 +72,20 @@ Fix for Entity Framework
 ```
 
 **Part 3: Implement the Initial Model with Entity Framework Core**
-- [ ] Task 5: Add Entity Framework Core
-- [ ] Task 6: Add the Connection String
-- [ ] Task 7: Implement the Initial Entity Classes
-- [ ] Task 8: Create and Register the Initial DbContext
-- [ ] Task 9: Configure the Initial Relational Mapping
-- [ ] Task 10: Create and Inspect the Initial Migration
-- [ ] Task 11: Create, Seed, and Test the Initial Database
+- [x] Task 5: Add Entity Framework Core
+	Entity Framework Core .NET Command-line Tools
+	10.0.13
+- [x] Task 6: Add the Connection String
+- [x] Task 7: Implement the Initial Entity Classes
+- [x] Task 8: Create and Register the Initial DbContext
+- [x] Task 9: Configure the Initial Relational Mapping
+	For each element in the ERD, identify how it is represented using one of these mechanisms:
+	Convention - enrolment_id 
+	Data annotation - student_number, first_name, last_name, email_address, programme_code, start_date, expected_end_date, mode_of_study
+	Fluent API - enrolment_id, enrolment_status, student_number(FK), 
+	C# type and nullability
+- [x] Task 10: Create and Inspect the Initial Migration
+- [x] Task 11: Create, Seed, and Test the Initial Database
 - [ ] Task 12: Display the Seeded Enrolment Data Through the Application
 - [ ] Task 13: Verify Persistence and Existing Behavior
 
@@ -88,4 +95,10 @@ Fix for Entity Framework
 - [ ] Extension 3: Select and Implement a New Relational Module
 - [ ] Extension 4: Reverse-Engineer the Database
 - [ ] Extension 5: Introduce a Data Transfer Object
-- [ ] 
+
+TO DO
+- [ ] convert w5 pdf files to md
+- [ ] add in the lab instruction files for all the weeks
+- [ ] add in ppt files
+- [ ] link lectures
+- [ ] link milanote

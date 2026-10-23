@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PgrStudentManagement.Web.Data;
 using PgrStudentManagement.Web.Services;
 using PgrStudentManagement.Web.Modules.Students.Contracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace PgrStudentManagement.Web.Modules.Students;
 public static class StudentModule
