@@ -10,7 +10,7 @@ public static class StudentDataSeeder
         if (await context.Students.AnyAsync())
         {
             return;
-        }
+        } // does not duplicate data if already seeded
         var studentOne = new Student
         {
             StudentNumber = "S100001",
