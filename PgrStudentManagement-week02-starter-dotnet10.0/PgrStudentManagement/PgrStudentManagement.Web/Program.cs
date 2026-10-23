@@ -10,7 +10,7 @@ builder.Services.AddDbContext<StudentManagementDbContext>(options => options.Use
 builder.Services
      .AddStudentsModule()
      .AddAcademicSupervisorsModule(); // custom service extension method
-Console.WriteLine("Modules registered successfully.");
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -43,4 +43,3 @@ app.MapControllerRoute(
 
 
 app.Run();
-Console.WriteLine("Application started successfully.");

@@ -13,11 +13,12 @@ public class StudentsController : Controller
         _studentService = studentService;
     }
 
-    public IActionResult Index() //recieves request, selects view, accesses the static collection => presentation layer
+    public async Task<IActionResult> Index()
     {
         try
         {
-            return View(_studentService.GetStudents()); //TO DO: update this to pull from DAO instead of static collection
+            var students = _studentService.GetStudentsAsync();
+            return View(students);
         }
         catch (KeyNotFoundException)
         {
@@ -32,58 +33,92 @@ public class StudentsController : Controller
 
     public async Task<IActionResult> Enrolments(string studentNumber)
     {
-        var enrolments = await _studentService.GetEnrolmentsForStudentAsync(studentNumber);
-        ViewData["StudentNumber"] = studentNumber;
-
-        if (enrolments.Count == 0)
+        try
         {
-            ViewData["Message"] = "No enrolments found";
-        }
-        // distinguish between no enrolments and student not found
+            var enrolments = await _studentService.GetEnrolmentsForStudentAsync(studentNumber);
+            ViewData["StudentNumber"] = studentNumber;
 
-        // The controller selects the presentation response. It must not query StudentManagementDbContext or call EnrolmentDao directly.
-        return View(enrolments);
+            if (enrolments.Count == 0)
+            {
+                ViewData["Message"] = "No enrolments found";
+            }
+            return View(enrolments);
+        }
+        catch (KeyNotFoundException)
+        {
+            TempData["StudentNotFound"] = $"Student with number {studentNumber} not found.";
+            return RedirectToAction(nameof(Index));
+        }
     }
 
-    public IActionResult EnrolmentDetails(string studentNumber, string? returnTo) //recieves request, selects view, accesses the static collection, finds student, => presentation layer
+    public async Task<IActionResult> EnrolmentDetails(string studentNumber, string? returnTo)
     {
-        Student? student = _studentService.GetStudent(studentNumber);
+        try
+        {
+            Student? student = await _studentService.GetStudentAsync(studentNumber);
 
-        ViewBag.ReturnTo = returnTo; // store the returnTo value in ViewData to be used in the view for navigation
-        return View(student);
+            ViewBag.ReturnTo = returnTo; // store the returnTo value in ViewData to be used in the view for navigation
+            return View(student);
+        }
+        catch (KeyNotFoundException)
+        {
+            TempData["StudentNotFound"] = $"Student with number {studentNumber} not found.";
+            return RedirectToAction(nameof(Index));
+        }
     }
 
-    public IActionResult ThesisDetails(string studentNumber) //recieves request, selects view, accesses the static collection, finds student, => presentation layer
+    public async Task<IActionResult> ThesisDetails(string studentNumber)
     {
-        Student? student = _studentService.GetStudent(studentNumber);
-        if (student?.ThesisTitle == null)
+        try
         {
-            return View("NoThesisDetails", student);
-        }
+            Student? student = await _studentService.GetStudentAsync(studentNumber);
+            if (student?.ThesisTitle == null)
+            {
+                return View("NoThesisDetails", student);
+            }
 
-        return View(student);
+            return View(student);
+        }
+        catch (KeyNotFoundException)
+        {
+            TempData["StudentNotFound"] = $"Student with number {studentNumber} not found.";
+            return RedirectToAction(nameof(Index));
+        }
     }
 
     [HttpGet]
-    public IActionResult EditStatus(string studentNumber) //recieves request, selects view, accesses the static collection, finds student => presentation layer
+    public async Task<IActionResult> EditStatus(string studentNumber)
     {
-        Student? student = _studentService.GetStudent(studentNumber);
-        return View(student);
+        try
+        {
+            var student = await _studentService.GetStudentAsync(studentNumber);
+            return View(student);
+        }
+        catch (KeyNotFoundException)
+        {
+            TempData["StudentNotFound"] = $"Student with number {studentNumber} not found.";
+            return RedirectToAction(nameof(Index));
+        }
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult EditStatus(string studentNumber, Status status) //updates student info => business layer
+    public async Task<IActionResult> EditStatus(string studentNumber, Status status)
     {
         try
         {
-            _studentService.UpdateStatus(studentNumber, status);
+            await _studentService.UpdateStatusAsync(studentNumber, status);
         }
         catch (ArgumentException exception)
         {
             ModelState.AddModelError(nameof(status), exception.Message);
-            Student? student = _studentService.GetStudent(studentNumber);
+            var student = await _studentService.GetStudentAsync(studentNumber);
             return View(student);
+        }
+        catch (KeyNotFoundException exception)
+        {
+            TempData["StudentNotFound"] = exception.Message;
+            return RedirectToAction(nameof(Index));
         }
 
         TempData["StatusUpdateSuccess"] = $"The student's status was updated to {status}.";
@@ -91,27 +126,32 @@ public class StudentsController : Controller
     }
 
     [HttpGet]
-    public IActionResult EditExpectedSubmissionDate(string studentNumber) //presentation layer
+    public async Task<IActionResult> EditExpectedSubmissionDate(string studentNumber)
     {
-        Student? student = _studentService.GetStudent(studentNumber);
-
-        return View(student);
+         try
+        {
+            var student = await _studentService.GetStudentAsync(studentNumber);
+            return View(student);
+        }
+        catch (KeyNotFoundException)
+        {
+            TempData["StudentNotFound"] = $"Student with number {studentNumber} not found.";
+            return RedirectToAction(nameof(Index));
+        }
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult EditExpectedSubmissionDate(
-        string studentNumber,
-        DateTime? expectedThesisSubmissionDate) // business layer
+    public async Task<IActionResult> EditExpectedSubmissionDate(string studentNumber, DateTime? expectedThesisSubmissionDate)
     {
         try
         {
-            _studentService.UpdateExpectedSubmissionDate(studentNumber, expectedThesisSubmissionDate);
+            await _studentService.UpdateExpectedSubmissionDate(studentNumber, expectedThesisSubmissionDate);
         }
         catch (ArgumentException exception)
         {
             ModelState.AddModelError(nameof(expectedThesisSubmissionDate), exception.Message);
-            Student? student = _studentService.GetStudent(studentNumber);
+            Student? student = await _studentService.GetStudentAsync(studentNumber);
             return View(student);
         }
 
@@ -120,9 +160,9 @@ public class StudentsController : Controller
     }
 
     [HttpGet]
-    public IActionResult RecordSubmission(string studentNumber) //presentation layer
+    public async Task<IActionResult> RecordSubmission(string studentNumber)
     {
-        Student? student = _studentService.GetStudent(studentNumber);
+        Student? student = await _studentService.GetStudentAsync(studentNumber);
         if (student == null)
         {
             return NotFound();
@@ -133,33 +173,32 @@ public class StudentsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult RecordSubmission(string studentNumber,
-        DateTime? actualThesisSubmissionDate) // business layer
+    public async Task<IActionResult> RecordSubmission(string studentNumber, DateTime? actualThesisSubmissionDate)
     {
         try
         {
-            _studentService.RecordSubmission(studentNumber, actualThesisSubmissionDate);
+           await _studentService.RecordSubmission(studentNumber, actualThesisSubmissionDate);
         }
         catch (ArgumentException exception)
         {
             ModelState.AddModelError(nameof(actualThesisSubmissionDate), exception.Message);
-            Student? student = _studentService.GetStudent(studentNumber);
+            Student? student = await _studentService.GetStudentAsync(studentNumber);
             return View(student);
         }
 
         TempData["RecordSubmissionSuccess"] = $"The student's actual thesis submission date was recorded as {actualThesisSubmissionDate:dd/MM/yyyy} and status updated to Submitted.";
-        return RedirectToAction(nameof(RecordSubmission), new { studentNumber });
+        return RedirectToAction(nameof(RecordSubmission), new {studentNumber});
     }
 
     [HttpGet]
-    public IActionResult CreateStudent() //business layer
+    public IActionResult CreateStudent()
     {
         return View("~/Views/Administrator/CreateStudent.cshtml");
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult CreateStudent(Student student) // business layer
+    public async Task<IActionResult> CreateStudent(Student student)
     {
         if (!ModelState.IsValid)
         {
@@ -168,7 +207,7 @@ public class StudentsController : Controller
 
         try
         {
-            _studentService.CreateStudent(student);
+            _studentService.CreateStudentAsync(student);
         }
         catch (ArgumentException exception)
         {
@@ -180,11 +219,11 @@ public class StudentsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    public IActionResult StudentDetails() // business layer
+    public async Task<IActionResult> StudentDetails()
     {
         try
         {
-            var students = _studentService.GetStudents();
+            var students = _studentService.GetStudentsAsync();
             return View("~/Views/Administrator/StudentDetails.cshtml", students);
         }
         catch (KeyNotFoundException)
