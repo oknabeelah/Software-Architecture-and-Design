@@ -28,11 +28,16 @@
                 <td>@student.FullName</td>
                 <td>@student.Status</td>
                 <td>
-                    <a asp-action="EnrolmentDetails"
+                    <a asp-action="Enrolments"
+                       asp-route-studentNumber="@student.StudentNumber">
+                       View enrolments
+                    </a>
+                    |
+                    @* <a asp-action="EnrolmentDetails"
                        asp-route-studentNumber="@student.StudentNumber"
                        add asp-route-returnTo="student">
                         Enrolment
-                    </a>
+                    </a> *@
                     |
                     <a asp-action="ThesisDetails"
                        asp-route-studentNumber="@student.StudentNumber">

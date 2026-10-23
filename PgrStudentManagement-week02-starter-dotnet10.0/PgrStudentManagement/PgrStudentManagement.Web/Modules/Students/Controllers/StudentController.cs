@@ -5,7 +5,7 @@ using PgrStudentManagement.Web.Services;
 namespace PgrStudentManagement.Web.Controllers;
 
 public class StudentsController : Controller
-{    
+{
     private readonly StudentService _studentService;
 
     public StudentsController(StudentService studentService)
@@ -17,7 +17,7 @@ public class StudentsController : Controller
     {
         try
         {
-            return View(_studentService.GetStudents());
+            return View(_studentService.GetStudents()); //TO DO: update this to pull from DAO instead of static collection
         }
         catch (KeyNotFoundException)
         {
@@ -30,10 +30,25 @@ public class StudentsController : Controller
         return View("~/Views/Administrator/Index.cshtml");
     }
 
+    public async Task<IActionResult> Enrolments(string studentNumber)
+    {
+        var enrolments = await _studentService.GetEnrolmentsForStudentAsync(studentNumber);
+        ViewData["StudentNumber"] = studentNumber;
+
+        if (enrolments.Count == 0)
+        {
+            ViewData["Message"] = "No enrolments found";
+        }
+        // distinguish between no enrolments and student not found
+
+        // The controller selects the presentation response. It must not query StudentManagementDbContext or call EnrolmentDao directly.
+        return View(enrolments);
+    }
+
     public IActionResult EnrolmentDetails(string studentNumber, string? returnTo) //recieves request, selects view, accesses the static collection, finds student, => presentation layer
     {
         Student? student = _studentService.GetStudent(studentNumber);
-        
+
         ViewBag.ReturnTo = returnTo; // store the returnTo value in ViewData to be used in the view for navigation
         return View(student);
     }
@@ -112,7 +127,7 @@ public class StudentsController : Controller
         {
             return NotFound();
         }
-    
+
         return View(student);
     }
 

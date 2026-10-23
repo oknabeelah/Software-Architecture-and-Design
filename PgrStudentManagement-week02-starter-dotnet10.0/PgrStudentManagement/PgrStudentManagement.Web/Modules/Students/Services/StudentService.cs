@@ -1,22 +1,31 @@
 using PgrStudentManagement.Web.Models;
 using PgrStudentManagement.Web.Data;
+using PgrStudentManagement.Web.Data.Daos;
 using PgrStudentManagement.Web.Modules.Students.Contracts;
 
 
 namespace PgrStudentManagement.Web.Services;
+
 public class StudentService : IStudentLookup
 {
+    private readonly EnrolmentDao _enrolmentDao;
     private readonly StudentStorage _studentStorage;
-    public StudentService(StudentStorage studentStorage)
+    public StudentService(StudentStorage studentStorage, EnrolmentDao enrolmentDao)
     {
         _studentStorage = studentStorage; // inject the StudentStorage through its constructor and assign it to the private field _studentStorage
+        _enrolmentDao = enrolmentDao;
+    }
+
+    public Task<IReadOnlyList<Enrolment>>GetEnrolmentsForStudentAsync(string studentNumber) // Adapt the constructor to the dependencies in your implementation.
+    {
+        return _enrolmentDao.GetEnrolmentsForStudentAsync(studentNumber); // The service coordinates the use case and delegates relational data access to the DAO.
     }
     public IReadOnlyList<Student> GetStudents()
     {
         if (!_studentStorage.GetStudents().Any())
         {
             throw new KeyNotFoundException("No students found.");
-        }      
+        }
         return _studentStorage.GetStudents().OrderBy(s => s.StudentNumber).ToList().AsReadOnly();
         //apply ordering for W3UC02
     }
