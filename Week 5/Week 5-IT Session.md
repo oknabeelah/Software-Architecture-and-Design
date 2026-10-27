@@ -86,19 +86,43 @@ Fix for Entity Framework
 	C# type and nullability
 - [x] Task 10: Create and Inspect the Initial Migration
 - [x] Task 11: Create, Seed, and Test the Initial Database
-- [ ] Task 12: Display the Seeded Enrolment Data Through the Application
-- [ ] Task 13: Verify Persistence and Existing Behavior
+- [x] Task 12: Display the Seeded Enrolment Data Through the Application
+- [x] Task 13: Verify Persistence and Existing Behavior
 
 **Extension Tasks**
-- [ ] Extension 1: Update the Existing Implementation Class Diagram
-- [ ] Extension 2: Refactor the Remaining Student Use Cases
+- [x] Extension 1: Update the Existing Implementation Class Diagram
+- [x] Extension 2: Refactor the Remaining Student Use Cases
 - [ ] Extension 3: Select and Implement a New Relational Module
 - [ ] Extension 4: Reverse-Engineer the Database
 - [ ] Extension 5: Introduce a Data Transfer Object
 
-TO DO
-- [ ] convert w5 pdf files to md
-- [ ] add in the lab instruction files for all the weeks
-- [ ] add in ppt files
-- [ ] link lectures
-- [ ] link milanote
+---
+lab 2 - Introduce new Research Activity Module and persist data with MongoDB
+
+**Part 1**
+- [x]  Preserve lab 1 baseline
+
+**Part 2: Understand the research activity domain**
+- [x] analyse the domain model
+
+Part 3: Compare relational and document model
+- [x] attempt a relational representation
+- [x] review the initial document model
+
+Part 4: Implement the document model
+- [x] add the mongodb driver and configurations
+- [x] create the document classes
+- [ ] create and register the repository
+- [ ] seed the research activities
+- [ ] add the service, controller, and view
+- [ ] verify the core use case
+
+Extension tasks
+- [ ] record a research activity
+- [ ] view research activity details
+- [ ] use strongly typed detail classes
+- [ ] add document validation and indexes
+- [ ] update the implementation class diagram
+- [ ] reverse engineer the document model
+- [ ] compare sql and nosql approaches
+- [ ] 
