@@ -10,7 +10,6 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
-
   <ItemGroup>
     <ProjectReference Include="..\PgrStudentManagement.Business\PgrStudentManagement.Business.csproj" />
   </ItemGroup>

@@ -2,7 +2,7 @@ using PgrStudentManagement.Business.Students.Gateway;
 
 namespace PgrStudentManagement.Business.Students.ViewStudentEnrolments;
 
-public class ViewStudentEnrolmentsUseCase
+public class ViewStudentEnrolmentsUseCase : IViewStudentEnrolmentsUseCase
 {
     private readonly IEnrolmentGateway _enrolmentGateway;
 

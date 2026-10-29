@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PgrStudentManagement.Adapters.API\PgrStudentManagement.Adapters.API.csproj" />
     <ProjectReference Include="..\PgrStudentManagement.Business\PgrStudentManagement.Business.csproj" />
     <ProjectReference Include="..\PgrStudentManagement.Domain\PgrStudentManagement.Domain.csproj" />
   </ItemGroup>
