@@ -32,7 +32,9 @@ jobs:
           set -euo pipefail
 
           SOURCE_FILE="${SOURCE_FILE#./}"
-          SOURCE_FILE="${SOURCE_FILE#"$REPOSITORY_NAME"/"}"
+          if [[ "$SOURCE_FILE" == "$REPOSITORY_NAME/"* ]]; then
+            SOURCE_FILE="${SOURCE_FILE:${#REPOSITORY_NAME}+1}"
+          fi
           SOURCE_FILE="${SOURCE_FILE//\\/ }"
 
           if [[ "$SOURCE_FILE" != *.puml ]]; then
@@ -82,7 +84,9 @@ jobs:
           set -euo pipefail
 
           SOURCE_FILE="${SOURCE_FILE#./}"
-          SOURCE_FILE="${SOURCE_FILE#"$REPOSITORY_NAME"/"}"
+          if [[ "$SOURCE_FILE" == "$REPOSITORY_NAME/"* ]]; then
+            SOURCE_FILE="${SOURCE_FILE:${#REPOSITORY_NAME}+1}"
+          fi
           SOURCE_FILE="${SOURCE_FILE//\\/ }"
 
           while IFS= read -r format; do
