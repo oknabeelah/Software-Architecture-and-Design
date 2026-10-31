@@ -1,0 +1,89 @@
+name: Render PlantUML diagram
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_file:
+        description: Path to the .puml file
+        required: true
+        type: string
+      formats:
+        description: Comma-separated PlantUML formats (e.g png,svg,pdf,jpg). See https://plantuml.com/command-line for supported formats.
+        required: true
+        default: png
+        type: string
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate inputs
+        env:
+          SOURCE_FILE: ${{ inputs.source_file }}
+          FORMATS: ${{ inputs.formats }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ "$SOURCE_FILE" != *.puml ]]; then
+            echo "::error::source_file must point to a .puml file."
+            exit 1
+          fi
+
+          if [[ ! -f "$SOURCE_FILE" ]]; then
+            echo "::error::PlantUML file not found: $SOURCE_FILE"
+            exit 1
+          fi
+
+          : > "$RUNNER_TEMP/plantuml-formats"
+          IFS=',' read -ra requested_formats <<< "$FORMATS"
+          if [[ "${#requested_formats[@]}" -eq 0 ]]; then
+            echo "::error::At least one output format is required."
+            exit 1
+          fi
+
+          for requested_format in "${requested_formats[@]}"; do
+            format="${requested_format//[[:space:]]/}"
+            case "$format" in
+              png|svg|eps|eps:text|pdf|vdx|xmi|scxml|html|txt|utxt|latex|latex:nopreamble|braille)
+                printf '%s\n' "$format" >> "$RUNNER_TEMP/plantuml-formats"
+                ;;
+              *)
+                echo "::error::Unsupported PlantUML format: $format"
+                exit 1
+                ;;
+            esac
+          done
+
+          mkdir -p "$RUNNER_TEMP/plantuml-output"
+
+      - name: Render diagrams
+        env:
+          SOURCE_FILE: ${{ inputs.source_file }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          while IFS= read -r format; do
+            echo "Rendering $SOURCE_FILE as $format"
+            docker run --rm --network none \
+              --user "$(id -u):$(id -g)" \
+              --volume "$GITHUB_WORKSPACE:/workspace:ro" \
+              --volume "$RUNNER_TEMP/plantuml-output:/output" \
+              plantuml/plantuml:latest \
+              "-t${format}" \
+              -o /output \
+              "/workspace/${SOURCE_FILE}"
+          done < "$RUNNER_TEMP/plantuml-formats"
+
+      - name: Upload generated diagrams
+        uses: actions/upload-artifact@v4
+        with:
+          name: plantuml-diagrams
+          path: ${{ runner.temp }}/plantuml-output
+          if-no-files-found: error
