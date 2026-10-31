@@ -9,8 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<StudentManagementDbContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("StudentManagementDatabase")));
 
-//builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(builder.Configuration["ResearchActivityDatabase:ConnectionString"]));
-//builder.Services.AddScoped<ResearchActivityRepository>();
+builder.Services.AddSingleton<IMongoClient>(_ =>
+    new MongoClient(builder.Configuration["ResearchActivityDatabase:ConnectionString"]));
+builder.Services.AddScoped<ResearchActivityRepository>();
 
 builder.Services
      .AddStudentsModule()
@@ -24,8 +25,8 @@ using (var scope = app.Services.CreateScope())
     await context.Database.MigrateAsync(); // applies any outstanding migrations before the seed operation runs
     await StudentDataSeeder.SeedAsync(context);
 
-    //var researchActivityRepository = scope.ServiceProvider.GetRequiredService<ResearchActivityRepository>();
-    //await ResearchActivityDataSeeder.SeedAsync(researchActivityRepository);
+    var researchActivityRepository = scope.ServiceProvider.GetRequiredService<ResearchActivityRepository>();
+    await ResearchActivityDataSeeder.SeedAsync(researchActivityRepository);
 } // run the seeder during application startup
 // Do not use EnsureCreated() in this project because the database schema is being managed through Entity Framework Core migrations.
 

@@ -1,0 +1,51 @@
+@model IReadOnlyList<PgrResearchActivity.Web.Models.ResearchActivity>
+
+@{
+    ViewData["Title"] = "Research Activities";
+    var studentNumber = ViewData["StudentNumber"] as string ?? string.Empty;
+    var message = ViewData["Message"] as string;
+
+    string FormatDetailValue(object? value)
+    {
+        if (value is System.Collections.IEnumerable values and not string)
+        {
+            return string.Join(", ", values.Cast<object?>());
+        }
+
+        return value?.ToString() ?? string.Empty;
+    }
+}
+
+<h1>Research Activities</h1>
+
+<form asp-controller="ResearchActivity" asp-action="Index" method="get">
+    <label for="studentNumber">Student number</label>
+    <input id="studentNumber" name="studentNumber" value="@studentNumber" />
+    <button type="submit">Search</button>
+</form>
+
+@if (!string.IsNullOrWhiteSpace(message))
+{
+    <p>@message</p>
+}
+
+@if (Model.Count > 0)
+{
+    <h2>Activities for @studentNumber</h2>
+    <ul>
+        @foreach (var activity in Model)
+        {
+            <li>
+                <strong>Title: </strong>@activity.Title
+                <br />
+                <strong>Type: </strong>(@activity.ActivityType)
+                <br />
+                <strong>Date: </strong>@activity.ActivityDate.ToString("yyyy-MM-dd")
+                <br />
+                <div><strong>Tags: </strong>@string.Join(", ", activity.Tags)</div>
+                <div><strong>Details: </strong>@string.Join("; ", activity.Details.Select(detail => $"{detail.Key}: {FormatDetailValue(detail.Value)}"))</div>
+                <br />
+            </li>
+        }
+    </ul>
+}
