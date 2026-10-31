@@ -1,0 +1,40 @@
+@model PgrStudentManagement.Adapters.Web.ViewModels.StudentEnrolmentsViewModel
+
+@{
+    ViewData["Title"] = "Student Enrolments";
+}
+
+<h1>Student Enrolments</h1>
+
+<p><strong>Student number:</strong> @Model.StudentNumber</p>
+
+@if (Model.Enrolments.Count == 0)
+{
+    <p>No enrolments found.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Programme code</th>
+                <th scope="col">Start date</th>
+                <th scope="col">Expected end date</th>
+                <th scope="col">Mode of study</th>
+                <th scope="col">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var enrolment in Model.Enrolments)
+        {
+            <tr>
+                <td>@enrolment.ProgrammeCode</td>
+                <td>@enrolment.StartDate.ToString("yyyy-MM-dd")</td>
+                <td>@enrolment.ExpectedEndDate</td>
+                <td>@enrolment.ModeOfStudy</td>
+                <td>@enrolment.Status</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
