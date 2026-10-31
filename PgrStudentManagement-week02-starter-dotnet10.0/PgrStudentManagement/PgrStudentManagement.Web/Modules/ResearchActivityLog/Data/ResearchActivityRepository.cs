@@ -18,6 +18,12 @@ public class ResearchActivityRepository
         return await _activities.Find(activity => activity.StudentNumber == studentNumber)
             .SortBy(activity => activity.ActivityDate).ToListAsync();
     }
+
+    public async Task<ResearchActivity?> GetByIdAsync(string activityId)
+    {
+        return await _activities.Find(activity => activity.ActivityId == activityId).FirstOrDefaultAsync();
+    }
+
     public Task AddAsync(ResearchActivity activity)
     {
         return _activities.InsertOneAsync(activity);

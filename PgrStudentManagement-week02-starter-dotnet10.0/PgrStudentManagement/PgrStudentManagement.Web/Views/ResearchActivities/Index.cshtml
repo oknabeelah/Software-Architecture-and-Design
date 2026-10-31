@@ -18,6 +18,8 @@
 
 <h1>Research Activities</h1>
 
+<p><a asp-controller="ResearchActivity" asp-action="Create" asp-route-studentNumber="@studentNumber">Record a research activity</a></p>
+
 <form asp-controller="ResearchActivity" asp-action="Index" method="get">
     <label for="studentNumber">Student number</label>
     <input id="studentNumber" name="studentNumber" value="@studentNumber" />
@@ -36,7 +38,7 @@
         @foreach (var activity in Model)
         {
             <li>
-                <strong>Title: </strong>@activity.Title
+                <strong>Title: </strong><a asp-controller="ResearchActivity" asp-action="Details" asp-route-activityId="@activity.ActivityId">@activity.Title</a>
                 <br />
                 <strong>Type: </strong>(@activity.ActivityType)
                 <br />

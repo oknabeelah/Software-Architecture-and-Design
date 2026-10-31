@@ -30,4 +30,57 @@ public class ResearchActivityController : Controller
 
         return View("~/Views/ResearchActivities/Index.cshtml", activities);
     }
+
+    [HttpGet]
+    public IActionResult Create(string? studentNumber)
+    {
+        return View("~/Views/ResearchActivities/Create.cshtml",
+            new CreateResearchActivityRequest { StudentNumber = studentNumber?.Trim() ?? string.Empty });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(CreateResearchActivityRequest request)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View("~/Views/ResearchActivities/Create.cshtml", request);
+        }
+
+        var details = request.Details
+            .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(line => line.Split('=', 2, StringSplitOptions.TrimEntries))
+            .Where(parts => parts.Length == 2 && parts[0].Length > 0)
+            .ToDictionary(parts => parts[0], parts => (object)parts[1]);
+
+        var activity = new ResearchActivity
+        {
+            ActivityId = Guid.NewGuid().ToString("N"),
+            StudentNumber = request.StudentNumber.Trim(),
+            ActivityType = request.ActivityType,
+            Title = request.Title.Trim(),
+            ActivityDate = request.ActivityDate,
+            CreatedOn = DateTime.UtcNow,
+            Tags = request.Tags
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList(),
+            Details = details
+        };
+
+        await _repository.AddAsync(activity);
+        return RedirectToAction(nameof(Details), new { activityId = activity.ActivityId });
+    }
+
+    [HttpGet("ResearchActivity/Details/{activityId}")]
+    public async Task<IActionResult> Details(string activityId)
+    {
+        if (string.IsNullOrWhiteSpace(activityId))
+        {
+            return NotFound();
+        }
+
+        var activity = await _repository.GetByIdAsync(activityId.Trim());
+        return activity is null ? NotFound() : View("~/Views/ResearchActivities/Details.cshtml", activity);
+    }
 }

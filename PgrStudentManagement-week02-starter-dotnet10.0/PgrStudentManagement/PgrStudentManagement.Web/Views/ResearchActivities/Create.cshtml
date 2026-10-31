@@ -1,0 +1,60 @@
+@model PgrResearchActivity.Web.Models.CreateResearchActivityRequest
+
+@{
+    ViewData["Title"] = "Record Research Activity";
+}
+
+<h1>Record Research Activity</h1>
+<p class="text-muted">Add a research, supervision, conference, or other postgraduate activity to the student's record.</p>
+
+<form asp-controller="ResearchActivity" asp-action="Create" method="post" class="research-activity-form">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="StudentNumber" class="form-label">Student number</label>
+        <input asp-for="StudentNumber" class="form-control" placeholder="For example, S100001" />
+        <div class="form-text">The student this activity belongs to.</div>
+        <span asp-validation-for="StudentNumber" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ActivityType" class="form-label">Activity type</label>
+        <select asp-for="ActivityType" asp-items="Html.GetEnumSelectList<PgrResearchActivity.Web.Models.ResearchActivityType>()" class="form-select"></select>
+        <span asp-validation-for="ActivityType" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label">Title</label>
+        <input asp-for="Title" class="form-control" placeholder="For example, Monthly supervision meeting" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ActivityDate" class="form-label">Activity date</label>
+        <input asp-for="ActivityDate" class="form-control" />
+        <span asp-validation-for="ActivityDate" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Tags" class="form-label">Tags</label>
+        <input asp-for="Tags" class="form-control" placeholder="For example, supervision, methods" />
+        <div class="form-text">Separate multiple tags with commas.</div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Details" class="form-label">Additional details</label>
+        <textarea asp-for="Details" class="form-control" rows="6"
+                  placeholder="Summary=Reviewed the proposed data-collection method.&#10;Next steps=Prepare the ethics application"></textarea>
+        <div class="form-text">
+            Add one detail per line using <strong>Label=value</strong>, for example:
+            <code>Summary=Reviewed the initial search results.</code>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save activity</button>
+    <a asp-action="Index" asp-route-studentNumber="@Model.StudentNumber" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
