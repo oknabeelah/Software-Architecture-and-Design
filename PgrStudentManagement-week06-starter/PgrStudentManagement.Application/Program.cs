@@ -35,4 +35,10 @@ app.MapControllerRoute(
     pattern: "{controller=Students}/{action=Enrolments}/{id?}");
 app.MapControllers();
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<StudentManagementDbContext>();
+    dbContext.Database.Migrate();
+}
+
 app.Run();
