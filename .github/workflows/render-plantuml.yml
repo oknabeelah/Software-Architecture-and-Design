@@ -30,8 +30,11 @@ jobs:
         run: |
           set -euo pipefail
 
+          REPOSITORY_NAME="${GITHUB_REPOSITORY#*/}"
           SOURCE_FILE="${SOURCE_FILE#./}"
-          SOURCE_FILE="${SOURCE_FILE//\\/ }"
+          SOURCE_FILE="${SOURCE_FILE#${REPOSITORY_NAME}/}"
+          SOURCE_FILE="${SOURCE_FILE#${GITHUB_REPOSITORY}/}"
+          SOURCE_FILE="${SOURCE_FILE//\\//}"
           echo "Using PlantUML source file: $SOURCE_FILE"
 
           if [[ "$SOURCE_FILE" != *.puml ]]; then
@@ -79,8 +82,11 @@ jobs:
         run: |
           set -euo pipefail
 
+          REPOSITORY_NAME="${GITHUB_REPOSITORY#*/}"
           SOURCE_FILE="${SOURCE_FILE#./}"
-          SOURCE_FILE="${SOURCE_FILE//\\/ }"
+          SOURCE_FILE="${SOURCE_FILE#${REPOSITORY_NAME}/}"
+          SOURCE_FILE="${SOURCE_FILE#${GITHUB_REPOSITORY}/}"
+          SOURCE_FILE="${SOURCE_FILE//\\//}"
           echo "Rendering PlantUML source file: $SOURCE_FILE"
 
           while IFS= read -r format; do
