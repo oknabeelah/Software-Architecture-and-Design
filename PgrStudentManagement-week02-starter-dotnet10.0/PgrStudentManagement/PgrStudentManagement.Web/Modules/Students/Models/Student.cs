@@ -1,15 +1,30 @@
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+
 namespace PgrStudentManagement.Web.Models;
 
+[Index(nameof(EmailAddress), IsUnique = true)]
 public class Student
 {
-    // no model changes made becuase the model is already designed to support the requirements of the application
+    [Key]
+    [MaxLength(20)]
     public string StudentNumber { get; set; } = string.Empty;
 
+    [Required]
+    [MaxLength(100)]
     public string FirstName { get; set; } = string.Empty;
 
+    [Required]
+    [MaxLength(100)]
     public string LastName { get; set; } = string.Empty;
 
     public string FullName => $"{FirstName} {LastName}";
+
+    [Required]
+    [MaxLength(255)]
+    public string EmailAddress { get; set; } = string.Empty;
+
+    public ICollection<Enrolment> Enrolments { get; set; } = new List<Enrolment>();
 
     public string? Course { get; set; }
 
