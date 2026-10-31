@@ -1,0 +1,15 @@
+@{
+    ViewData["Title"] = "Home";
+}
+
+<h1>Student Management</h1>
+
+<p>View the enrolments recorded for a student.</p>
+
+<form asp-controller="Students" asp-action="Enrolments" method="get">
+    <div class="mb-3">
+        <label class="form-label" for="studentNumber">Student number</label>
+        <input class="form-control" id="studentNumber" name="studentNumber" required />
+    </div>
+    <button class="btn btn-primary" type="submit">View enrolments</button>
+</form>
