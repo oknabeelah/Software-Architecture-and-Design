@@ -1,0 +1,27 @@
+@startuml
+
+entity Student {
+  * student_number : VARCHAR(20) <<PK>>
+  --
+  * first_name : VARCHAR(100)
+  * last_name : VARCHAR(100)
+  email_address : VARCHAR(255) <<UQ>>
+}
+
+entity Enrolment {
+  * enrolment_id : INTEGER <<PK>>
+  --
+  * student_number : VARCHAR(100) <<FK>>
+  * programme_code : VARCHAR(20)
+  * start_date : DATE
+  expected_end_date : DATE
+  '? is it better to make the expected end date required and add a new actual end date column
+  '? is it better to change the expected end date column to end date and make it optional
+  '? is it better to add a /current bool column to indicate if the enrolment is current or not, can be evaluated from (start date <= today)
+  * mode_of_study : VARCHAR(20)
+  *enrolment_status : VARCHAR(30)
+}
+
+Student ||--o{ Enrolment : "has"
+
+@enduml
