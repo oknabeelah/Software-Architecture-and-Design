@@ -1,0 +1,33 @@
+name: Generate PlantUML Diagrams
+on:
+  workflow_dispatch: # manual trigger
+    inputs:
+      target-file:
+        description: 'The PlantUML file to render'
+        required: true
+        type: string  # path to file
+      output-format:
+        description: 'The output format for the rendered diagram (e.g., png, svg, pdf)'
+        required: true
+        type: string # list of supported output formats: png, svg, pdf, eps, ps, txt, html, xmi, json, vdx
+# workflow_call: # allows this workflow to be called by other workflows
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Generate PlantUML Diagram
+        uses: rotaract/plantuml-action@v1
+        with:
+          format: ${{ inputs.output-format }}
+          pattern: ${{ inputs.target-file }}
+
+      - name: Upload Generated Diagram
+        uses: actions/upload-artifact@v3
+        with:
+          name: diagrams
+          path: '**/*.${{ inputs.output-format }}'
+          if-no-files-found: error
+# TO DO: allow multiple diagrams to be generated and uploaded

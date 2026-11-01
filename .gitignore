@@ -10,3 +10,6 @@
 # Build logs and generated symbols
 *.binlog
 *.pdb
+
+# github actions artifacts
+.act-artifacts/
