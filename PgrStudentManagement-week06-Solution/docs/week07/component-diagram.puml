@@ -1,0 +1,31 @@
+@startuml Week07_Component_Diagram
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+LAYOUT_LEFT_RIGHT()
+title PGR Student Management System - Module-Level Component Diagram
+
+System_Ext(restClient, "REST API Client", "Invokes Students and Academic Supervisors REST operations.")
+
+Container_Boundary(application, "ASP.NET Core Application") {
+    Component(students, "Students Module", "Domain, Business, and adapters", "Owns Student information and exposes the Student lookup REST interface.")
+    Component(academicSupervisors, "Academic Supervisors Module", "Domain, Business, and adapters", "Manages Academic Supervisors and supervisory assignments.")
+    Component(applicationHost, "Application Host", ".NET 10", "Composes modules, persistence, controllers, and the HTTP client.")
+}
+
+ContainerDb(sqlite, "SQLite", "Relational database", "Stores Students, Enrolments, Academic Supervisors, eligible roles, and supervisory assignments.")
+
+Rel(restClient, students, "Invokes Student lookup", "HTTP/JSON")
+Rel(restClient, academicSupervisors, "Invokes assignment operations", "HTTP/JSON")
+Rel(academicSupervisors, students, "Looks up Students through the Students REST interface", "HTTP/JSON")
+Rel(students, sqlite, "Reads Student and Enrolment data", "EF Core")
+Rel(academicSupervisors, sqlite, "Reads and writes Academic Supervisor data", "EF Core")
+Rel(applicationHost, students, "Registers and loads")
+Rel(applicationHost, academicSupervisors, "Registers and loads")
+
+note right of academicSupervisors
+Academic Supervisors Business owns IStudentLookup.
+HttpStudentLookupAdapter implements that port
+and crosses the HTTP boundary to Students.
+end note
+
+SHOW_LEGEND()
+@enduml

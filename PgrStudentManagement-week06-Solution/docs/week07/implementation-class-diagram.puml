@@ -1,0 +1,207 @@
+@startuml Week07_Implementation_Class_Diagram
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+left to right direction
+title PGR Student Management System - HTTP Lookup Implementation
+
+package "Academic Supervisors API adapter" {
+    class AcademicSupervisorsApiController <<incoming adapter>> {
+        +Assign(studentNumber, request, cancellationToken)
+    }
+    class AcademicSupervisorApiMapper <<mapper>> {
+        +ToInput(studentNumber, request)
+        +ToResponse(result)
+    }
+    class AssignAcademicSupervisorRequest <<API request>> {
+        +SupervisorStaffNumber : string
+        +Role : string
+        +StartDate : DateTime
+        +ExceptionAuthorised : bool
+    }
+    class AssignAcademicSupervisorResponse <<API response>> {
+        +Succeeded : bool
+        +Outcome : string
+        +AssignmentId : string?
+    }
+}
+
+package "Academic Supervisors Business" {
+    interface IAcademicSupervisorUseCase <<input port>> {
+        +ExecuteAsync(input, cancellationToken)
+    }
+    class AcademicSupervisorAssignmentUseCase <<use case>>
+    class AcademicSupervisorAssignmentInput <<Business DTO>>
+    class AcademicSupervisorAssignmentResult <<Business result>> {
+        +Outcome : AcademicSupervisorAssignmentOutcome
+        +AssignmentId : string?
+    }
+    enum AcademicSupervisorAssignmentOutcome <<Business outcome>> {
+        Created
+        InvalidInput
+        StudentNotFound
+        AcademicSupervisorNotFound
+        DuplicateAssignment
+        RoleAlreadyFilled
+        SupervisorNotEligible
+        EmploymentTypeNotPermitted
+        MaximumSupervisorsReached
+        ExceptionRequired
+    }
+    interface IStudentLookup <<output port>> {
+        +GetStudentSummaryAsync(studentNumber, cancellationToken)
+    }
+    class StudentSummary <<Business DTO>> {
+        +StudentNumber : string
+        +DisplayName : string
+    }
+    interface IAcademicSupervisorAssignmentGateway <<output port>> {
+        +GetSupervisorAsync(staffNumber, cancellationToken)
+        +GetForStudentAsync(studentNumber, cancellationToken)
+        +AddAsync(assignment, cancellationToken)
+    }
+}
+
+package "Academic Supervisors outgoing adapter" {
+    class HttpStudentLookupAdapter <<outgoing adapter>> {
+        -_httpClient : HttpClient
+        +GetStudentSummaryAsync(studentNumber, cancellationToken)
+    }
+    class StudentLookupApiResponse <<adapter transport model>> {
+        +StudentNumber : string
+        +DisplayName : string
+    }
+}
+
+package "Academic Supervisors Domain" {
+    class AcademicSupervisor <<domain entity>> {
+        +StaffNumber : string
+        +FirstName : string
+        +LastName : string
+        +EmploymentType : SupervisorEmploymentType
+        +TrainingCompleted : bool
+        +EligibleRoleEntries : ICollection<SupervisoryRole>
+        +IsEligibleFor(role)
+    }
+    class SupervisoryAssignment <<domain entity>> {
+        +StudentNumber : string
+        +SupervisorStaffNumber : string
+        +Role : SupervisoryRole
+        +StartDate : DateTime
+        +EndDate : DateTime?
+        +ExceptionAuthorised : bool
+        +Current : bool
+    }
+    enum SupervisoryRole <<domain enum>>
+    enum SupervisorEmploymentType <<domain enum>>
+}
+
+package "Students API adapter" {
+    class StudentsApiController <<incoming adapter>> {
+        +GetLookup(studentNumber, cancellationToken)
+    }
+    class StudentLookupApiMapper <<mapper>> {
+        +ToResponse(output)
+    }
+    class StudentLookupResponse <<API response>> {
+        +StudentNumber : string
+        +DisplayName : string
+    }
+}
+
+package "Students Business" {
+    interface IViewStudentSummaryUseCase <<input port>> {
+        +ExecuteAsync(input, cancellationToken)
+    }
+    class ViewStudentSummaryUseCase <<use case>>
+    class ViewStudentSummaryInput <<Business DTO>> {
+        +StudentNumber : string
+    }
+    class StudentSummaryOutput <<Business DTO>> {
+        +StudentNumber : string
+        +DisplayName : string
+    }
+    interface IStudentGateway <<output port>> {
+        +GetByStudentNumberAsync(studentNumber, cancellationToken)
+    }
+}
+
+package "Students Domain" {
+    class Student <<domain entity>> {
+        +StudentNumber : string
+        +FirstName : string
+        +LastName : string
+        +EmailAddress : string
+        +FullName : string
+    }
+}
+
+package "Persistence adapters" {
+    class EfAcademicSupervisorAssignmentGateway <<persistence adapter>>
+    class EfStudentGateway <<persistence adapter>>
+    class StudentManagementDbContext <<persistence adapter>> {
+        +Students
+        +AcademicSupervisors
+        +SupervisoryAssignments
+    }
+}
+
+package "Application" {
+    class Program <<composition root>> {
+        +AddHttpClient<IStudentLookup, HttpStudentLookupAdapter>()
+    }
+}
+
+AcademicSupervisorsApiController --> AcademicSupervisorApiMapper : uses
+AcademicSupervisorsApiController --> IAcademicSupervisorUseCase : invokes
+AcademicSupervisorApiMapper --> AssignAcademicSupervisorRequest : maps from
+AcademicSupervisorApiMapper --> AssignAcademicSupervisorResponse : maps to
+AcademicSupervisorApiMapper --> AcademicSupervisorAssignmentInput : creates
+AcademicSupervisorApiMapper --> AcademicSupervisorAssignmentResult : reads
+
+IAcademicSupervisorUseCase <|.. AcademicSupervisorAssignmentUseCase
+AcademicSupervisorAssignmentUseCase --> AcademicSupervisorAssignmentInput : accepts
+AcademicSupervisorAssignmentUseCase --> AcademicSupervisorAssignmentResult : returns
+AcademicSupervisorAssignmentUseCase --> IStudentLookup : uses
+AcademicSupervisorAssignmentUseCase --> IAcademicSupervisorAssignmentGateway : uses
+AcademicSupervisorAssignmentUseCase --> AcademicSupervisor : validates
+AcademicSupervisorAssignmentUseCase --> SupervisoryAssignment : creates
+AcademicSupervisorAssignmentInput --> SupervisoryRole : contains
+AcademicSupervisorAssignmentResult --> AcademicSupervisorAssignmentOutcome : contains
+
+IStudentLookup <|.. HttpStudentLookupAdapter
+HttpStudentLookupAdapter --> StudentLookupApiResponse : deserialises
+HttpStudentLookupAdapter --> StudentSummary : creates
+
+StudentsApiController --> IViewStudentSummaryUseCase : invokes
+StudentsApiController --> StudentLookupApiMapper : uses
+StudentLookupApiMapper --> StudentSummaryOutput : maps from
+StudentLookupApiMapper --> StudentLookupResponse : creates
+IViewStudentSummaryUseCase <|.. ViewStudentSummaryUseCase
+ViewStudentSummaryUseCase --> ViewStudentSummaryInput : accepts
+ViewStudentSummaryUseCase --> StudentSummaryOutput : returns
+ViewStudentSummaryUseCase --> IStudentGateway : uses
+IStudentGateway <|.. EfStudentGateway
+EfStudentGateway --> Student : maps to
+EfAcademicSupervisorAssignmentGateway ..|> IAcademicSupervisorAssignmentGateway
+EfAcademicSupervisorAssignmentGateway --> StudentManagementDbContext : uses
+EfStudentGateway --> StudentManagementDbContext : uses
+StudentManagementDbContext --> AcademicSupervisor : persists
+StudentManagementDbContext --> SupervisoryAssignment : persists
+StudentManagementDbContext --> Student : persists
+Program --> HttpStudentLookupAdapter : registers typed client
+Program --> EfAcademicSupervisorAssignmentGateway : registers
+Program --> EfStudentGateway : registers
+
+note right of IStudentLookup
+Consumer-side output port owned by
+Academic Supervisors Business.
+It is not the Students HTTP contract.
+end note
+
+note right of HttpStudentLookupAdapter
+HTTP GET /api/students/{studentNumber}/lookup
+200 -> StudentSummary
+404 -> null
+Other failures -> HttpRequestException
+end note
+@enduml
