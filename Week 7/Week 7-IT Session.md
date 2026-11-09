@@ -200,3 +200,20 @@ POST /api/students/S999999/academic-supervisors
 404 Not Found
 {"succeeded":false,"outcome":"StudentNotFound","assignmentId":null}
 ```
+
+**Task 13**
+The HTTP-based sequence diagram is [http-lookup-sequence.puml](../PgrStudentManagement-week06-Solution/docs/week07/http-lookup-sequence.puml). The original direct-call diagram is [direct-lookup-sequence.puml](../PgrStudentManagement-week06-Solution/docs/week07/direct-lookup-sequence.puml).
+
+| Direct lookup | HTTP lookup |
+|---|---|
+| In-process invocation | HTTP request and JSON response |
+| `LocalStudentLookupAdapter` | `HttpStudentLookupAdapter` |
+| No network failure | Endpoint, timeout, and protocol failure possible |
+| No serialisation | Request and response serialisation |
+| Local runtime path | Crosses the Students REST boundary |
+
+These parts remain unchanged:
+- the Academic Supervisors assignment use case;
+- the Business-owned `IStudentLookup` port;
+- the Academic Supervisors Business rules; and
+- Students ownership of Student information.
