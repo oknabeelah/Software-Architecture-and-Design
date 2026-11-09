@@ -47,6 +47,7 @@ builder.Services.AddSingleton<AcademicSupervisorPersistenceMapper>();
 builder.Services.AddSingleton<AcademicSupervisorApiMapper>();
 builder.Services.AddSingleton<StudentEnrolmentsWebMapper>();
 builder.Services.AddSingleton<StudentEnrolmentsApiMapper>();
+builder.Services.AddSingleton<StudentLookupApiMapper>();
 builder.Services.AddSingleton<ResearchActivityDocumentMapper>();
 builder.Services.AddSingleton<ResearchActivityWebMapper>();
 builder.Services.AddSingleton<ResearchActivityApiMapper>();

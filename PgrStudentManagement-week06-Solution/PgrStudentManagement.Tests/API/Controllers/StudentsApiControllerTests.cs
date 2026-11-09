@@ -17,7 +17,9 @@ public class StudentsApiControllerTests
 
         var controller = new StudentsApiController(
             useCase,
-            mapper);
+            mapper,
+            new StubViewStudentSummaryUseCase(),
+            new StudentLookupApiMapper());
 
         var actionResult = await controller.GetEnrolments(
             "S100003",

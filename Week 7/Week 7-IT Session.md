@@ -159,3 +159,44 @@ IViewStudentSummaryUseCase
 	-> ViewStudentSummaryUseCase
 		-> IStudentGateway
 ```
+
+**Task 12**
+The Students lookup REST adapter is:
+```text
+GET http://localhost:5066/api/students/{studentNumber}/lookup
+```
+
+The complete cross-module flow is:
+```text
+Academic Supervisors REST controller
+-> Academic Supervisor assignment use case
+-> IStudentLookup
+-> HttpStudentLookupAdapter
+-> HTTP GET Students lookup endpoint
+-> Students REST controller
+-> IViewStudentSummaryUseCase
+-> IStudentGateway
+-> EfStudentGateway
+-> SQLite
+```
+
+with curl:
+```text
+GET /api/students/S100002/lookup
+200 OK
+{"studentNumber":"S100002","displayName":"Jane Smith"}
+
+Students lookup, unknown Student:
+GET /api/students/S999999/lookup
+404 Not Found
+
+Academic Supervisor assignment, known Student:
+POST /api/students/S100004/academic-supervisors
+201 Created
+{"succeeded":true,"outcome":"Created","assignmentId":"assignment-fce2e"}
+
+Academic Supervisor assignment, unknown Student:
+POST /api/students/S999999/academic-supervisors
+404 Not Found
+{"succeeded":false,"outcome":"StudentNotFound","assignmentId":null}
+```

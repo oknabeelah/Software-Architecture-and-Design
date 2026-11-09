@@ -1,5 +1,13 @@
 @baseUrl = http://localhost:5066
 
+### Students lookup - known Student
+GET {{baseUrl}}/api/students/S100002/lookup
+Accept: application/json
+
+### Students lookup - unknown Student
+GET {{baseUrl}}/api/students/S999999/lookup
+Accept: application/json
+
 ### Successful assignment
 POST {{baseUrl}}/api/students/S100004/academic-supervisors
 Content-Type: application/json
