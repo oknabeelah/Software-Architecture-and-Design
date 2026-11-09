@@ -1,6 +1,9 @@
 namespace PgrStudentManagement.Business.AcademicSupervisors.AcademicSupervisorAssignment;
 
 public record AcademicSupervisorAssignmentResult(
-    bool Succeeded,
-    string? AssignmentId = null,
-    string? ErrorMessage = null );
+    AcademicSupervisorAssignmentOutcome Outcome,
+    string? AssignmentId = null)
+{
+    public bool Succeeded =>
+        Outcome == AcademicSupervisorAssignmentOutcome.Created;
+}

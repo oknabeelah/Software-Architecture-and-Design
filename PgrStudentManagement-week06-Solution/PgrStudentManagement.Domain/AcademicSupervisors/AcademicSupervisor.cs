@@ -11,4 +11,6 @@ public class AcademicSupervisor
     public bool TrainingCompleted { get; set; }
     public ICollection<SupervisoryRole> EligibleRoleEntries { get; set; } = new List<SupervisoryRole>();
 
+    public bool IsEligibleFor(SupervisoryRole role) =>
+        EligibleRoleEntries.Contains(role);
 }

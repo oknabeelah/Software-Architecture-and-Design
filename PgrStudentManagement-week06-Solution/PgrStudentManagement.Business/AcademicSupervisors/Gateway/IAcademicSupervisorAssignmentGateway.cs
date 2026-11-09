@@ -4,8 +4,17 @@ namespace PgrStudentManagement.Business.AcademicSupervisors.Gateway;
 
 public interface IAcademicSupervisorAssignmentGateway
 {
-    Task AddAsync(SupervisoryAssignment assignment, CancellationToken cancellationToken);
-    Task<IReadOnlyList<SupervisoryAssignment>> GetForStudentAsync(string studentNumber, CancellationToken cancellationToken);
+    Task<AcademicSupervisor?> GetSupervisorAsync(
+        string staffNumber,
+        CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<SupervisoryAssignment>> GetForStudentAsync(
+        string studentNumber,
+        CancellationToken cancellationToken = default);
+
+    Task AddAsync(
+        SupervisoryAssignment assignment,
+        CancellationToken cancellationToken = default);
 }
 
 // I..Gateway
