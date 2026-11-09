@@ -1,0 +1,34 @@
+@baseUrl = http://localhost:5066
+
+### Successful assignment
+POST {{baseUrl}}/api/students/S100004/academic-supervisors
+Content-Type: application/json
+
+{
+  "supervisorStaffNumber": "AS1003",
+  "role": "Adviser",
+  "startDate": "2026-11-09",
+  "exceptionAuthorised": false
+}
+
+### Unknown Student
+POST {{baseUrl}}/api/students/S999999/academic-supervisors
+Content-Type: application/json
+
+{
+  "supervisorStaffNumber": "AS1003",
+  "role": "Adviser",
+  "startDate": "2026-11-09",
+  "exceptionAuthorised": false
+}
+
+### Business-rule failure: role already filled
+POST {{baseUrl}}/api/students/S100001/academic-supervisors
+Content-Type: application/json
+
+{
+  "supervisorStaffNumber": "AS1002",
+  "role": "DirectorOfStudies",
+  "startDate": "2026-11-09",
+  "exceptionAuthorised": false
+}

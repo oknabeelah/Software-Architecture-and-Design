@@ -70,3 +70,81 @@ PgrStudentManagement.Application
 	dependency injection  
 	configuration  
 	migrations and startup composition
+
+## Week 7 Task 6 testing notes
+
+The Academic Supervisors assignment endpoint is:
+
+```text
+POST http://localhost:5066/api/students/{studentNumber}/academic-supervisors
+```
+
+The reusable requests are in [AcademicSupervisors.http](../PgrStudentManagement-week06-Solution/PgrStudentManagement.Application/AcademicSupervisors.http). Start the application from the solution directory:
+
+```bash
+dotnet run --project PgrStudentManagement.Application --launch-profile http
+```
+
+Test the successful request with curl:
+
+```bash
+curl -i -X POST http://localhost:5066/api/students/S100003/academic-supervisors \
+  -H "Content-Type: application/json" \
+  -d "{\"supervisorStaffNumber\":\"AS1003\",\"role\":\"Adviser\",\"startDate\":\"2026-11-09\",\"exceptionAuthorised\":false}"
+```
+
+Expected result: `201 Created` with an `AssignAcademicSupervisorResponse` whose `succeeded` value is `true` and whose `outcome` is `Created`.
+
+Test an unknown Student:
+
+```bash
+curl -i -X POST http://localhost:5066/api/students/S999999/academic-supervisors \
+  -H "Content-Type: application/json" \
+  -d "{\"supervisorStaffNumber\":\"AS1003\",\"role\":\"Adviser\",\"startDate\":\"2026-11-09\",\"exceptionAuthorised\":false}"
+```
+
+Expected result: `404 Not Found` with outcome `StudentNotFound`.
+
+Test a Business-rule failure using the seeded Director of Studies assignment:
+
+```bash
+curl -i -X POST http://localhost:5066/api/students/S100001/academic-supervisors \
+  -H "Content-Type: application/json" \
+  -d "{\"supervisorStaffNumber\":\"AS1002\",\"role\":\"DirectorOfStudies\",\"startDate\":\"2026-11-09\",\"exceptionAuthorised\":false}"
+```
+
+Expected result: `409 Conflict` with outcome `RoleAlreadyFilled`.
+
+Observed with curl on 09/11/2026:
+
+```text
+Known Student assignment: 201 Created
+{"succeeded":true,"outcome":"Created","assignmentId":"assignment-185a7"}
+
+Unknown Student: 404 Not Found
+{"succeeded":false,"outcome":"StudentNotFound","assignmentId":null}
+
+Filled Director of Studies role: 409 Conflict
+{"succeeded":false,"outcome":"RoleAlreadyFilled","assignmentId":null}
+```
+
+The direct lookup registration is in `PgrStudentManagement.Application/Program.cs`:
+
+```csharp
+builder.Services.AddScoped<IStudentLookup, LocalStudentLookupAdapter>();
+```
+
+The runtime path is:
+
+```text
+Academic Supervisors controller
+-> Academic Supervisor assignment use case
+-> IStudentLookup
+-> LocalStudentLookupAdapter
+-> ViewStudentSummaryUseCase
+-> EfStudentGateway
+-> StudentManagementDbContext
+-> SQLite
+```
+
+No HTTP call is made for Student lookup in Task 6.
