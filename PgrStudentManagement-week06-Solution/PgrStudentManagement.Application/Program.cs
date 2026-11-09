@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using PgrStudentManagement.Adapters.API.Controllers;
 using PgrStudentManagement.Adapters.API.Mappers;
+using PgrStudentManagement.Adapters.API.AcademicSupervisors.StudentLookup;
 using PgrStudentManagement.Adapters.Persistence.Documents.Gateway;
 using PgrStudentManagement.Adapters.Persistence.Documents.Mappers;
 using PgrStudentManagement.Adapters.Persistence.Relational;
@@ -14,7 +15,9 @@ using PgrStudentManagement.Business.ResearchActivities.RecordResearchActivity;
 using PgrStudentManagement.Business.ResearchActivities.ViewStudentResearchActivities;
 using PgrStudentManagement.Business.Students.Gateway;
 using PgrStudentManagement.Business.AcademicSupervisors.Gateway;
+using PgrStudentManagement.Business.AcademicSupervisors.AcademicSupervisorAssignment;
 using PgrStudentManagement.Business.Students.ViewStudentEnrolments;
+using PgrStudentManagement.Business.Students.ViewStudentSummary;
 using PgrStudentManagement.Domain.ResearchActivities;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -49,11 +52,15 @@ builder.Services.AddSingleton<ResearchActivityApiMapper>();
 
 // Register gateways (output ports)
 builder.Services.AddScoped<IEnrolmentGateway, EfEnrolmentGateway>();
+builder.Services.AddScoped<IStudentGateway, EfStudentGateway>();
 builder.Services.AddScoped<IAcademicSupervisorAssignmentGateway, EfAcademicSupervisorAssignmentGateway>();
 builder.Services.AddScoped<IResearchActivityGateway, MongoResearchActivityGateway>();
 
 // Register use cases (input ports)
 builder.Services.AddScoped<IViewStudentEnrolmentsUseCase, ViewStudentEnrolmentsUseCase>();
+builder.Services.AddScoped<IViewStudentSummaryUseCase, ViewStudentSummaryUseCase>();
+builder.Services.AddScoped<IStudentLookup, LocalStudentLookupAdapter>();
+builder.Services.AddScoped<IAcademicSupervisorUseCase, AcademicSupervisorAssignmentUseCase>();
 builder.Services.AddScoped<IRecordResearchActivityUseCase, RecordResearchActivityUseCase>();
 builder.Services.AddScoped<IViewStudentResearchActivitiesUseCase, ViewStudentResearchActivitiesUseCase>();
 
