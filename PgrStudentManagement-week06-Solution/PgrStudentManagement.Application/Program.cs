@@ -13,6 +13,7 @@ using PgrStudentManagement.Business.ResearchActivities.Gateway;
 using PgrStudentManagement.Business.ResearchActivities.RecordResearchActivity;
 using PgrStudentManagement.Business.ResearchActivities.ViewStudentResearchActivities;
 using PgrStudentManagement.Business.Students.Gateway;
+using PgrStudentManagement.Business.AcademicSupervisors.Gateway;
 using PgrStudentManagement.Business.Students.ViewStudentEnrolments;
 using PgrStudentManagement.Domain.ResearchActivities;
 
@@ -39,6 +40,7 @@ if (!string.IsNullOrWhiteSpace(mongoConnectionString))
 
 // Register mappers
 builder.Services.AddSingleton<EnrolmentPersistenceMapper>();
+builder.Services.AddSingleton<AcademicSupervisorPersistenceMapper>();
 builder.Services.AddSingleton<StudentEnrolmentsWebMapper>();
 builder.Services.AddSingleton<StudentEnrolmentsApiMapper>();
 builder.Services.AddSingleton<ResearchActivityDocumentMapper>();
@@ -47,6 +49,7 @@ builder.Services.AddSingleton<ResearchActivityApiMapper>();
 
 // Register gateways (output ports)
 builder.Services.AddScoped<IEnrolmentGateway, EfEnrolmentGateway>();
+builder.Services.AddScoped<IAcademicSupervisorAssignmentGateway, EfAcademicSupervisorAssignmentGateway>();
 builder.Services.AddScoped<IResearchActivityGateway, MongoResearchActivityGateway>();
 
 // Register use cases (input ports)
@@ -66,7 +69,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<StudentManagementDbContext>();
-    await context.Database.EnsureCreatedAsync();
+    await context.Database.MigrateAsync();
     await DatabaseSeeder.SeedAsync(context);
 
     // Seed sample research activities
