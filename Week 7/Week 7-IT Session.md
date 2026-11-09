@@ -148,3 +148,14 @@ Academic Supervisors controller
 ```
 
 No HTTP call is made for Student lookup in Task 6.
+
+---
+
+**Task 8**
+Assign Academic Supervisor use case delegates through the Students-owned `IStudentGateway`, so the Business path is:
+
+```text
+IViewStudentSummaryUseCase
+	-> ViewStudentSummaryUseCase
+		-> IStudentGateway
+```
