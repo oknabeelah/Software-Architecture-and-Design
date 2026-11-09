@@ -44,6 +44,7 @@ if (!string.IsNullOrWhiteSpace(mongoConnectionString))
 // Register mappers
 builder.Services.AddSingleton<EnrolmentPersistenceMapper>();
 builder.Services.AddSingleton<AcademicSupervisorPersistenceMapper>();
+builder.Services.AddSingleton<AcademicSupervisorApiMapper>();
 builder.Services.AddSingleton<StudentEnrolmentsWebMapper>();
 builder.Services.AddSingleton<StudentEnrolmentsApiMapper>();
 builder.Services.AddSingleton<ResearchActivityDocumentMapper>();
