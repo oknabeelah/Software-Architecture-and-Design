@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using PgrStudentManagement.Adapters.API.Controllers;
 using PgrStudentManagement.Adapters.API.Mappers;
-using PgrStudentManagement.Adapters.API.AcademicSupervisors.StudentLookup;
+using PgrStudentManagement.Adapters.API.AcademicSupervisors.StudentLookupClient;
 using PgrStudentManagement.Adapters.Persistence.Documents.Gateway;
 using PgrStudentManagement.Adapters.Persistence.Documents.Mappers;
 using PgrStudentManagement.Adapters.Persistence.Relational;
@@ -60,7 +60,15 @@ builder.Services.AddScoped<IResearchActivityGateway, MongoResearchActivityGatewa
 // Register use cases (input ports)
 builder.Services.AddScoped<IViewStudentEnrolmentsUseCase, ViewStudentEnrolmentsUseCase>();
 builder.Services.AddScoped<IViewStudentSummaryUseCase, ViewStudentSummaryUseCase>();
-builder.Services.AddScoped<IStudentLookup, LocalStudentLookupAdapter>();
+var studentsBaseUrl = builder.Configuration["Services:Students:BaseUrl"]
+    ?? throw new InvalidOperationException(
+        "The Students service base URL is not configured.");
+
+builder.Services.AddHttpClient<IStudentLookup, HttpStudentLookupAdapter>(
+    client =>
+    {
+        client.BaseAddress = new Uri(studentsBaseUrl);
+    });
 builder.Services.AddScoped<IAcademicSupervisorUseCase, AcademicSupervisorAssignmentUseCase>();
 builder.Services.AddScoped<IRecordResearchActivityUseCase, RecordResearchActivityUseCase>();
 builder.Services.AddScoped<IViewStudentResearchActivitiesUseCase, ViewStudentResearchActivitiesUseCase>();
