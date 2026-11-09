@@ -1,0 +1,58 @@
+@baseUrl = http://localhost:5066
+
+### 1. Students Lookup - Known Student (200 OK)
+GET {{baseUrl}}/api/students/S100002/lookup
+Accept: application/json
+
+### 2. Students Lookup - Unknown Student (404 Not Found)
+GET {{baseUrl}}/api/students/UNKNOWN/lookup
+Accept: application/json
+
+### 3. Academic Supervisors - Get Supervisory Team for S100001 (200 OK)
+GET {{baseUrl}}/api/students/S100001/academic-supervisors
+Accept: application/json
+
+### 4. Academic Supervisors - Successful Assignment for S100001 (201 Created)
+POST {{baseUrl}}/api/students/S100001/academic-supervisors
+Content-Type: application/json
+
+{
+  "staffNumber": "AS1004",
+  "role": "SecondSupervisor",
+  "startDate": "2026-10-01T00:00:00Z",
+  "exceptionAuthorised": false
+}
+
+### 5. Academic Supervisors - Unknown Student (404 Not Found)
+POST {{baseUrl}}/api/students/UNKNOWN/academic-supervisors
+Content-Type: application/json
+
+{
+  "staffNumber": "AS1004",
+  "role": "SecondSupervisor",
+  "startDate": "2026-10-01T00:00:00Z",
+  "exceptionAuthorised": false
+}
+
+### 6. Academic Supervisors - Business Rule Violation: Unique Role Already Filled (409 Conflict)
+POST {{baseUrl}}/api/students/S100001/academic-supervisors
+Content-Type: application/json
+
+{
+  "staffNumber": "AS1004",
+  "role": "FirstSupervisor",
+  "startDate": "2026-10-01T00:00:00Z",
+  "exceptionAuthorised": false
+}
+
+### 7. Academic Supervisors - Business Rule Violation: Supervisor Not Eligible (422 Unprocessable Content)
+POST {{baseUrl}}/api/students/S100003/academic-supervisors
+Content-Type: application/json
+
+{
+  "staffNumber": "AS1004",
+  "role": "DirectorOfStudies",
+  "startDate": "2026-10-01T00:00:00Z",
+  "exceptionAuthorised": false
+}
+

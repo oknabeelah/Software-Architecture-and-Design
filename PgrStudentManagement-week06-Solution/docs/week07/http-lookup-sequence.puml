@@ -1,0 +1,82 @@
+@startuml Week07_HTTP_Lookup_Sequence
+title Week 7 - Academic Supervisor Assignment with HTTP Student Lookup
+
+actor "REST client" as client
+participant "AcademicSupervisorsApiController\n(incoming adapter)" as academicApi
+participant "IAcademicSupervisorUseCase\n(input port)" as inputPort
+participant "AcademicSupervisorAssignmentUseCase" as assignment
+participant "IStudentLookup\n(Business output port)" as lookup
+participant "HttpStudentLookupAdapter\n(outgoing adapter)" as httpLookup
+participant "StudentsApiController\n(incoming adapter)" as studentsApi
+participant "IViewStudentSummaryUseCase\n(Students input port)" as studentInput
+participant "ViewStudentSummaryUseCase" as studentUseCase
+participant "IStudentGateway\n(Students output port)" as studentGateway
+participant "EfStudentGateway" as efStudent
+participant "StudentManagementDbContext" as dbContext
+database SQLite as sqlite
+
+client -> academicApi: POST /api/students/{studentNumber}/academic-supervisors
+activate academicApi
+academicApi -> academicApi: Map request to AcademicSupervisorAssignmentInput
+academicApi -> inputPort: ExecuteAsync(input, cancellationToken)
+activate inputPort
+inputPort -> assignment: ExecuteAsync(input, cancellationToken)
+activate assignment
+
+assignment -> lookup: GetStudentSummaryAsync(studentNumber)
+activate lookup
+lookup -> httpLookup: GetStudentSummaryAsync(studentNumber)
+activate httpLookup
+httpLookup -> studentsApi: HTTP GET /api/students/{studentNumber}/lookup
+activate studentsApi
+studentsApi -> studentInput: ExecuteAsync(ViewStudentSummaryInput)
+activate studentInput
+studentInput -> studentUseCase: ExecuteAsync(input)
+activate studentUseCase
+studentUseCase -> studentGateway: GetByStudentNumberAsync(studentNumber)
+activate studentGateway
+studentGateway -> efStudent: GetByStudentNumberAsync(studentNumber)
+activate efStudent
+efStudent -> dbContext: Query Students
+activate dbContext
+dbContext -> sqlite: SELECT Student
+activate sqlite
+sqlite --> dbContext: Student row or no row
+deactivate sqlite
+dbContext --> efStudent: StudentRecord or null
+deactivate dbContext
+efStudent --> studentGateway: Student or null
+deactivate efStudent
+studentGateway --> studentUseCase: StudentSummaryOutput or null
+deactivate studentGateway
+studentUseCase --> studentInput: StudentSummaryOutput or null
+deactivate studentUseCase
+
+alt Student found
+    studentInput --> studentsApi: 200 OK\nStudentLookupResponse JSON
+    studentsApi --> httpLookup: 200 OK\nJSON response
+    httpLookup --> lookup: StudentSummary
+    lookup --> assignment: StudentSummary
+    assignment -> assignment: Validate supervisor and assignment rules
+    assignment -> assignment: Persist assignment through IAcademicSupervisorAssignmentGateway
+    assignment --> inputPort: Created outcome
+    inputPort --> academicApi: Created outcome
+    academicApi --> client: 201 Created\nAssignment response
+else Student not found
+    studentInput --> studentsApi: Student not found
+    studentsApi --> httpLookup: 404 Not Found
+    httpLookup --> lookup: null
+    lookup --> assignment: null
+    assignment --> inputPort: StudentNotFound outcome
+    inputPort --> academicApi: StudentNotFound outcome
+    academicApi --> client: 404 Not Found\nStudentNotFound response
+end
+
+deactivate studentInput
+deactivate studentsApi
+deactivate httpLookup
+deactivate lookup
+deactivate assignment
+deactivate inputPort
+deactivate academicApi
+@enduml

@@ -1,0 +1,68 @@
+@startuml Week07_Direct_Lookup_Sequence
+title Week 7 - Academic Supervisor Assignment with Direct Student Lookup
+
+actor "REST client" as client
+participant "AcademicSupervisorsApiController\n(incoming adapter)" as api
+participant "IAcademicSupervisorUseCase\n(input port)" as inputPort
+participant "AcademicSupervisorAssignmentUseCase" as assignment
+participant "IStudentLookup\n(Business output port)" as lookup
+participant "LocalStudentLookupAdapter" as localLookup
+participant "IViewStudentSummaryUseCase\n(Students input port)" as studentInput
+participant "IStudentGateway\n(Students output port)" as studentGateway
+participant "EfStudentGateway" as efStudent
+participant "StudentManagementDbContext" as dbContext
+database SQLite as sqlite
+
+client -> api: POST /api/students/{studentNumber}/academic-supervisors
+activate api
+api -> api: Map request to AcademicSupervisorAssignmentInput
+api -> inputPort: ExecuteAsync(input, cancellationToken)
+activate inputPort
+inputPort -> assignment: ExecuteAsync(input, cancellationToken)
+activate assignment
+
+assignment -> lookup: GetStudentSummaryAsync(studentNumber)\n(in-process call)
+activate lookup
+lookup -> localLookup: GetStudentSummaryAsync(studentNumber)
+activate localLookup
+localLookup -> studentInput: ExecuteAsync(ViewStudentSummaryInput)
+activate studentInput
+studentInput -> studentGateway: GetByStudentNumberAsync(studentNumber)
+activate studentGateway
+studentGateway -> efStudent: GetByStudentNumberAsync(studentNumber)
+activate efStudent
+efStudent -> dbContext: Query Students
+activate dbContext
+dbContext -> sqlite: SELECT Student
+activate sqlite
+sqlite --> dbContext: Student row or no row
+deactivate sqlite
+dbContext --> efStudent: StudentRecord or null
+deactivate dbContext
+efStudent --> studentGateway: Student or null
+deactivate efStudent
+studentGateway --> studentInput: StudentSummaryOutput or null
+deactivate studentGateway
+studentInput --> localLookup: StudentSummaryOutput or null
+deactivate studentInput
+localLookup --> lookup: StudentSummary or null
+deactivate localLookup
+lookup --> assignment: StudentSummary or null
+deactivate lookup
+
+alt Student found
+    assignment -> assignment: Validate supervisor and assignment rules
+    assignment -> assignment: Persist assignment through IAcademicSupervisorAssignmentGateway
+    assignment --> inputPort: Created outcome
+    inputPort --> api: Created outcome
+    api --> client: 201 Created\nAssignment response
+else Student not found
+    assignment --> inputPort: StudentNotFound outcome
+    inputPort --> api: StudentNotFound outcome
+    api --> client: 404 Not Found\nStudentNotFound response
+end
+
+deactivate assignment
+deactivate inputPort
+deactivate api
+@enduml
