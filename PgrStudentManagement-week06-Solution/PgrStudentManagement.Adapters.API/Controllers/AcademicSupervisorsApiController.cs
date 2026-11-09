@@ -23,6 +23,11 @@ public sealed class AcademicSupervisorsApiController : ControllerBase
     }
 
     [HttpPost]
+    [ProducesResponseType<AssignAcademicSupervisorResponse>(StatusCodes.Status201Created)]
+    [ProducesResponseType<AssignAcademicSupervisorResponse>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<AssignAcademicSupervisorResponse>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<AssignAcademicSupervisorResponse>(StatusCodes.Status409Conflict)]
+    [ProducesResponseType<AssignAcademicSupervisorResponse>(StatusCodes.Status422UnprocessableEntity)]
     public async Task<ActionResult<AssignAcademicSupervisorResponse>> Assign(
         string studentNumber,
         [FromBody] AssignAcademicSupervisorRequest request,

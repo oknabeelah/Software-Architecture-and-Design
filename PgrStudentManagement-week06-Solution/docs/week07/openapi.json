@@ -1,0 +1,627 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "PgrStudentManagement.Application | v1",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5066/"
+    }
+  ],
+  "paths": {
+    "/api/students/{studentNumber}/academic-supervisors": {
+      "post": {
+        "tags": [
+          "AcademicSupervisorsApi"
+        ],
+        "parameters": [
+          {
+            "name": "studentNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignAcademicSupervisorRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignAcademicSupervisorRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignAcademicSupervisorRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignAcademicSupervisorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignAcademicSupervisorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignAcademicSupervisorResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignAcademicSupervisorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignAcademicSupervisorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignAcademicSupervisorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignAcademicSupervisorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignAcademicSupervisorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignAcademicSupervisorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignAcademicSupervisorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignAcademicSupervisorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignAcademicSupervisorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignAcademicSupervisorResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignAcademicSupervisorResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssignAcademicSupervisorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/students/{studentNumber}/research-activities": {
+      "post": {
+        "tags": [
+          "ResearchActivitiesApi"
+        ],
+        "parameters": [
+          {
+            "name": "studentNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordResearchActivityRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordResearchActivityRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordResearchActivityRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordResearchActivityResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordResearchActivityResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordResearchActivityResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "ResearchActivitiesApi"
+        ],
+        "parameters": [
+          {
+            "name": "studentNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentResearchActivitiesResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentResearchActivitiesResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentResearchActivitiesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/students/{studentNumber}/enrolments": {
+      "get": {
+        "tags": [
+          "StudentsApi"
+        ],
+        "parameters": [
+          {
+            "name": "studentNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentEnrolmentsResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentEnrolmentsResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentEnrolmentsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/students/{studentNumber}/lookup": {
+      "get": {
+        "tags": [
+          "StudentsApi"
+        ],
+        "parameters": [
+          {
+            "name": "studentNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentLookupResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentLookupResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentLookupResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AssignAcademicSupervisorRequest": {
+        "required": [
+          "supervisorStaffNumber",
+          "role",
+          "startDate",
+          "exceptionAuthorised"
+        ],
+        "type": "object",
+        "properties": {
+          "supervisorStaffNumber": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "exceptionAuthorised": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AssignAcademicSupervisorResponse": {
+        "required": [
+          "succeeded",
+          "outcome"
+        ],
+        "type": "object",
+        "properties": {
+          "succeeded": {
+            "type": "boolean"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "assignmentId": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "EnrolmentResponse": {
+        "required": [
+          "programmeCode",
+          "startDate",
+          "expectedEndDate",
+          "modeOfStudy",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "programmeCode": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expectedEndDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "modeOfStudy": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "detail": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "instance": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "RecordResearchActivityRequest": {
+        "type": "object",
+        "properties": {
+          "activityType": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "activityDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "tags": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "details": {
+            "type": [
+              "null",
+              "object"
+            ]
+          }
+        }
+      },
+      "RecordResearchActivityResponse": {
+        "required": [
+          "succeeded",
+          "activityId",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "succeeded": {
+            "type": "boolean"
+          },
+          "activityId": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "message": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ResearchActivityResponse": {
+        "required": [
+          "id",
+          "studentNumber",
+          "activityType",
+          "title",
+          "activityDate",
+          "createdOn",
+          "tags",
+          "details"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "studentNumber": {
+            "type": "string"
+          },
+          "activityType": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "activityDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "details": {
+            "type": "object"
+          }
+        }
+      },
+      "StudentEnrolmentsResponse": {
+        "required": [
+          "studentNumber",
+          "enrolments"
+        ],
+        "type": "object",
+        "properties": {
+          "studentNumber": {
+            "type": "string"
+          },
+          "enrolments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EnrolmentResponse"
+            }
+          }
+        }
+      },
+      "StudentLookupResponse": {
+        "required": [
+          "studentNumber",
+          "displayName"
+        ],
+        "type": "object",
+        "properties": {
+          "studentNumber": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          }
+        }
+      },
+      "StudentResearchActivitiesResponse": {
+        "required": [
+          "studentNumber",
+          "activities"
+        ],
+        "type": "object",
+        "properties": {
+          "studentNumber": {
+            "type": "string"
+          },
+          "activities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResearchActivityResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "AcademicSupervisorsApi"
+    },
+    {
+      "name": "ResearchActivitiesApi"
+    },
+    {
+      "name": "StudentsApi"
+    }
+  ]
+}

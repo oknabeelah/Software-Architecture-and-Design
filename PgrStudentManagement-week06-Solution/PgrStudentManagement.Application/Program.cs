@@ -22,6 +22,8 @@ using PgrStudentManagement.Domain.ResearchActivities;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddOpenApi();
+
 // Register persistence
 builder.Services.AddDbContext<StudentManagementDbContext>(options =>
     options.UseSqlite(
@@ -124,6 +126,11 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
+}
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();

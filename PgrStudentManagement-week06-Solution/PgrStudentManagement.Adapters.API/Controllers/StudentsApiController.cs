@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PgrStudentManagement.Adapters.API.Mappers;
 using PgrStudentManagement.Adapters.API.Responses;
@@ -39,6 +40,8 @@ public class StudentsApiController : ControllerBase
     }
 
     [HttpGet("{studentNumber}/lookup")]
+    [ProducesResponseType<StudentLookupResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<StudentLookupResponse>> GetLookup(
         string studentNumber,
         CancellationToken cancellationToken)
