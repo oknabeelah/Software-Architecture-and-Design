@@ -1,0 +1,59 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using PgrStudentManagement.Adapters.Web.ViewModels;
+using PgrStudentManagement.Business.DummyModule;
+
+namespace PgrStudentManagement.Adapters.Web.Controllers;
+
+[Route("dummy")]
+public sealed class DummyController : Controller
+{
+    private readonly IDummyService _dummyService;
+
+    public DummyController(IDummyService dummyService)
+    {
+        _dummyService = dummyService;
+    }
+
+    [HttpGet("")]
+    public IActionResult Index()
+    {
+        return View();
+    }
+
+    [HttpGet("public-page")]
+    public IActionResult PublicPage()
+    {
+        return View(new DummyInputViewModel());
+    }
+
+    [HttpPost("public-result")]
+    public IActionResult PublicResult(DummyInputViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View("PublicPage", model);
+        }
+
+        var result = _dummyService.Process(model.Input);
+        return View(result);
+    }
+
+    [HttpGet("private-page")]
+    public IActionResult PrivatePage()
+    {
+        return View(new DummyInputViewModel());
+    }
+
+    [HttpPost("private-result")]
+    public IActionResult PrivateResult(DummyInputViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View("PrivatePage", model);
+        }
+
+        var result = _dummyService.Process(model.Input);
+        return View(result);
+    }
+}

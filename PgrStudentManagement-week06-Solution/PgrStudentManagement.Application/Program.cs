@@ -10,6 +10,8 @@ using PgrStudentManagement.Adapters.Persistence.Relational.Gateway;
 using PgrStudentManagement.Adapters.Persistence.Relational.Mappers;
 using PgrStudentManagement.Adapters.Web.Controllers;
 using PgrStudentManagement.Adapters.Web.Mappers;
+using PgrStudentManagement.Adapters.Web.ViewModels;
+using PgrStudentManagement.Business.DummyModule;
 using PgrStudentManagement.Business.ResearchActivities.Gateway;
 using PgrStudentManagement.Business.ResearchActivities.RecordResearchActivity;
 using PgrStudentManagement.Business.ResearchActivities.ViewStudentResearchActivities;
@@ -76,11 +78,15 @@ builder.Services.AddScoped<IAcademicSupervisorUseCase, AcademicSupervisorAssignm
 builder.Services.AddScoped<IRecordResearchActivityUseCase, RecordResearchActivityUseCase>();
 builder.Services.AddScoped<IViewStudentResearchActivitiesUseCase, ViewStudentResearchActivitiesUseCase>();
 
+// Register dummy module Business service
+builder.Services.AddScoped<IDummyService, DummyService>();
+
 // Register MVC and API controllers from adapter assemblies
 builder.Services
     .AddControllersWithViews()
     .AddApplicationPart(typeof(StudentsController).Assembly)
-    .AddApplicationPart(typeof(StudentsApiController).Assembly);
+    .AddApplicationPart(typeof(StudentsApiController).Assembly)
+    .AddApplicationPart(typeof(DummyController).Assembly);
 
 var app = builder.Build();
 
