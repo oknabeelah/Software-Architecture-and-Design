@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using PgrStudentManagement.Adapters.Web.Mappers;
 using PgrStudentManagement.Business.Students.ViewStudentEnrolments;
 
 namespace PgrStudentManagement.Adapters.Web.Controllers;
 
+[Authorize]
 public class StudentsController : Controller
 {
     private readonly IViewStudentEnrolmentsUseCase _useCase;

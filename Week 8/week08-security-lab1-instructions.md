@@ -735,6 +735,7 @@ Create a simple `AccessDenied.cshtml` page stating that the authenticated identi
 **File path:** `PgrStudentManagement.Adapters.Web/Views/Shared/_Layout.cshtml`
 
 Add conditional navigation to the shared layout:
+
 ```cshtml
 @if (User.Identity?.IsAuthenticated == true)
 {
@@ -968,7 +969,7 @@ Verify:
 - sign-in and sign-out;
 - Students MVC redirect behaviour when signed out;
 - Students MVC access when signed in;
-- Students REST `401` when no valid authentication cookie is supplied;
+- Students REST `401` when no valid authentication cookie is supplied; // blank page
 - Students REST success with an authenticated client;
 - public DummyModule behaviour remains unchanged;
 - private DummyModule behaviour remains protected; and

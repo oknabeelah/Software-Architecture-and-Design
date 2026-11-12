@@ -146,7 +146,7 @@ public class AcademicSupervisorAssignmentUseCaseTests
             CancellationToken.None);
 
         Assert.Equal(
-            AcademicSupervisorAssignmentOutcome.ExceptionRequired,
+            AcademicSupervisorAssignmentOutcome.MaximumSupervisorsReached,
             result.Outcome);
     }
 

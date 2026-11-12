@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using PgrStudentManagement.Adapters.API.Mappers;
 using PgrStudentManagement.Adapters.API.Responses;
 using PgrStudentManagement.Business.Students.ViewStudentEnrolments;
@@ -8,6 +9,7 @@ using PgrStudentManagement.Business.Students.ViewStudentSummary;
 namespace PgrStudentManagement.Adapters.API.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/students")]
 public class StudentsApiController : ControllerBase
 {
@@ -39,6 +41,7 @@ public class StudentsApiController : ControllerBase
         return Ok(response);
     }
 
+    [AllowAnonymous] //temporary decision to preserve Academic Supervisor lookup functionality without authentication. extension: service - to - service authentication
     [HttpGet("{studentNumber}/lookup")]
     [ProducesResponseType<StudentLookupResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -58,3 +61,5 @@ public class StudentsApiController : ControllerBase
         return Ok(_summaryMapper.ToResponse(output));
     }
 }
+
+// ASP.NET 10 cookie authentication allows recognised API endpoints to return access codes rather than redirecting to an HTML sign-in page
