@@ -21,12 +21,14 @@ public sealed class DummyController : Controller
         return View();
     }
 
+    [AllowAnonymous]
     [HttpGet("public-page")]
     public IActionResult PublicPage()
     {
         return View(new DummyInputViewModel());
     }
 
+    [AllowAnonymous]
     [HttpPost("public-result")]
     public IActionResult PublicResult(DummyInputViewModel model)
     {
@@ -39,12 +41,14 @@ public sealed class DummyController : Controller
         return View(result);
     }
 
+    [Authorize]
     [HttpGet("private-page")]
     public IActionResult PrivatePage()
     {
         return View(new DummyInputViewModel());
     }
 
+    [Authorize]
     [HttpPost("private-result")]
     public IActionResult PrivateResult(DummyInputViewModel model)
     {

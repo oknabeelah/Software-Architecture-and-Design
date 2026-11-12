@@ -1,0 +1,16 @@
+@model PgrStudentManagement.Domain.DummyModule.DummyResult
+
+@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<h1>Access Denied</h1>
+
+<p>@Model.Message</p>
+
+<p>
+    The Authenticated Identity is not permitted to access the requested operation.
+    <br />
+    Processed at:
+    @Model.ProcessedAtUtc.ToString("d MMMM yyyy HH:mm:ss 'UTC'")
+</p>

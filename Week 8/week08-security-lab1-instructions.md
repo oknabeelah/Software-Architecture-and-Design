@@ -735,7 +735,6 @@ Create a simple `AccessDenied.cshtml` page stating that the authenticated identi
 **File path:** `PgrStudentManagement.Adapters.Web/Views/Shared/_Layout.cshtml`
 
 Add conditional navigation to the shared layout:
-
 ```cshtml
 @if (User.Identity?.IsAuthenticated == true)
 {

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using PgrStudentManagement.Adapters.API.Controllers;
@@ -88,6 +89,22 @@ builder.Services
     .AddApplicationPart(typeof(StudentsApiController).Assembly)
     .AddApplicationPart(typeof(DummyController).Assembly);
 
+builder.Services
+    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/account/login";
+        options.AccessDeniedPath = "/account/accessdenied";
+
+        options.Cookie.Name = "PgrStudentManagement.Auth";
+
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+
+        options.SlidingExpiration = true;
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    });
+
 var app = builder.Build();
 
 // Ensure relational database exists and is seeded
@@ -142,7 +159,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseAuthorization();
+app.UseAuthentication(); // establishes HttpContext.User
+app.UseAuthorization(); // evaluates access requirements
 
 app.MapControllerRoute(
     name: "default",
