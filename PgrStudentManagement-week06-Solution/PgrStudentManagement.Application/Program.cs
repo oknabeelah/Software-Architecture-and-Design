@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using PgrStudentManagement.Adapters.API.Controllers;
@@ -10,6 +11,8 @@ using PgrStudentManagement.Adapters.Persistence.Relational.Gateway;
 using PgrStudentManagement.Adapters.Persistence.Relational.Mappers;
 using PgrStudentManagement.Adapters.Web.Controllers;
 using PgrStudentManagement.Adapters.Web.Mappers;
+using PgrStudentManagement.Adapters.Web.ViewModels;
+using PgrStudentManagement.Business.DummyModule;
 using PgrStudentManagement.Business.ResearchActivities.Gateway;
 using PgrStudentManagement.Business.ResearchActivities.RecordResearchActivity;
 using PgrStudentManagement.Business.ResearchActivities.ViewStudentResearchActivities;
@@ -76,11 +79,31 @@ builder.Services.AddScoped<IAcademicSupervisorUseCase, AcademicSupervisorAssignm
 builder.Services.AddScoped<IRecordResearchActivityUseCase, RecordResearchActivityUseCase>();
 builder.Services.AddScoped<IViewStudentResearchActivitiesUseCase, ViewStudentResearchActivitiesUseCase>();
 
+// Register dummy module Business service
+builder.Services.AddScoped<IDummyService, DummyService>();
+
 // Register MVC and API controllers from adapter assemblies
 builder.Services
     .AddControllersWithViews()
     .AddApplicationPart(typeof(StudentsController).Assembly)
-    .AddApplicationPart(typeof(StudentsApiController).Assembly);
+    .AddApplicationPart(typeof(StudentsApiController).Assembly)
+    .AddApplicationPart(typeof(DummyController).Assembly);
+
+builder.Services
+    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/account/login";
+        options.AccessDeniedPath = "/account/accessdenied";
+
+        options.Cookie.Name = "PgrStudentManagement.Auth";
+
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+
+        options.SlidingExpiration = true;
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    });
 
 var app = builder.Build();
 
@@ -136,7 +159,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseAuthorization();
+app.UseAuthentication(); // establishes HttpContext.User
+app.UseAuthorization(); // evaluates access requirements
 
 app.MapControllerRoute(
     name: "default",
