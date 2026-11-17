@@ -1,0 +1,202 @@
+@{
+    ViewData["Title"] = "Graduate School Dashboard";
+}
+
+<section class="portal-hero" aria-labelledby="hero-heading">
+    <h1 id="hero-heading">Postgraduate Research (PGR) Management Portal</h1>
+    <p>
+        Centralised academic administration for doctoral admissions, student enrolment lifecycles,
+        supervisory team governance, and research milestone tracking across the Graduate Research School.
+    </p>
+    <div class="portal-cta-group">
+        <a asp-controller="PhdApplications" asp-action="Create" class="btn btn-accent">
+            New PhD Application
+        </a>
+        <a asp-controller="Students" asp-action="Create" class="btn btn-outline-light">
+            Enrol PGR Student
+        </a>
+        <a asp-controller="AcademicSupervisors" asp-action="Create" class="btn btn-outline-light">
+            Register Supervisor
+        </a>
+        <a asp-controller="PhdApplications" asp-action="Index" class="btn btn-outline-light">
+            Review Admissions Queue
+        </a>
+    </div>
+</section>
+
+<section aria-label="Portal overview metrics" class="portal-stats-grid">
+    <div class="portal-stat-card">
+        <div class="portal-stat-label">Active PGR Programmes</div>
+        <div class="portal-stat-value">PhD &amp; MPhil</div>
+        <div class="text-muted">Computing &amp; Design cohorts</div>
+    </div>
+    <div class="portal-stat-card stat-accent">
+        <div class="portal-stat-label">Admissions Intake</div>
+        <div class="portal-stat-value">Oct &amp; Jan</div>
+        <div class="text-muted">Full-time &amp; Part-time pathways</div>
+    </div>
+    <div class="portal-stat-card stat-success">
+        <div class="portal-stat-label">Supervisory Governance</div>
+        <div class="portal-stat-value">DoS &amp; Team</div>
+        <div class="text-muted">Role eligibility &amp; load checks</div>
+    </div>
+    <div class="portal-stat-card">
+        <div class="portal-stat-label">Research Portfolio</div>
+        <div class="portal-stat-value">Activity Logs</div>
+        <div class="text-muted">Meetings, reflections &amp; outputs</div>
+    </div>
+</section>
+
+<div class="portal-section-title">
+    <h2 class="mb-0">Core Administration Modules</h2>
+    <span class="text-muted">Manage active doctoral records, supervisors, and applications</span>
+</div>
+
+<section aria-label="Core administration modules" class="portal-grid">
+    <article class="portal-module-card">
+        <div>
+            <span class="portal-module-tag">Enrolment &amp; Thesis</span>
+            <h3 class="h4">PGR Students</h3>
+            <p class="text-muted">
+                View enrolled doctoral candidates, manage programme enrolments, update progression statuses,
+                and record expected or actual thesis submission dates.
+            </p>
+        </div>
+        <div class="portal-module-actions">
+            <a asp-controller="Students" asp-action="Index" class="btn btn-primary">
+                Manage Students
+            </a>
+            <a asp-controller="Students" asp-action="Create" class="btn btn-outline-primary">
+                Enrol Student
+            </a>
+        </div>
+    </article>
+
+    <article class="portal-module-card">
+        <div>
+            <span class="portal-module-tag">Academic Staff</span>
+            <h3 class="h4">Academic Supervisors</h3>
+            <p class="text-muted">
+                Maintain the register of eligible Directors of Studies, First and Second Supervisors, and Advisers,
+                and assign compliant supervisory teams to students.
+            </p>
+        </div>
+        <div class="portal-module-actions">
+            <a asp-controller="AcademicSupervisors" asp-action="Index" class="btn btn-primary">
+                View Supervisors
+            </a>
+            <a asp-controller="AcademicSupervisors" asp-action="Create" class="btn btn-outline-primary">
+                Add Supervisor
+            </a>
+        </div>
+    </article>
+
+    <article class="portal-module-card">
+        <div>
+            <span class="portal-module-tag">Admissions Pipeline</span>
+            <h3 class="h4">PhD Applications</h3>
+            <p class="text-muted">
+                Submit new doctoral research proposals, evaluate candidate funding and proposed supervision,
+                and progress applications from review through to offer and enrolment.
+            </p>
+        </div>
+        <div class="portal-module-actions">
+            <a asp-controller="PhdApplications" asp-action="Index" class="btn btn-accent">
+                Admissions Queue
+            </a>
+            <a asp-controller="PhdApplications" asp-action="Create" class="btn btn-outline-primary">
+                Create Application
+            </a>
+        </div>
+    </article>
+
+    <article class="portal-module-card">
+        <div>
+            <span class="portal-module-tag">Research Portfolio</span>
+            <h3 class="h4">Research Activity Logs</h3>
+            <p class="text-muted">
+                Inspect chronological logs of student supervision meetings, literature reflections,
+                experiments, and conference presentations.
+            </p>
+        </div>
+        <div class="portal-module-actions">
+            <a asp-controller="ResearchActivity" asp-action="Index" asp-route-studentNumber="S100001" class="btn btn-secondary">
+                Sample Log (S100001)
+            </a>
+            <a asp-controller="ResearchActivity" asp-action="Index" asp-route-studentNumber="S100002" class="btn btn-outline-secondary">
+                Sample Log (S100002)
+            </a>
+        </div>
+    </article>
+</section>
+
+<div class="portal-section-title">
+    <h2 class="mb-0">Doctoral Lifecycle &amp; Governance Services</h2>
+    <span class="text-muted">Additional institutional modules (Preview / Planned Services)</span>
+</div>
+
+<section aria-label="Additional governance and lifecycle modules" class="portal-grid">
+    <article class="portal-module-card">
+        <div>
+            <span class="portal-module-tag tag-mock">Milestone Reviews</span>
+            <h3 class="h5">Annual Progression &amp; Viva</h3>
+            <p class="text-muted">
+                Track Confirmation of Registration (MPhil-to-PhD transfer), Annual Progress Review (APR) panels,
+                and Viva Voce examination nominations.
+            </p>
+        </div>
+        <div class="portal-module-actions">
+            <a asp-controller="Home" asp-action="Progression" class="btn btn-outline-secondary btn-sm">
+                Open Progression Workspace
+            </a>
+        </div>
+    </article>
+
+    <article class="portal-module-card">
+        <div>
+            <span class="portal-module-tag tag-mock">Compliance</span>
+            <h3 class="h5">Research Ethics &amp; Integrity</h3>
+            <p class="text-muted">
+                Manage Research Ethics Committee (REC) submissions, human-participant consent templates,
+                and Data Management Plans (DMPs).
+            </p>
+        </div>
+        <div class="portal-module-actions">
+            <a asp-controller="Home" asp-action="Ethics" class="btn btn-outline-secondary btn-sm">
+                Open Ethics Portal
+            </a>
+        </div>
+    </article>
+
+    <article class="portal-module-card">
+        <div>
+            <span class="portal-module-tag tag-mock">Skills &amp; CPD</span>
+            <h3 class="h5">PGR Training &amp; Development</h3>
+            <p class="text-muted">
+                Browse Researcher Development Framework (RDF) workshops, research methods seminars,
+                and mandatory supervisor accreditation courses.
+            </p>
+        </div>
+        <div class="portal-module-actions">
+            <a asp-controller="Home" asp-action="Training" class="btn btn-outline-secondary btn-sm">
+                View Training Catalogue
+            </a>
+        </div>
+    </article>
+
+    <article class="portal-module-card">
+        <div>
+            <span class="portal-module-tag tag-mock">Business Intelligence</span>
+            <h3 class="h5">Reports &amp; Cohort Analytics</h3>
+            <p class="text-muted">
+                Monitor 4-year timely submission rates, UKRI studentship compliance returns,
+                and department-wide supervisory capacity.
+            </p>
+        </div>
+        <div class="portal-module-actions">
+            <a asp-controller="Home" asp-action="Reports" class="btn btn-outline-secondary btn-sm">
+                View Analytics Summary
+            </a>
+        </div>
+    </article>
+</section>

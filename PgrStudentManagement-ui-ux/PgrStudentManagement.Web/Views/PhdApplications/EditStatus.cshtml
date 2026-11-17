@@ -1,0 +1,58 @@
+@model PgrStudentManagement.Web.Modules.PhdApplications.Models.PhdApplication
+
+@*
+    ===========================================================================
+    UI/UX & ACCESSIBILITY LAB — STARTING POINT (EditStatus.cshtml)
+    ===========================================================================
+    See LabResources/lab1-instructions.md (Part 10 - Optional) and LabResources/code-snippets.md (Snippet 10.A):
+      1. Display the current status clearly above the form.
+      2. Replace the free-text status input with radio buttons populated from
+         ViewBag.AllowedTransitions (returned by PhdApplicationService.GetAllowedTransitions).
+      3. Display validation/domain errors accessibly at the top of the form.
+    ===========================================================================
+*@
+
+@{
+    ViewData["Title"] = "Update Application Status";
+}
+
+<h1>Update Application Status</h1>
+
+<p>
+    <strong>@Model.ApplicationReference:</strong>
+    @Model.FullName
+</p>
+
+@* TODO (Lab Part 10 - Optional): Show current status and validation summary here (see Snippet 10.A in code-snippets.md) *@
+
+<form asp-action="EditStatus" method="post">
+    <input type="hidden"
+           name="applicationReference"
+           value="@Model.ApplicationReference" />
+
+    @* TODO (Lab Part 10 - Optional): Replace this plain text input with radio buttons inside a <fieldset>
+       for the allowed status transitions (see Snippet 10.A in code-snippets.md). *@
+    <div class="mb-3">
+        <label for="status"
+               class="form-label">
+            Status
+        </label>
+
+        <input type="text"
+               id="status"
+               name="status"
+               value="@Model.Status"
+               class="form-control" />
+    </div>
+
+    <button type="submit"
+            class="btn btn-primary">
+        Save
+    </button>
+
+    <a asp-action="Details"
+       asp-route-applicationReference="@Model.ApplicationReference"
+       class="btn btn-secondary">
+        Cancel
+    </a>
+</form>

@@ -1,0 +1,69 @@
+@model IReadOnlyList<PgrStudentManagement.Web.Modules.PhdApplications.Models.PhdApplication>
+
+@*
+    TODO (Lab Part 9):
+    - Add a status filter <form method="get"> above the table.
+    - Add a <caption> inside <table> and scope="col" on <th> elements.
+    - Add <span class="visually-hidden"> for @application.ApplicationReference (@application.FullName)</span> to action links.
+    See Snippet 9.A in LabResources/code-snippets.md.
+*@
+
+@{
+    ViewData["Title"] = "PhD Applications";
+}
+
+<h1>PhD Applications</h1>
+
+<p>
+    <a asp-action="Create"
+       class="btn btn-primary">
+        Create Application
+    </a>
+</p>
+
+@if (Model.Count == 0)
+{
+    <p class="alert alert-info">No PhD applications found</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Reference</th>
+                <th>Applicant</th>
+                <th>Programme</th>
+                <th>Mode of study</th>
+                <th>Funding</th>
+                <th>Status</th>
+                <th>Submitted</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var application in Model)
+        {
+            <tr>
+                <td>@application.ApplicationReference</td>
+                <td>@application.FullName</td>
+                <td>@application.ProgrammeCode</td>
+                <td>@application.ModeOfStudy</td>
+                <td>@application.FundingSource</td>
+                <td>@application.Status</td>
+                <td>@application.SubmittedDate.ToString("yyyy-MM-dd")</td>
+                <td>
+                    <a asp-action="Details"
+                       asp-route-applicationReference="@application.ApplicationReference">
+                        Details
+                    </a>
+                    |
+                    <a asp-action="EditStatus"
+                       asp-route-applicationReference="@application.ApplicationReference">
+                        Edit status
+                    </a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

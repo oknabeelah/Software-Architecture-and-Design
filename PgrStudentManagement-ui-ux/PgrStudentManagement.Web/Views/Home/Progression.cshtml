@@ -1,0 +1,65 @@
+@{
+    ViewData["Title"] = "Annual Progression & Viva";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <span class="portal-module-tag tag-mock">Preview Module</span>
+        <h1 class="mb-0">Annual Progression &amp; Viva Voce</h1>
+    </div>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">
+        Return to Dashboard
+    </a>
+</div>
+
+<div class="alert alert-info" role="status">
+    <strong>Module Preview:</strong> Formal milestone review workflows and Viva Voce examination scheduling are currently in preview. Use the <a asp-controller="Students" asp-action="Index" class="alert-link">PGR Students</a> module to record expected and actual thesis submission dates.
+</div>
+
+<section class="portal-grid" aria-label="Progression stages">
+    <article class="portal-module-card">
+        <div>
+            <span class="portal-module-tag">Stage 1 (9&ndash;12 Months FT)</span>
+            <h2 class="h4">Confirmation of Registration</h2>
+            <p class="text-muted">
+                Formal assessment of the literature review, methodology, and project plan to confirm transfer from probationary MPhil to PhD status.
+            </p>
+        </div>
+        <div class="portal-module-actions">
+            <button type="button" class="btn btn-outline-primary btn-sm" disabled>
+                Schedule Confirmation Panel (Coming Soon)
+            </button>
+        </div>
+    </article>
+
+    <article class="portal-module-card">
+        <div>
+            <span class="portal-module-tag">Stage 2 (Annual Cycle)</span>
+            <h2 class="h4">Annual Progress Review (APR)</h2>
+            <p class="text-muted">
+                End-of-year independent panel review verifying research momentum, supervisory meeting frequency, and training credit completion.
+            </p>
+        </div>
+        <div class="portal-module-actions">
+            <button type="button" class="btn btn-outline-primary btn-sm" disabled>
+                Launch APR Round (Coming Soon)
+            </button>
+        </div>
+    </article>
+
+    <article class="portal-module-card">
+        <div>
+            <span class="portal-module-tag">Stage 3 (Final Examination)</span>
+            <h2 class="h4">Intention to Submit &amp; Viva Voce</h2>
+            <p class="text-muted">
+                Internal and External Examiner nominations, independent chair allocation, and post-viva corrections tracking.
+            </p>
+        </div>
+        <div class="portal-module-actions">
+            <a asp-controller="Students" asp-action="Index" class="btn btn-primary btn-sm">
+                Manage Student Submissions
+            </a>
+        </div>
+    </article>
+</section>
+

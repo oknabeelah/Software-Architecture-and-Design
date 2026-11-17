@@ -1,0 +1,65 @@
+@{
+    ViewData["Title"] = "Reports & Cohort Analytics";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <span class="portal-module-tag tag-mock">Preview Module</span>
+        <h1 class="mb-0">Reports &amp; Cohort Analytics</h1>
+    </div>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">
+        Return to Dashboard
+    </a>
+</div>
+
+<div class="alert alert-info" role="status">
+    <strong>Module Preview:</strong> Automated CSV/PDF export and statutory HESA / UKRI reporting feeds are stubbed in this demonstration build.
+</div>
+
+<section class="portal-grid" aria-label="Available reports">
+    <article class="portal-module-card">
+        <div>
+            <span class="portal-module-tag">Admissions Funnel</span>
+            <h2 class="h4">PhD Intake &amp; Conversion Report</h2>
+            <p class="text-muted">
+                Breakdown of submitted proposals, interview conversion rates, funding distribution (UKRI, University Studentships, Self-Funded), and matriculated cohorts.
+            </p>
+        </div>
+        <div class="portal-module-actions">
+            <a asp-controller="PhdApplications" asp-action="Index" class="btn btn-primary btn-sm">
+                View PhD Applications
+            </a>
+        </div>
+    </article>
+
+    <article class="portal-module-card">
+        <div>
+            <span class="portal-module-tag">Timely Completion</span>
+            <h2 class="h4">Submission Window Monitoring</h2>
+            <p class="text-muted">
+                Identifies candidates approaching their expected submission deadline and tracks extensions against original expected submission dates.
+            </p>
+        </div>
+        <div class="portal-module-actions">
+            <a asp-controller="Students" asp-action="Index" class="btn btn-primary btn-sm">
+                Inspect Student Records
+            </a>
+        </div>
+    </article>
+
+    <article class="portal-module-card">
+        <div>
+            <span class="portal-module-tag">Workload &amp; Compliance</span>
+            <h2 class="h4">Supervisory Capacity Audit</h2>
+            <p class="text-muted">
+                Reviews active supervision headcounts per academic staff member and highlights any supervisory teams operating under an authorised exception.
+            </p>
+        </div>
+        <div class="portal-module-actions">
+            <a asp-controller="AcademicSupervisors" asp-action="Index" class="btn btn-primary btn-sm">
+                View Academic Supervisors
+            </a>
+        </div>
+    </article>
+</section>
+
