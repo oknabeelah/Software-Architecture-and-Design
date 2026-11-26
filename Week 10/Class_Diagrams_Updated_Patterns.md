@@ -111,7 +111,7 @@ title: Milestone Management - Behavioural observer design pattern
 ---
 classDiagram
     Subject --> MilestoneService : 
-    MilestoneService --> Observer : notify observers
+    MilestoneService --> Observer : notify observers -> NotifyObservers(observers)
     Observer --> NotificationService : sends alert
     Observer --> DashboardService : updates dashboard
     Observer --> ReminderService : updates reminder
@@ -119,13 +119,15 @@ classDiagram
     class Subject {
         <<interface>>
         -observers : List
+        -subjectState: State
+        +GetState()
+        +SetState()
         +AddObserver()
         +RemoveObserver()
         +NotifyObservers() 
     }
     
     class MilestoneService["MilestoneService : Subject"] {
-        -subjectState: State
         +UpdateMilestone()
         +CompleteMilestone()
     }
