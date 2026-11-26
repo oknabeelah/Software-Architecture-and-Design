@@ -116,14 +116,14 @@
                 <legend class="form-label">Mode of study</legend>
                 <div class="form-check">
                     <input class="form-check-input" type="radio" asp-for="ModeOfStudy" id="ModeOfStudyFullTime" value="Full-time" required />
-                    <label class="form-check-label" for="ModeOfStudy-FullTime">Full-time (typically 3 years)</label>
+                    <label class="form-check-label" for="ModeOfStudyFullTime">Full-time (typically 3 years)</label>
                 </div>
                 <div class="form-check">
                     <input class="form-check-input" type="radio" asp-for="ModeOfStudy" id="ModeOfStudyPartTime" value="Part-time" required />
-                    <label class="form-check-label" for="ModeOfStudy-PartTime">Part-time (typically 6 years)</label>
+                    <label class="form-check-label" for="ModeOfStudyPartTime">Part-time (typically 6 years)</label>
                 </div>
                 <span asp-validation-for="ModeOfStudy" class="text-danger"></span>
-            </fieldset>
+            </fieldset> @* fastpass failure: label for and input id mismatch causing unnamed *@
             <div class="mb-3">
                 <label asp-for="ProposedStartDate" class="form-label">Proposed Start Date</label>
                 <div id="ProposedStartDate-hint" class="form-text">
