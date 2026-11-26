@@ -1,0 +1,65 @@
+@{
+    ViewData["Title"] = "PGR Training & Development";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <span class="portal-module-tag tag-mock">Preview Module</span>
+        <h1 class="mb-0">PGR Training &amp; Researcher Development</h1>
+    </div>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">
+        Return to Dashboard
+    </a>
+</div>
+
+<div class="alert alert-info" role="status">
+    <strong>Module Preview:</strong> Workshop booking is stubbed in this environment. Completed training events can be inspected via student <a asp-controller="ResearchActivity" asp-action="Index" asp-route-studentNumber="S100001" class="alert-link">Research Activity Logs</a>.
+</div>
+
+<section class="portal-grid" aria-label="Training programmes">
+    <article class="portal-module-card">
+        <div>
+            <span class="portal-module-tag">RDF Domain A &amp; B</span>
+            <h2 class="h4">Research Methods &amp; Academic Writing</h2>
+            <p class="text-muted">
+                Core doctoral workshops covering systematic literature reviews, statistical and qualitative analysis, and thesis structuring.
+            </p>
+        </div>
+        <div class="portal-module-actions">
+            <button type="button" class="btn btn-outline-primary btn-sm" disabled>
+                Browse Workshops (Coming Soon)
+            </button>
+        </div>
+    </article>
+
+    <article class="portal-module-card">
+        <div>
+            <span class="portal-module-tag">RDF Domain C</span>
+            <h2 class="h4">Research Governance &amp; Integrity</h2>
+            <p class="text-muted">
+                Mandatory onboarding modules on research ethics, authorship conventions, intellectual property, and reproducible science.
+            </p>
+        </div>
+        <div class="portal-module-actions">
+            <button type="button" class="btn btn-outline-primary btn-sm" disabled>
+                View Mandatory Modules (Coming Soon)
+            </button>
+        </div>
+    </article>
+
+    <article class="portal-module-card">
+        <div>
+            <span class="portal-module-tag">Academic Staff CPD</span>
+            <h2 class="h4">Supervisor Accreditation</h2>
+            <p class="text-muted">
+                Initial and biennial refresher training required for academic staff acting as Director of Studies or First Supervisor.
+            </p>
+        </div>
+        <div class="portal-module-actions">
+            <a asp-controller="AcademicSupervisors" asp-action="Index" class="btn btn-primary btn-sm">
+                View Supervisor Training Status
+            </a>
+        </div>
+    </article>
+</section>
+

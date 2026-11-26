@@ -1,0 +1,72 @@
+@model PgrStudentManagement.Web.Modules.PhdApplications.Models.PhdApplication
+
+@{
+    ViewData["Title"] = "PhD Application Details";
+}
+
+<h1>PhD Application Details</h1>
+
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div class="alert alert-success" role="status">
+        @successMessage
+    </div>
+}
+
+<dl class="row">
+    <dt class="col-sm-4">Application reference</dt>
+    <dd class="col-sm-8">@Model.ApplicationReference</dd>
+
+    <dt class="col-sm-4">Applicant name</dt>
+    <dd class="col-sm-8">@Model.FullName</dd>
+
+    <dt class="col-sm-4">Email address</dt>
+    <dd class="col-sm-8">@Model.EmailAddress</dd>
+
+    <dt class="col-sm-4">Programme code</dt>
+    <dd class="col-sm-8">@Model.ProgrammeCode</dd>
+
+    <dt class="col-sm-4">Mode of study</dt>
+    <dd class="col-sm-8">@Model.ModeOfStudy</dd>
+
+    <dt class="col-sm-4">Proposed start date</dt>
+    <dd class="col-sm-8">@Model.ProposedStartDate.ToString("dd MMMM yyyy")</dd>
+
+    <dt class="col-sm-4">Proposed thesis title</dt>
+    <dd class="col-sm-8">@Model.ProposedThesisTitle</dd>
+
+    <dt class="col-sm-4">Research summary</dt>
+    <dd class="col-sm-8">@(Model.ResearchSummary ?? "Not recorded")</dd>
+
+    <dt class="col-sm-4">Funding source</dt>
+    <dd class="col-sm-8">@Model.FundingSource</dd>
+
+    <dt class="col-sm-4">Proposed supervisor</dt>
+    <dd class="col-sm-8">@(Model.ProposedSupervisorStaffNumber ?? "Not assigned")</dd>
+
+    <dt class="col-sm-4">Status</dt>
+    <dd class="col-sm-8">@Model.Status</dd>
+
+    <dt class="col-sm-4">Submitted date</dt>
+    <dd class="col-sm-8">@Model.SubmittedDate.ToString("dd MMMM yyyy")</dd>
+
+    <dt class="col-sm-4">Decision date</dt>
+    <dd class="col-sm-8">
+        @(Model.DecisionDate?.ToString("dd MMMM yyyy") ?? "Pending")
+    </dd>
+
+    <dt class="col-sm-4">Enrolled student number</dt>
+    <dd class="col-sm-8">
+        @(Model.EnrolledStudentNumber ?? "Not enrolled")
+    </dd>
+</dl>
+
+<p>
+    <a asp-action="EditStatus"
+       asp-route-applicationReference="@Model.ApplicationReference">
+        Edit status
+    </a>
+    |
+    <a asp-action="Index">Return to applications</a>
+</p>
+
